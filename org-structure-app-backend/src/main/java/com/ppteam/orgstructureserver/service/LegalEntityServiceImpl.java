@@ -25,7 +25,7 @@ public class LegalEntityServiceImpl implements LegalEntityService {
         List<LegalEntityWithLocationsAndDivisionsDTO> result = new ArrayList<>();
         for (LegalEntity legalEntity : legalEntities) {
             List<LocationWithDivisionsDTO> locations =
-                    locationService.findAllWithDivisionsFromLegalEntity(legalEntity.getId());
+                    locationService.findAllWithDivisionsByLegalEntityId(legalEntity.getId());
             result.add(legalEntityMapper.convert(legalEntity, locations));
         }
         return result;

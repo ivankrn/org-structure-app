@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface LocationService {
 
-    List<LocationWithDivisionsDTO> findAllWithDivisionsFromLegalEntity(long legalEntityId);
+    List<LocationWithDivisionsDTO> findAllWithDivisionsByLegalEntityId(long legalEntityId);
 
 }
