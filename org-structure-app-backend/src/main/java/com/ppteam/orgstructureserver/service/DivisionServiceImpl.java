@@ -1,5 +1,6 @@
 package com.ppteam.orgstructureserver.service;
 
+import com.ppteam.orgstructureserver.controller.error.NotFoundException;
 import com.ppteam.orgstructureserver.database.model.Division;
 import com.ppteam.orgstructureserver.database.repository.DivisionRepository;
 import com.ppteam.orgstructureserver.dto.*;
@@ -27,7 +28,7 @@ public class DivisionServiceImpl implements DivisionService {
 
     @Override
     public DivisionWithNestedStructuresDTO findByIdWithNestedStructures(long id) {
-        Division division = divisionRepository.findById(id).orElseThrow();
+        Division division = divisionRepository.findById(id).orElseThrow(NotFoundException::new);
         List<DepartmentDTO> departments = departmentService.findByDivisionId(division.getId());
         List<GroupDTO> groups = groupService.findByDivisionId(division.getId());
         List<EmployeeDTO> otherEmployees = employeeService.findAttachedOnlyToDivisionId(division.getId());
