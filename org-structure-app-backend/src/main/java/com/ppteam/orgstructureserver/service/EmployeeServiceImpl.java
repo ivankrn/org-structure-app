@@ -22,6 +22,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDTO> findAttachedOnlyToDepartmentId(long departmentId) {
+        return employeeRepository.findAttachedOnlyToDepartmentId(departmentId)
+                .stream().map(mapper::convert).toList();
+    }
+
+    @Override
     public EmployeeDTO findDivisionHead(long divisionId) {
         return mapper.convert(employeeRepository.findDivisionHead(divisionId).orElse(null));
     }
