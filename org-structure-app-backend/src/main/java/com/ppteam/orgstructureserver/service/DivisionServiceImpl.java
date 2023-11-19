@@ -29,10 +29,11 @@ public class DivisionServiceImpl implements DivisionService {
     @Override
     public DivisionWithNestedStructuresDTO findByIdWithNestedStructures(long id) {
         Division division = divisionRepository.findById(id).orElseThrow(NotFoundException::new);
+        EmployeeDTO divisionHead = employeeService.findDivisionHead(id);
         List<DepartmentDTO> departments = departmentService.findByDivisionId(division.getId());
         List<GroupDTO> groups = groupService.findByDivisionId(division.getId());
         List<EmployeeDTO> otherEmployees = employeeService.findAttachedOnlyToDivisionId(division.getId());
-        return mapper.convert(division, departments, groups, otherEmployees);
+        return mapper.convert(division, divisionHead, departments, groups, otherEmployees);
     }
 
 }

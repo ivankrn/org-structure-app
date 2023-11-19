@@ -21,4 +21,19 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .stream().map(mapper::convert).toList();
     }
 
+    @Override
+    public EmployeeDTO findDivisionHead(long divisionId) {
+        return mapper.convert(employeeRepository.findDivisionHead(divisionId).orElse(null));
+    }
+
+    @Override
+    public EmployeeDTO findDepartmentHead(long departmentId) {
+        return mapper.convert(employeeRepository.findDepartmentHead(departmentId).orElse(null));
+    }
+
+    @Override
+    public EmployeeDTO findGroupHead(long groupId) {
+        return mapper.convert(employeeRepository.findGroupHead(groupId).orElse(null));
+    }
+
 }
