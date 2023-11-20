@@ -8,6 +8,7 @@ import java.util.List;
 public interface DepartmentService {
 
     List<DepartmentDTO> findByDivisionId(long divisionId);
+    List<DepartmentDTO> findNotAttachedToDivisionByLegalEntityIdAndLocationId(long legalEntityId, long locationId);
     DepartmentWithNestedStructuresDTO findByIdWithNestedStructures(long id);
 
 }

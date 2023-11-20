@@ -1,8 +1,8 @@
 package com.ppteam.orgstructureserver.dto.mapper;
 
 import com.ppteam.orgstructureserver.database.model.LegalEntity;
-import com.ppteam.orgstructureserver.dto.LegalEntityWithLocationsAndDivisionsDTO;
-import com.ppteam.orgstructureserver.dto.LocationWithDivisionsDTO;
+import com.ppteam.orgstructureserver.dto.LegalEntityWithNestedStructuresDTO;
+import com.ppteam.orgstructureserver.dto.LocationWithNestedStructuresDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -10,6 +10,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface LegalEntityMapper {
 
-    LegalEntityWithLocationsAndDivisionsDTO convert(LegalEntity legalEntity, List<LocationWithDivisionsDTO> locations);
+    LegalEntityWithNestedStructuresDTO convert(LegalEntity legalEntity, List<LocationWithNestedStructuresDTO> locations);
 
 }

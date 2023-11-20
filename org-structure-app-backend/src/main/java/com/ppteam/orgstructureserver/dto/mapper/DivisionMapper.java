@@ -9,8 +9,10 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DivisionMapper {
+    @Mapping(source = "division.id", target = "id")
 
-    DivisionDTO convert(Division division);
+    DivisionDTO convert(Division division, EmployeeDTO head);
+
     @Mapping(source = "division.id", target = "id")
     DivisionWithNestedStructuresDTO convert(Division division, EmployeeDTO head, List<DepartmentDTO> departments,
                                             List<GroupDTO> groups, List<EmployeeDTO> otherEmployees);

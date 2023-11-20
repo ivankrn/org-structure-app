@@ -1,6 +1,6 @@
 package com.ppteam.orgstructureserver.controller;
 
-import com.ppteam.orgstructureserver.dto.LegalEntityWithLocationsAndDivisionsDTO;
+import com.ppteam.orgstructureserver.dto.LegalEntityWithNestedStructuresDTO;
 import com.ppteam.orgstructureserver.service.LegalEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class LegalEntityController {
     private final LegalEntityService legalEntityService;
 
     @GetMapping
-    public List<LegalEntityWithLocationsAndDivisionsDTO> getLegalEntities() {
+    public List<LegalEntityWithNestedStructuresDTO> getLegalEntities() {
         return legalEntityService.findAllWithLocationsAndDivisions();
     }
 

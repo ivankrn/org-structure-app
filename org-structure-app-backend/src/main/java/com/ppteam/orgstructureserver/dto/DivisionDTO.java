@@ -1,4 +1,4 @@
 package com.ppteam.orgstructureserver.dto;
 
-public record DivisionDTO(long id, String name) {
+public record DivisionDTO(long id, String name, EmployeeDTO head) {
 }

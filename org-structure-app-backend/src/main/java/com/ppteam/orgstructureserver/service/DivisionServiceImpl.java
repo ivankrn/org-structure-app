@@ -23,16 +23,21 @@ public class DivisionServiceImpl implements DivisionService {
     @Override
     public List<DivisionDTO> findByLegalEntityIdAndLocationId(long legalEntityId, long locationId) {
         return divisionRepository.findByLegalEntityIdAndLocationId(legalEntityId, locationId)
-                .stream().map(mapper::convert).toList();
+                .stream()
+                .map(division -> {
+                    EmployeeDTO divisionHead = employeeService.findDivisionHead(division.getId());
+                    return mapper.convert(division, divisionHead);
+                })
+                .toList();
     }
 
     @Override
     public DivisionWithNestedStructuresDTO findByIdWithNestedStructures(long id) {
         Division division = divisionRepository.findById(id).orElseThrow(NotFoundException::new);
         EmployeeDTO divisionHead = employeeService.findDivisionHead(id);
-        List<DepartmentDTO> departments = departmentService.findByDivisionId(division.getId());
-        List<GroupDTO> groups = groupService.findByDivisionId(division.getId());
-        List<EmployeeDTO> otherEmployees = employeeService.findAttachedOnlyToDivisionId(division.getId());
+        List<DepartmentDTO> departments = departmentService.findByDivisionId(id);
+        List<GroupDTO> groups = groupService.findAttachedOnlyToDivisionId(id);
+        List<EmployeeDTO> otherEmployees = employeeService.findAttachedOnlyToDivisionId(id);
         return mapper.convert(division, divisionHead, departments, groups, otherEmployees);
     }
 

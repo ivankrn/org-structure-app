@@ -26,8 +26,19 @@ public class DepartmentServiceImpl implements DepartmentService {
     public List<DepartmentDTO> findByDivisionId(long divisionId) {
         return departmentRepository.findByDivisionId(divisionId).stream()
                 .map(department -> {
-                    EmployeeDTO divisionHead = employeeService.findDepartmentHead(department.getId());
-                    return mapper.convert(department, divisionHead);
+                    EmployeeDTO departmentHead = employeeService.findDepartmentHead(department.getId());
+                    return mapper.convert(department, departmentHead);
+                })
+                .toList();
+    }
+
+    @Override
+    public List<DepartmentDTO> findNotAttachedToDivisionByLegalEntityIdAndLocationId(long legalEntityId, long locationId) {
+        return departmentRepository.findNotAttachedToDivisionByLegalEntityIdAndLocationId(legalEntityId, locationId)
+                .stream()
+                .map(department -> {
+                    EmployeeDTO departmentHead = employeeService.findDepartmentHead(department.getId());
+                    return mapper.convert(department, departmentHead);
                 })
                 .toList();
     }
@@ -35,8 +46,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentWithNestedStructuresDTO findByIdWithNestedStructures(long id) {
         Department department = departmentRepository.findById(id).orElseThrow(NotFoundException::new);
-        EmployeeDTO departmentHead = employeeService.findDivisionHead(id);
-        List<GroupDTO> groups = groupService.findByDivisionId(id);
+        EmployeeDTO departmentHead = employeeService.findDepartmentHead(id);
+        List<GroupDTO> groups = groupService.findByDepartmentId(id);
         List<EmployeeDTO> otherEmployees = employeeService.findAttachedOnlyToDepartmentId(id);
         return mapper.convert(department, departmentHead, groups, otherEmployees);
     }
