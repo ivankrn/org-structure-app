@@ -16,36 +16,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper mapper;
 
     @Override
-    public List<EmployeeDTO> findAttachedOnlyToDivisionId(long divisionId) {
-        return employeeRepository.findAttachedOnlyToDivisionId(divisionId)
-                .stream().map(mapper::convert).toList();
+    public List<EmployeeDTO> findByParentId(long parentId) {
+        return employeeRepository.findByParentId(parentId).stream()
+                .map(mapper::convert).toList();
     }
 
     @Override
-    public List<EmployeeDTO> findAttachedOnlyToDepartmentId(long departmentId) {
-        return employeeRepository.findAttachedOnlyToDepartmentId(departmentId)
-                .stream().map(mapper::convert).toList();
+    public List<EmployeeDTO> findByFullNameContaining(String name) {
+        return employeeRepository.findByFullNameContaining(name).stream()
+                .map(mapper::convert).toList();
     }
 
     @Override
-    public List<EmployeeDTO> findByGroupId(long groupId) {
-        return employeeRepository.findByGroupId(groupId)
-                .stream().map(mapper::convert).toList();
-    }
-
-    @Override
-    public EmployeeDTO findDivisionHead(long divisionId) {
-        return mapper.convert(employeeRepository.findDivisionHead(divisionId).orElse(null));
-    }
-
-    @Override
-    public EmployeeDTO findDepartmentHead(long departmentId) {
-        return mapper.convert(employeeRepository.findDepartmentHead(departmentId).orElse(null));
-    }
-
-    @Override
-    public EmployeeDTO findGroupHead(long groupId) {
-        return mapper.convert(employeeRepository.findGroupHead(groupId).orElse(null));
+    public EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId) {
+        return mapper.convert(employeeRepository.findStructuralUnitHead(organizationalUnitId).orElse(null));
     }
 
 }

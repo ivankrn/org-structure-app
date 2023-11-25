@@ -12,12 +12,28 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
     public static final String NOT_FOUND_MESSAGE = "Not found";
+    public static final String WRONG_ORG_UNIT_TYPE_MESSAGE = "Wrong organizational unit type";
+    public static final String WRONG_GROUPING_PROPERTY_MESSAGE = "Wrong grouping property";
     public static final String VALIDATION_MESSAGE = "Validation error";
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException exception) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         return ResponseEntity.status(status).body(new ErrorResponse(status, NOT_FOUND_MESSAGE));
+    }
+
+    @ExceptionHandler(WrongOrganizationalUnitTypeException.class)
+    public ResponseEntity<ErrorResponse> handleWrongOrgUnitTypeException(
+            WrongOrganizationalUnitTypeException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(new ErrorResponse(status, WRONG_ORG_UNIT_TYPE_MESSAGE));
+    }
+
+    @ExceptionHandler(WrongGroupingPropertyException.class)
+    public ResponseEntity<ErrorResponse> handleWrongGroupingPropertyException(
+            WrongOrganizationalUnitTypeException exception) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(new ErrorResponse(status, WRONG_ORG_UNIT_TYPE_MESSAGE));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

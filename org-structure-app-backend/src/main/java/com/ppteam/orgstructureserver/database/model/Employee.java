@@ -2,29 +2,26 @@ package com.ppteam.orgstructureserver.database.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "employee")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employee {
 
     @Id
-    @SequenceGenerator(name = "group_id_seq", sequenceName = "group_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "group_id_seq")
-    private long id;
+    @SequenceGenerator(name = "employee_id_seq", sequenceName = "employee_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "employee_id_seq")
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "division_id")
-    private Division division;
-
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
-
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "parent_id", nullable = false)
+    private OrganizationalUnit parent;
 
     @ManyToOne
     @JoinColumn(name = "job_title_id", nullable = false)
@@ -37,5 +34,21 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "job_type_id", nullable = false)
     private JobType jobType;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee that = (Employee) o;
+        if (id == null && that.id == null) {
+            return false;
+        }
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }
