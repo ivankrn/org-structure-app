@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<div id="container" style="margin: 100px">
+    <button type="button" id="total-view-button">Общий вид</button>
+    <button type="button" id="back-button">Назад</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script type="module">
+
+    const idHistory = [];
+    document.getElementById("total-view-button").addEventListener("click", showTotalView);
+    document.getElementById("back-button").addEventListener("click", returnToPreviousId);
+
+    function showTotalView() {
+        d3.json("https://org-structure-app-vkkan.run-eu-central1.goorm.site/api/organizational-units?type=legal_entity&group-by=location")
+            .then(data => {
+                const convertedData = convertUnitGroupedByLocations(data[0]);
+                redrawTreeFromData(convertedData);
+            });
+    }
+
+    function updateTreeFromUnitId(id) {
+        d3.json(`https://org-structure-app-vkkan.run-eu-central1.goorm.site/api/organizational-units/${id}`)
+            .then(data => {
+                redrawTreeFromData(convertUnit(data));
+            });
+    }
+
+    function redrawTreeFromData(jsonData) {
+        const root = tree(d3.hierarchy(jsonData)
+            .sort((a, b) => d3.ascending(a.data.name, b.data.name)));
+
+        svg.selectAll(".link").remove();
+        svg.selectAll(".link")
+            .data(root.links())
+            .join("path")
+            .attr("class", "link")
+            .attr("fill", "none")
+            .attr("stroke", "#555")
+            .attr("stroke-opacity", 0.4)
+            .attr("stroke-width", 1.5)
+            .attr("d", d3.linkRadial()
+                .angle(d => d.x)
+                .radius(d => d.y));
+
+        svg.selectAll(".node").remove();
+        svg.selectAll(".node")
+            .data(root.descendants())
+            .join("circle")
+            .attr("class", "node")
+            .attr("id", d => d.data.id)
+            .on("click", (evt) => {
+                console.log(evt);
+                const unitId = evt.target.id;
+                if (idHistory[idHistory.length - 1] !== unitId) {
+                    idHistory.push(unitId);
+                }
+                updateTreeFromUnitId(unitId);
+            })
+            .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
+            .attr("fill", d => d.children ? "#555" : "#999")
+            .attr("r", 2.5);
+
+        svg.selectAll(".label").remove();
+        svg.selectAll(".label")
+            .data(root.descendants())
+            .join("text")
+            .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
+            .attr("dy", "0.31em")
+            .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+            .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
+            .attr("paint-order", "stroke")
+            .attr("stroke", "white")
+            .attr("fill", "currentColor")
+            .attr("class", "label")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-width", 3)
+            .text(d => d.data.name);
+    }
+
+    function returnToPreviousId() {
+        idHistory.pop();
+        if (idHistory.length === 0) {
+            showTotalView();
+        } else {
+            const previousId = idHistory.pop();
+            updateTreeFromUnitId(previousId);
+        }
+    }
+
+    function convertUnitGroupedByLocations(organizationalUnit) {
+        const tree = { id: organizationalUnit["id"], name: getUnitNameWithType(organizationalUnit) };
+        tree["children"] = [];
+        organizationalUnit["locations"].forEach(location => {
+            const locationChild = { id: location["id"], name: location["name"] };
+            locationChild["children"] = [];
+            location["subsidiaries"].forEach(subsidiary => {
+                const newSubsidiary = { id: subsidiary["id"], name: getUnitNameWithType(subsidiary) };
+                locationChild["children"].push(newSubsidiary);
+            });
+            tree["children"].push(locationChild);
+        });
+        return tree;
+    }
+
+    function convertUnit(organizationalUnit) {
+        const tree = { id: organizationalUnit["id"], name: getUnitNameWithType(organizationalUnit) };
+        tree["children"] = [];
+        organizationalUnit["subsidiaries"].forEach(subsidiary => {
+            const newSubsidiary = { id: subsidiary["id"], name: getUnitNameWithType(subsidiary) };
+            tree["children"].push(newSubsidiary);
+        });
+        const employees = { name: "Сотрудники", children: [] };
+        organizationalUnit["employees"].forEach(employee => {
+            const newEmployee = { id: employee["id"], name: employee["fullName"] };
+            employees["children"].push(newEmployee);
+        });
+        tree["children"].push(employees);
+        return tree;
+    }
+
+    function getUnitNameWithType(unit) {
+        let type;
+        if (unit.type === "LEGAL_ENTITY") {
+            type = "Юр.лицо";
+        } else if (unit.type === "DIVISION") {
+            type = "Подразделение";
+        } else if (unit.type === "DEPARTMENT") {
+            type = "Отдел";
+        } else if (unit.type === "GROUP") {
+            type = "Группа";
+        }
+        return `${type} "${unit.name}"`;
+    }
+
+    const width = 1500;
+    const height = width;
+    const cx = width * 0.5;
+    const cy = height * 0.495;
+    const radius = Math.min(width, height) / 2 - 80;
+
+    const tree = d3.tree()
+        .size([2 * Math.PI, radius])
+        .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+
+    const svg = d3.create("svg")
+        .attr("id", "graph")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [-cx, -cy, width, height])
+        .attr("style", "width: 100%; height: auto; font: 10px sans-serif;");
+
+    container.append(svg.node());
+
+    showTotalView();
+
+</script>
