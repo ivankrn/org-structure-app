@@ -35,7 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId) {
-        return mapper.convert(employeeRepository.findStructuralUnitHead(organizationalUnitId).orElse(null));
+        return mapper.convert(employeeRepository.findOrganizationalUnitHead(organizationalUnitId).orElse(null));
     }
 
 }

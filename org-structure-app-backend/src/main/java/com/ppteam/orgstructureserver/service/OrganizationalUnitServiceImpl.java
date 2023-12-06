@@ -44,9 +44,9 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     @Override
     public List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type) {
         return organizationalUnitRepository.findByType(type).stream()
-                .map(structuralUnit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(structuralUnit.getId());
-                    return mapper.convert(structuralUnit, head);
+                .map(organizationalUnit -> {
+                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
+                    return mapper.convert(organizationalUnit, head);
                 })
                 .toList();
     }
@@ -57,9 +57,9 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
             throw new WrongQueryParamException();
         }
         return organizationalUnitRepository.findByType(type, Sort.by(Sort.Direction.ASC, property)).stream()
-                .map(structuralUnit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(structuralUnit.getId());
-                    return mapper.convert(structuralUnit, head);
+                .map(organizationalUnit -> {
+                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
+                    return mapper.convert(organizationalUnit, head);
                 })
                 .toList();
     }

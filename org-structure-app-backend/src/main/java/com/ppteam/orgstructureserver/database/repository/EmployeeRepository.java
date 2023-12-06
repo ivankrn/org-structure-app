@@ -22,6 +22,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
             "(e.jobTitle.name LIKE '%Руководитель подразделения%' " +
             "OR e.jobTitle.name LIKE '%Руководитель отдела%' " +
             "OR e.jobTitle.name LIKE '%Руководитель группы%')")
-    Optional<Employee> findStructuralUnitHead(long structuralUnitId);
+    Optional<Employee> findOrganizationalUnitHead(long organizationalUnitId);
 
 }
