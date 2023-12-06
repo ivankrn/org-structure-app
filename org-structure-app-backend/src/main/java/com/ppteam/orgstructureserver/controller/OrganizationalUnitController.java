@@ -27,6 +27,12 @@ public class OrganizationalUnitController {
         return organizationalUnitService.findAllByType(type);
     }
 
+    @GetMapping(params = {"type", "sort"})
+    public List<OrganizationalUnitDTO> findUnitsByTypeSortByProperty(@RequestParam OrganizationalUnitType type,
+                                                             @RequestParam("sort") String property) {
+        return organizationalUnitService.findAllByTypeSortByProperty(type, property);
+    }
+
     @GetMapping(params = {"type", "group-by"})
     public List<OrganizationalUnitWithLocationsDTO> findUnitsByTypeGroupByProperty(
             @RequestParam OrganizationalUnitType type,

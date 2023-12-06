@@ -12,6 +12,9 @@ import java.util.Optional;
 public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     List<Employee> findByParentId(long parentId);
+
+    List<Employee> findByParentIdOrderByFullNameAsc(long parentId);
+
     List<Employee> findByFullNameContaining(String name);
 
     @Query("SELECT e from Employee e " +

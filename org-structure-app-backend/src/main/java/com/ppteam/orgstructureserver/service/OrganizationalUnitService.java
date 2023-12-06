@@ -11,6 +11,7 @@ public interface OrganizationalUnitService {
 
     OrganizationalUnitWithSubsidiariesDTO findByIdWithSubsidiaries(long id);
     List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type);
+    List<OrganizationalUnitDTO> findAllByTypeSortByProperty(OrganizationalUnitType type, String property);
     List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type, String property);
     List<OrganizationalUnitDTO> findByNameLike(String name);
 

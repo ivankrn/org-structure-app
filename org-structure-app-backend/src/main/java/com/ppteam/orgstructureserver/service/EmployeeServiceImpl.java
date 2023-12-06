@@ -22,6 +22,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public List<EmployeeDTO> findByParentIdSortByFullNameAsc(long parentId) {
+        return employeeRepository.findByParentIdOrderByFullNameAsc(parentId).stream()
+                .map(mapper::convert).toList();
+    }
+
+    @Override
     public List<EmployeeDTO> findByFullNameContaining(String name) {
         return employeeRepository.findByFullNameContaining(name).stream()
                 .map(mapper::convert).toList();

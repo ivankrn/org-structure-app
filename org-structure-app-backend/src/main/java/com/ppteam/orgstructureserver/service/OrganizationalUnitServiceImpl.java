@@ -1,7 +1,7 @@
 package com.ppteam.orgstructureserver.service;
 
 import com.ppteam.orgstructureserver.controller.error.NotFoundException;
-import com.ppteam.orgstructureserver.controller.error.WrongGroupingPropertyException;
+import com.ppteam.orgstructureserver.controller.error.WrongQueryParamException;
 import com.ppteam.orgstructureserver.database.model.Location;
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnit;
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
@@ -9,6 +9,7 @@ import com.ppteam.orgstructureserver.database.repository.OrganizationalUnitRepos
 import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.dto.mapper.OrganizationalUnitMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
                     return mapper.convert(unit, unitHead);
                 })
                 .toList();
-        List<EmployeeDTO> employees = employeeService.findByParentId(id);
+        List<EmployeeDTO> employees = employeeService.findByParentIdSortByFullNameAsc(id);
         return mapper.convert(organizationalUnit, head, subsidiaries, employees);
     }
 
@@ -51,10 +52,23 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
+    public List<OrganizationalUnitDTO> findAllByTypeSortByProperty(OrganizationalUnitType type, String property) {
+        if (!property.equalsIgnoreCase("name")) {
+            throw new WrongQueryParamException();
+        }
+        return organizationalUnitRepository.findByType(type, Sort.by(Sort.Direction.ASC, property)).stream()
+                .map(structuralUnit -> {
+                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(structuralUnit.getId());
+                    return mapper.convert(structuralUnit, head);
+                })
+                .toList();
+    }
+
+    @Override
     public List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type,
                                                                                  String property) {
         if (!property.equalsIgnoreCase("location")) {
-            throw new WrongGroupingPropertyException();
+            throw new WrongQueryParamException();
         }
         return organizationalUnitRepository.findByType(type).stream()
                 .map(unit -> {
