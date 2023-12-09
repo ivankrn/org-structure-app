@@ -1,0 +1,30 @@
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node {
+    font: 10px sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke: #8da0cb;
+    stroke-width: 2px;
+}
+
+.total-view-button {
+    margin-right: 20px;
+    border-width: 2px;
+    font-weight: bold;
+}
+
+.back-button { 
+    border-width: 2px;
+    font-weight: bold;
+}
+
+body {
+    margin: 100px;
+}
