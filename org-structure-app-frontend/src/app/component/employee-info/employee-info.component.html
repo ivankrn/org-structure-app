@@ -1,0 +1,33 @@
+<details open>
+    <summary>Сведения о сотруднике</summary>
+    <div *ngIf="employee">
+        <fieldset>
+            <legend>Имя</legend>
+            {{ employee.fullName }}
+        </fieldset>
+        <fieldset>
+            <legend>Должность</legend>
+            {{ employee.jobTitle }}
+        </fieldset>
+        <fieldset>
+            <legend>Тип работы</legend>
+            {{ employee.jobType }}
+        </fieldset>
+        <fieldset>
+            <legend>Группа</legend>
+            {{ employee.organizationalUnitHierarchy?.group?.name }}
+        </fieldset>
+        <fieldset>
+            <legend>Отдел</legend>
+            {{ employee.organizationalUnitHierarchy?.department?.name }}
+        </fieldset>
+        <fieldset>
+            <legend>Подразделение</legend>
+            {{ employee.organizationalUnitHierarchy?.division?.name }}
+        </fieldset>
+        <fieldset>
+            <legend>Локация</legend>
+            {{ employee.organizationalUnit?.location }}
+        </fieldset>
+    </div>
+</details>

@@ -1,0 +1,47 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.search-bar {
+    padding: 10px;
+    max-height: 20%;
+    background-color: #f8f8f8;
+    border: 2px solid gray;
+}
+
+.suggestions {
+    max-height: 200px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.buttons {
+    margin-top: 10px;
+}
+
+input[type=search] {
+    padding: 10px;
+    width: 90%;
+}
+
+.location-name {
+    color: #b4b4b4;
+}
+
+.button {
+    background-color: #f8f8f8;
+    border: none;
+    color: black;
+    padding: 12px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border: 2px solid gray;
+}
+
+.selected-button {
+    background-color: #121212;
+    color: white;
+    border: 2px solid #121212;
+}

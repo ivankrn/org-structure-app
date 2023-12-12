@@ -1,0 +1,34 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { OrganizationalUnit } from '../model/organizational-unit.model';
+import { OrganizationalUnitHierarchy } from '../model/organizational-unit-hierarchy.model';
+import { environment } from '../../environments/environment';
+import { OrganizationalUnitType } from '../model/organizational-unit-type.enum';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class OrganizationalUnitService {
+
+  private endpoint: string = "organizational-units";
+  private apiUrl: string = environment.apiUrl + this.endpoint;
+
+  constructor(private httpClient: HttpClient) { }
+
+  public findById(id: number): Observable<OrganizationalUnit> {
+    return this.httpClient.get<OrganizationalUnit>(this.apiUrl + "/" +id);
+  }
+
+  public findByTypeGroupedByLocation(type: OrganizationalUnitType): Observable<OrganizationalUnit[]> {
+    return this.httpClient.get<OrganizationalUnit[]>(`${this.apiUrl}?type=${type}&group-by=location`);
+  }
+  
+  public findByName(name: string): Observable<OrganizationalUnit[]> {
+    return this.httpClient.get<OrganizationalUnit[]>(`${this.apiUrl}?name=${name}`);
+  }
+
+  public findUnitHierarchy(unitId: number): Observable<OrganizationalUnitHierarchy> {
+    return this.httpClient.get<OrganizationalUnitHierarchy>(`${this.apiUrl}/${unitId}/hierarchy`);
+  }
+}

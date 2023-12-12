@@ -1,0 +1,16 @@
+<div class="container">
+    <div id="employee-info">
+        <employee-info [employee]="selectedEmployee"></employee-info>
+    </div>
+    <div id="tree-search-bar">
+        <tree-search-bar 
+        (selectedEmployeeEvent)="findEmployeeOnTreeById($event)"
+        (selectedUnitEvent)="findUnitOnTreeById($event)"></tree-search-bar>
+    </div>
+    <div id="filter-menu">
+        <filter-menu *ngIf="locationNames" (newSettingsEvent)="updateSettings($event)" [locationNames]="locationNames"></filter-menu>
+    </div>
+    <div id="graph-area">
+        <figure id="tree"></figure>
+    </div>
+</div>

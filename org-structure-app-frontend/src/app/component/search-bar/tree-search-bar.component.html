@@ -1,0 +1,21 @@
+<div class="search-bar">
+    <label for="search-field">⌕</label>
+    <input type="search" id="search-field" #searchBarInput placeholder="Введите запрос">
+    <div class="suggestions" [hidden]="!showSearches">
+        <div *ngIf="searchUnits">
+            <div *ngFor="let unit of searchedOrganizationalUnits; trackBy: trackById" (click)="selectUnit(unit)">
+                {{ unit | withUnitTypeName }} <span class="location-name">{{ unit.location }}</span>
+            </div>
+        </div>
+        <div *ngIf="!searchUnits">
+            <div *ngFor="let employee of searchedEmployees; trackBy: trackById" (click)="selectEmployee(employee)">
+                {{ employee.fullName }}
+            </div>
+        </div>
+    </div>
+    <p class="search" [hidden]="!isSearching">Поиск...</p>
+</div>
+<div class="buttons">
+    <button type="button" class="button" [ngClass]="{'selected-button': !this.searchUnits}" (click)="setSearchUnits(false)">По сотрудникам</button>
+    <button type="button" class="button" style="margin-left: 1rem" [ngClass]="{'selected-button': this.searchUnits}" (click)="setSearchUnits(true)">По структурам</button>
+</div>

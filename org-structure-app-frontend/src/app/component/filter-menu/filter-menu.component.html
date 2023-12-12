@@ -1,0 +1,29 @@
+<details id="filter-menu">
+    <summary>Фильтры</summary>
+    <form [formGroup]="settingsForm">
+        <details id="locations" formArrayName="locations">
+            <summary>Локации</summary>
+            <ul>
+                <li *ngFor="let location of settingsForm.get('locations')?.value | keyvalue">
+                    <input type="checkbox" [value]="location.value" [formControlName]="location.key">
+                    <label>{{ location.key }}</label>
+                </li>
+            </ul>
+        </details>
+        <details id="employee-type">
+            <summary>Тип места</summary>
+            <ul>
+                <li>
+                    <input type="checkbox" id="vacancy" name="vacancy" value="vacancy"
+                        formControlName="displayVacancies">
+                    <label for="vacancy">Вакантные места</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="not-vacancy" name="not-vacancy" value="not-vacancy"
+                        formControlName="displayNotVacancies">
+                    <label for="not-vacancy">Занятые места</label>
+                </li>
+            </ul>
+        </details>
+    </form>
+</details>

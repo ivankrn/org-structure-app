@@ -1,0 +1,35 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+details {
+    padding: 20px;
+    border: 2px solid gray;
+    background-color: #f8f8f8;
+}
+
+details>summary {
+    list-style: none;
+    font-weight: bold;
+}
+
+summary::-webkit-details-marker {
+    display: none
+}
+
+summary::after {
+    content: ' ►';
+}
+
+details[open] summary:after {
+    content: " ▼";
+}
+
+fieldset {
+    margin-top: 20px;
+    background-color: white;
+}
+
+fieldset legend {
+    color: #747474;
+}
