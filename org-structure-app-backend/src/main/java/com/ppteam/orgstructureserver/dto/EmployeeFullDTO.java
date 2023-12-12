@@ -5,5 +5,7 @@ public record EmployeeFullDTO(long id,
                               String jobTitle,
                               String jobType,
                               String location,
-                              OrganizationalUnitWithParentDTO parent) {
+                              String division,
+                              String department,
+                              String group) {
 }
