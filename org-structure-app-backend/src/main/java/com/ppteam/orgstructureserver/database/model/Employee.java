@@ -35,6 +35,9 @@ public class Employee {
     @JoinColumn(name = "job_type_id", nullable = false)
     private JobType jobType;
 
+    @Column(name = "is_vacancy", nullable = false)
+    private boolean vacancy;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
