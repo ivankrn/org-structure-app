@@ -2,6 +2,7 @@ package com.ppteam.orgstructureserver.controller;
 
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitDTO;
+import com.ppteam.orgstructureserver.dto.OrganizationalUnitHierarchyDTO;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithLocationsDTO;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
@@ -45,4 +46,8 @@ public class OrganizationalUnitController {
         return organizationalUnitService.findByNameLike(name);
     }
 
+    @GetMapping("/{id}/hierarchy")
+    public OrganizationalUnitHierarchyDTO findUnitHierarchy(@PathVariable long id) {
+        return organizationalUnitService.findHierarchyByUnitId(id);
+    }
 }

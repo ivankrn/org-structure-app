@@ -5,8 +5,5 @@ public record EmployeeFullDTO(long id,
                               String jobTitle,
                               String jobType,
                               boolean isVacancy,
-                              String location,
-                              String division,
-                              String department,
-                              String group) {
+                              OrganizationalUnitSlimDTO organizationalUnit) {
 }

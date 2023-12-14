@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,4 +105,32 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
                 .toList();
     }
 
+    @Override
+    public OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId) {
+        OrganizationalUnit unit = organizationalUnitRepository.findById(unitId).orElseThrow(NotFoundException::new);
+        OrganizationalUnit legalEntity = null;
+        OrganizationalUnit division = null;
+        OrganizationalUnit department = null;
+        OrganizationalUnit group = null;
+        List<OrganizationalUnit> hierarchy = findUnitHierarchy(unit);
+        for (OrganizationalUnit hierarchyUnit : hierarchy) {
+            switch (hierarchyUnit.getType()) {
+                case LEGAL_ENTITY -> legalEntity = hierarchyUnit;
+                case DIVISION -> division = hierarchyUnit;
+                case DEPARTMENT -> department = hierarchyUnit;
+                case GROUP -> group = hierarchyUnit;
+            }
+        }
+        return mapper.convert(legalEntity, division, department, group);
+    }
+
+    private List<OrganizationalUnit> findUnitHierarchy(OrganizationalUnit unit) {
+        List<OrganizationalUnit> hierarchy = new ArrayList<>();
+        hierarchy.add(unit);
+        while (unit.getParent() != null) {
+            hierarchy.add(unit.getParent());
+            unit = unit.getParent();
+        }
+        return hierarchy;
+    }
 }

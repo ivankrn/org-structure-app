@@ -1,9 +1,6 @@
 package com.ppteam.orgstructureserver.service;
 
 import com.ppteam.orgstructureserver.controller.error.NotFoundException;
-import com.ppteam.orgstructureserver.database.model.Employee;
-import com.ppteam.orgstructureserver.database.model.OrganizationalUnit;
-import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
 import com.ppteam.orgstructureserver.database.repository.EmployeeRepository;
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
 import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
@@ -22,34 +19,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeFullDTO findById(long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(NotFoundException::new);
-        OrganizationalUnit unit = employee.getParent();
-        OrganizationalUnit group = null;
-        OrganizationalUnit department = null;
-        OrganizationalUnit division = null;
-        if (unit.getType() == OrganizationalUnitType.GROUP) {
-            group = unit;
-            OrganizationalUnit groupParent = group.getParent();
-            switch (groupParent.getType()) {
-                case DEPARTMENT -> {
-                    department = groupParent;
-                    OrganizationalUnit departmentParent = department.getParent();
-                    if (departmentParent.getType() == OrganizationalUnitType.DIVISION) {
-                        division = departmentParent;
-                    }
-                }
-                case DIVISION -> division = groupParent;
-            }
-        } else if (unit.getType() == OrganizationalUnitType.DEPARTMENT) {
-            department = unit;
-            OrganizationalUnit parent = department.getParent();
-            if (parent.getType() == OrganizationalUnitType.DIVISION) {
-                division = parent;
-            }
-        } else if (unit.getType() == OrganizationalUnitType.DIVISION) {
-            division = unit;
-        }
-        return mapper.convertToFullDTO(employee, division, department, group);
+        return employeeRepository.findById(id).map(mapper::convertToFullDTO).orElseThrow(NotFoundException::new);
     }
 
     @Override

@@ -14,6 +14,9 @@ public interface OrganizationalUnitMapper {
     @Mapping(source = "organizationalUnit.location.name", target = "location")
     OrganizationalUnitDTO convert(OrganizationalUnit organizationalUnit, EmployeeDTO head);
 
+    @Mapping(source = "organizationalUnit.location.name", target = "location")
+    OrganizationalUnitSlimDTO convert(OrganizationalUnit organizationalUnit);
+
     @Mapping(source = "organizationalUnit.id", target = "id")
     @Mapping(source = "organizationalUnit.name", target = "name")
     @Mapping(source = "organizationalUnit.type", target = "type")
@@ -29,5 +32,8 @@ public interface OrganizationalUnitMapper {
     @Mapping(source = "head", target = "head")
     OrganizationalUnitWithLocationsDTO convert(OrganizationalUnit organizationalUnit, EmployeeDTO head,
                                                List<LocationWithOrganizationalUnitsDTO> locations);
+
+    OrganizationalUnitHierarchyDTO convert(OrganizationalUnit legalEntity, OrganizationalUnit division,
+                                           OrganizationalUnit department, OrganizationalUnit group);
 
 }
