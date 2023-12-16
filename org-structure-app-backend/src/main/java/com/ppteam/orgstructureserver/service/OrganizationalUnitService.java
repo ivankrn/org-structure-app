@@ -18,7 +18,7 @@ public interface OrganizationalUnitService {
 
     List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type, String property);
 
-    List<OrganizationalUnitDTO> findByNameLike(String name);
+    List<OrganizationalUnitDTO> findByNameContaining(String name);
 
     OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId);
 }

@@ -96,8 +96,8 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
-    public List<OrganizationalUnitDTO> findByNameLike(String name) {
-        return organizationalUnitRepository.findByNameLike(name).stream()
+    public List<OrganizationalUnitDTO> findByNameContaining(String name) {
+        return organizationalUnitRepository.findByNameContaining(name).stream()
                 .map(unit -> {
                     EmployeeDTO head = employeeService.findOrganizationalUnitHead(unit.getId());
                     return mapper.convert(unit, head);

@@ -14,6 +14,6 @@ public interface OrganizationalUnitRepository extends CrudRepository<Organizatio
     List<OrganizationalUnit> findByType(OrganizationalUnitType type);
     List<OrganizationalUnit> findByType(OrganizationalUnitType type, Sort sort);
 
-    List<OrganizationalUnit> findByNameLike(String name);
+    List<OrganizationalUnit> findByNameContaining(String name);
 
 }

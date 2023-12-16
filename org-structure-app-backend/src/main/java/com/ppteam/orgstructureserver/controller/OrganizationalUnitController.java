@@ -42,8 +42,8 @@ public class OrganizationalUnitController {
     }
 
     @GetMapping(params = "name")
-    public List<OrganizationalUnitDTO> findUnitsByNameLike(@RequestParam String name) {
-        return organizationalUnitService.findByNameLike(name);
+    public List<OrganizationalUnitDTO> findUnitsByNameContaining(@RequestParam String name) {
+        return organizationalUnitService.findByNameContaining(name);
     }
 
     @GetMapping("/{id}/hierarchy")
