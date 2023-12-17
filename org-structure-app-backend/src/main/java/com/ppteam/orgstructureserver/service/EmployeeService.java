@@ -1,16 +1,16 @@
 package com.ppteam.orgstructureserver.service;
 
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
+import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
 
 import java.util.List;
 
 public interface EmployeeService {
 
-    List<EmployeeDTO> findAttachedOnlyToDivisionId(long divisionId);
-    List<EmployeeDTO> findAttachedOnlyToDepartmentId(long departmentId);
-    List<EmployeeDTO> findByGroupId(long groupId);
-    EmployeeDTO findDivisionHead(long divisionId);
-    EmployeeDTO findDepartmentHead(long departmentId);
-    EmployeeDTO findGroupHead(long groupId);
+    EmployeeFullDTO findById(long id);
+    List<EmployeeDTO> findByParentId(long parentId);
+    List<EmployeeDTO> findByParentIdSortByFullNameAsc(long parentId);
+    List<EmployeeDTO> findByFullNameContaining(String name);
+    EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId);
 
 }

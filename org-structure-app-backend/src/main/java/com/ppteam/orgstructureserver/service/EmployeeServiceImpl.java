@@ -1,7 +1,9 @@
 package com.ppteam.orgstructureserver.service;
 
+import com.ppteam.orgstructureserver.controller.error.NotFoundException;
 import com.ppteam.orgstructureserver.database.repository.EmployeeRepository;
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
+import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
 import com.ppteam.orgstructureserver.dto.mapper.EmployeeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,36 +18,32 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper mapper;
 
     @Override
-    public List<EmployeeDTO> findAttachedOnlyToDivisionId(long divisionId) {
-        return employeeRepository.findAttachedOnlyToDivisionId(divisionId)
-                .stream().map(mapper::convert).toList();
+    public EmployeeFullDTO findById(long id) {
+        return employeeRepository.findById(id).map(mapper::convertToFullDTO).orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public List<EmployeeDTO> findAttachedOnlyToDepartmentId(long departmentId) {
-        return employeeRepository.findAttachedOnlyToDepartmentId(departmentId)
-                .stream().map(mapper::convert).toList();
+    public List<EmployeeDTO> findByParentId(long parentId) {
+        return employeeRepository.findByParentId(parentId).stream()
+                .map(mapper::convertToDTO).toList();
     }
 
     @Override
-    public List<EmployeeDTO> findByGroupId(long groupId) {
-        return employeeRepository.findByGroupId(groupId)
-                .stream().map(mapper::convert).toList();
+    public List<EmployeeDTO> findByParentIdSortByFullNameAsc(long parentId) {
+        return employeeRepository.findByParentIdOrderByFullNameAsc(parentId).stream()
+                .map(mapper::convertToDTO).toList();
     }
 
     @Override
-    public EmployeeDTO findDivisionHead(long divisionId) {
-        return mapper.convert(employeeRepository.findDivisionHead(divisionId).orElse(null));
+    public List<EmployeeDTO> findByFullNameContaining(String name) {
+        return employeeRepository.findByFullNameContaining(name).stream()
+                .map(mapper::convertToDTO).toList();
     }
 
     @Override
-    public EmployeeDTO findDepartmentHead(long departmentId) {
-        return mapper.convert(employeeRepository.findDepartmentHead(departmentId).orElse(null));
-    }
-
-    @Override
-    public EmployeeDTO findGroupHead(long groupId) {
-        return mapper.convert(employeeRepository.findGroupHead(groupId).orElse(null));
+    public EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId) {
+        return employeeRepository.findOrganizationalUnitHead(organizationalUnitId).map(mapper::convertToDTO)
+                .orElse(null);
     }
 
 }

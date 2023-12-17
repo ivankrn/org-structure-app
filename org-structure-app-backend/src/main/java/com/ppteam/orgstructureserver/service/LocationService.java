@@ -1,11 +1,11 @@
 package com.ppteam.orgstructureserver.service;
 
-import com.ppteam.orgstructureserver.dto.LocationWithNestedStructuresDTO;
+import com.ppteam.orgstructureserver.dto.LocationDTO;
 
 import java.util.List;
 
 public interface LocationService {
 
-    List<LocationWithNestedStructuresDTO> findAllWithNestedStructuresByLegalEntityId(long legalEntityId);
+    List<LocationDTO> findAll();
 
 }
