@@ -10,7 +10,7 @@ public interface EmployeeService {
     EmployeeFullDTO findById(long id);
     List<EmployeeDTO> findByParentId(long parentId);
     List<EmployeeDTO> findByParentIdSortByFullNameAsc(long parentId);
-    List<EmployeeDTO> findByFullNameContaining(String name);
+    List<EmployeeDTO> findByFullNameContainingIgnoreCase(String name);
     EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId);
 
 }

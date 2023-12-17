@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/organizational-units")
@@ -43,11 +44,24 @@ public class OrganizationalUnitController {
 
     @GetMapping(params = "name")
     public List<OrganizationalUnitDTO> findUnitsByNameContaining(@RequestParam String name) {
-        return organizationalUnitService.findByNameContaining(name);
+        return organizationalUnitService.findByNameContainingIgnoreCase(name);
     }
 
     @GetMapping("/{id}/hierarchy")
     public OrganizationalUnitHierarchyDTO findUnitHierarchy(@PathVariable long id) {
         return organizationalUnitService.findHierarchyByUnitId(id);
     }
+
+    @GetMapping(value = "/names", params = {"type", "name"})
+    public List<String> findByTypeUnitNamesContaining(
+            @RequestParam OrganizationalUnitType type,
+            @RequestParam String name) {
+        return organizationalUnitService.findByTypeNamesContaining(type, name);
+    }
+
+    @GetMapping(value = "/names")
+    public Map<String, List<String>> findNamesByTypes() {
+        return organizationalUnitService.findNamesByTypes();
+    }
+
 }

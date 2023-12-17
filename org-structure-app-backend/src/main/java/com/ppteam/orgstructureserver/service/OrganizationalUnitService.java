@@ -7,6 +7,7 @@ import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithLocationsDTO;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrganizationalUnitService {
 
@@ -18,7 +19,9 @@ public interface OrganizationalUnitService {
 
     List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type, String property);
 
-    List<OrganizationalUnitDTO> findByNameContaining(String name);
+    List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name);
+    List<String> findByTypeNamesContaining(OrganizationalUnitType type, String text);
 
     OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId);
+    Map<String, List<String>> findNamesByTypes();
 }

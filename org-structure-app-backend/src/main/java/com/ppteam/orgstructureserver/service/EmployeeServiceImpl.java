@@ -35,8 +35,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> findByFullNameContaining(String name) {
-        return employeeRepository.findByFullNameContaining(name).stream()
+    public List<EmployeeDTO> findByFullNameContainingIgnoreCase(String name) {
+        return employeeRepository.findByFullNameContainingIgnoreCase(name).stream()
                 .map(mapper::convertToDTO).toList();
     }
 
