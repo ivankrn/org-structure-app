@@ -15,7 +15,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     List<Employee> findByParentIdOrderByFullNameAsc(long parentId);
 
-    List<Employee> findByFullNameContaining(String name);
+    List<Employee> findByFullNameContainingIgnoreCase(String name);
 
     @Query("SELECT e from Employee e " +
             "WHERE e.parent.id = ?1 AND " +

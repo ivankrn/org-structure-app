@@ -22,7 +22,7 @@ public class EmployeeController {
 
     @GetMapping(params = "name")
     public List<EmployeeDTO> findEmployeesWithFullNameContaining(@RequestParam String name) {
-        return employeeService.findByFullNameContaining(name);
+        return employeeService.findByFullNameContainingIgnoreCase(name);
     }
 
 }

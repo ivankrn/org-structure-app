@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -96,8 +93,8 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
-    public List<OrganizationalUnitDTO> findByNameContaining(String name) {
-        return organizationalUnitRepository.findByNameContaining(name).stream()
+    public List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name) {
+        return organizationalUnitRepository.findByNameContainingIgnoreCase(name).stream()
                 .map(unit -> {
                     EmployeeDTO head = employeeService.findOrganizationalUnitHead(unit.getId());
                     return mapper.convert(unit, head);
@@ -124,6 +121,15 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
         return mapper.convert(legalEntity, division, department, group);
     }
 
+    @Override
+    public Map<String, List<String>> findNamesByTypes() {
+        Map<String, List<String>> result = new HashMap<>(OrganizationalUnitType.values().length);
+        for (OrganizationalUnitType type : OrganizationalUnitType.values()) {
+            result.put(type.toString(), organizationalUnitRepository.findNamesByType(type));
+        }
+        return result;
+    }
+
     private List<OrganizationalUnit> findUnitHierarchy(OrganizationalUnit unit) {
         List<OrganizationalUnit> hierarchy = new ArrayList<>();
         hierarchy.add(unit);
@@ -132,5 +138,10 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
             unit = unit.getParent();
         }
         return hierarchy;
+    }
+
+    @Override
+    public List<String> findByTypeNamesContaining(OrganizationalUnitType type, String text) {
+        return organizationalUnitRepository.findByTypeNamesContaining(type, text);
     }
 }
