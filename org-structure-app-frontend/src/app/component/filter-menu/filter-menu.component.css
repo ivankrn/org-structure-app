@@ -1,8 +1,28 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+}
+
 * {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-style: bold;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-SemiBold.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-SemiBold.woff') format('woff');
 }
 
 #filter-menu {
+    margin-right: 20px;
     padding: 20px;
     border: 2px solid gray;
 }
@@ -17,7 +37,7 @@ details {
 
 details>summary {
     list-style: none;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 summary::-webkit-details-marker {
@@ -44,4 +64,31 @@ fieldset legend {
 ul {
     padding: 0;
     list-style-type: none;
+}
+
+input[type="checkbox"] + label {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+input[type='checkbox']:checked {
+    background-color: #121212;
+}
+
+input[type='checkbox']:checked:after {
+    content: '\2713';
+    color:white;
+}
+
+input[type='checkbox']{
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px !important;
+    height: 20px !important;
+    appearance:none;
+    border: 1px solid #121212;
+    box-shadow: none;
+    font-size: 1em;
 }

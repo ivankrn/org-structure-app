@@ -1,5 +1,15 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+  }
+
 * {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
 }
 
 .search-bar {
@@ -32,7 +42,7 @@ input[type=search] {
     background-color: #f8f8f8;
     border: none;
     color: black;
-    padding: 12px 12px;
+    padding: 9px 14px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -44,4 +54,8 @@ input[type=search] {
     background-color: #121212;
     color: white;
     border: 2px solid #121212;
+}
+
+label {
+    margin-right: 10px;
 }

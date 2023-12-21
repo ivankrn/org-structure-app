@@ -77,7 +77,7 @@ export class OrganizationalTreeComponent implements OnInit {
       .attr("width", this.width)
       .attr("height", this.height)
       .attr("viewBox", [-this.cx - delta / 2, -this.cy + delta / 2, this.width + delta, this.height + delta])
-      .attr("style", "width: 100%; height: auto; font: 10px sans-serif;")
+      .attr("style", "width: 100%; height: auto; font: 10px inter;")
       .call(this.zoom);
     this.graph = this.svg.append("g");
   }

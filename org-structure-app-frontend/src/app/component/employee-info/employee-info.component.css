@@ -1,5 +1,24 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+}
+
 * {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-style: bold;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-SemiBold.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-SemiBold.woff') format('woff');
 }
 
 details {
@@ -10,7 +29,7 @@ details {
 
 details>summary {
     list-style: none;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 summary::-webkit-details-marker {

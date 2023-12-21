@@ -22,3 +22,17 @@
 #graph-area {
     z-index: -1;
 }
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+}
+
+svg {
+    font-family: 'Inter', Courier, monospace !important;
+    font-style: normal;
+}
