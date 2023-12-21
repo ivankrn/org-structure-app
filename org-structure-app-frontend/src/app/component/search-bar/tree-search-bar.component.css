@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+  }
+
+* {
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
+}
+
+.search-bar {
+    padding: 10px;
+    max-height: 20%;
+    background-color: #f8f8f8;
+    border: 2px solid gray;
+}
+
+.suggestions {
+    max-height: 200px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.buttons {
+    margin-top: 10px;
+}
+
+input[type=search] {
+    padding: 10px;
+    width: 90%;
+}
+
+.location-name {
+    color: #b4b4b4;
+}
+
+.button {
+    background-color: #f8f8f8;
+    border: none;
+    color: black;
+    padding: 9px 14px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border: 2px solid gray;
+}
+
+.selected-button {
+    background-color: #121212;
+    color: white;
+    border: 2px solid #121212;
+}
+
+label {
+    margin-right: 10px;
+}

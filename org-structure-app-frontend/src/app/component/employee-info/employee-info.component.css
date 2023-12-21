@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+}
+
+* {
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-style: bold;
+    src: local('Muller'),
+         url('../../../assets/fonts/Inter-SemiBold.woff2') format('woff2'),
+         url('../../../assets/fonts/Inter-SemiBold.woff') format('woff');
+}
+
+details {
+    padding: 20px;
+    border: 2px solid gray;
+    background-color: #f8f8f8;
+}
+
+details>summary {
+    list-style: none;
+    font-weight: 600;
+}
+
+summary::-webkit-details-marker {
+    display: none
+}
+
+summary::after {
+    content: ' ►';
+}
+
+details[open] summary:after {
+    content: " ▼";
+}
+
+fieldset {
+    margin-top: 20px;
+    background-color: white;
+}
+
+fieldset legend {
+    color: #747474;
+}

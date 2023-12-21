@@ -4,5 +4,5 @@
 
 ## Технологический стек
 
-- Frontend: React
+- Frontend: Angular
 - Backend: Spring Boot, Hibernate
