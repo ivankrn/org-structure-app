@@ -29,8 +29,8 @@ import { convertUnit, convertUnitGroupedByLocations } from './util/organizationa
 export class OrganizationalTreeComponent implements OnInit {
 
   private treeData?: OrganizationalTreeNode;
-  private svg?: d3.Selection<any, any, any, any>
-  private graph?: d3.Selection<any, any, any, any>
+  private svg?: d3.Selection<any, any, any, any>;
+  private graph?: d3.Selection<any, any, any, any>;
   private zoom?: d3.ZoomBehavior<any, any>;
   private selectedUnitsIds: Set<number> = new Set();
   private filterSettings?: FilterMenuSettings;
@@ -45,6 +45,7 @@ export class OrganizationalTreeComponent implements OnInit {
   private cx = this.width * 0.5;
   private cy = this.height * 0.495;
   private radius = Math.min(this.width, this.height) / 2 - 350;
+  private redrawAnimationDurationInMs = 250;
 
   constructor(private organizationalUnitService: OrganizationalUnitService,
     private employeeService: EmployeeService, private locationService: LocationService) { }
@@ -131,10 +132,19 @@ export class OrganizationalTreeComponent implements OnInit {
         + "L" + targetX + " " + targetY
     };
 
-    this.graph?.selectAll(".link").remove();
-    this.graph?.selectAll(".link")
-      .data(root.links())
-      .join("path")
+    const u = this.graph?.selectAll(".link")
+      .data(root.links());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("path")
+      .merge(u)
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
       .attr("class", "link")
       .attr("fill", "none")
       .attr("stroke", "#555")
@@ -145,10 +155,17 @@ export class OrganizationalTreeComponent implements OnInit {
 
   private redrawTreeNodes(root: d3.HierarchyPointNode<any>): void {
     const nodeRadius = 6;
-    this.graph?.selectAll(".node").remove();
-    this.graph?.selectAll(".node")
-      .data(root.descendants())
-      .join("circle")
+    const u = this.graph?.selectAll(".node")
+      .data(root.descendants());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("circle")
+      .merge(u)
       .attr("class", d => {
         const classList: string[] = ["node"];
         if (d.data.type === OrganizationalTreeNodeType.EMPLOYEE) {
@@ -169,7 +186,7 @@ export class OrganizationalTreeComponent implements OnInit {
         return `UNIT-${d.data.id}`;
       })
       .on("click", (evt) => {
-        const elementId: string = evt.target.id;
+        const elementId: string = evt["target"].id;
         const splitted = elementId.split("-");
         const type = OrganizationalTreeNodeType[splitted[0]];
         const id: number = Number.parseInt(splitted[1]);
@@ -181,6 +198,8 @@ export class OrganizationalTreeComponent implements OnInit {
           }
         }
       })
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
       .attr("fill", d => {
         if (d.children) {
@@ -188,19 +207,25 @@ export class OrganizationalTreeComponent implements OnInit {
         }
         return d.data.isVacancy ? "#88ff50" : "#999";
       })
-      .attr("r", nodeRadius);
-    this.graph?.select(".selected-employee-node")
-      .join("circle")
       .attr("r", nodeRadius)
-      .attr("stroke", "#353535")
+      .attr("stroke", d => {
+        return d.data.type === OrganizationalTreeNodeType.EMPLOYEE && d.data.id == this.selectedEmployee?.id ? "#353535" : null;
+      })
       .attr("stroke-width", 2);
   }
 
   private redrawTreeLabels(root: d3.HierarchyPointNode<any>): void {
-    this.graph?.selectAll(".label").remove();
-    this.graph?.selectAll(".label")
-      .data(root.descendants())
-      .join("text")
+    const u = this.graph?.selectAll(".label")
+      .data(root.descendants());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("text")
+      .merge(u)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
       .attr("dy", "0.31em")
       .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
