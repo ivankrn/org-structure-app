@@ -10,6 +10,36 @@
                 </li>
             </ul>
         </details>
+        <details id="divisions">
+            <summary>Подразделения</summary>
+            <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)"></unit-search-bar>
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedDivisionNames">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDivisionName(name)"></i>
+                </div>
+            </div>
+        </details>
+        <details id="departments">
+            <summary>Отделы</summary>
+            <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)"></unit-search-bar>
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedDepartmentNames">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDepartmentName(name)"></i>
+                </div>
+            </div>
+        </details>
+        <details id="groups">
+            <summary>Группы</summary>
+            <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)"></unit-search-bar>
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedGroupNames">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectGroupName(name)"></i>
+                </div>
+            </div>
+        </details>
         <details id="employee-type">
             <summary>Тип места</summary>
             <ul>

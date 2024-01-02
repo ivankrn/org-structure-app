@@ -1,0 +1,6 @@
+<input type="search" placeholder="Введите запрос" (input)="searchUnitNames($event.target!)">
+<div class="suggestions">
+    <div *ngFor="let name of searchedUnitNames" (click)="selectUnitName(name)">
+        {{ name }}
+    </div>
+</div>

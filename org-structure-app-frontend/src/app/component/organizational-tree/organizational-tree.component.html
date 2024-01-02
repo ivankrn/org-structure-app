@@ -8,7 +8,13 @@
         (selectedUnitEvent)="findUnitOnTreeById($event)"></tree-search-bar>
     </div>
     <div id="filter-menu">
-        <filter-menu *ngIf="locationNames" (newSettingsEvent)="updateSettings($event)" [locationNames]="locationNames"></filter-menu>
+        <filter-menu *ngIf="locationNames && divisionNames && departmentNames && groupNames" 
+        (newSettingsEvent)="updateSettings($event)" 
+        [locationNames]="locationNames"
+        [divisionNames]="divisionNames"
+        [departmentNames]="departmentNames"
+        [groupNames]="groupNames">
+    </filter-menu>
     </div>
     <div id="graph-area">
         <figure id="tree"></figure>

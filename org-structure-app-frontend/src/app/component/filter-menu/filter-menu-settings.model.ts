@@ -1,5 +1,8 @@
 export interface FilterMenuSettings {
-    locations: string[];
+    locations: Map<string, boolean>;
+    divisions: Map<string, boolean>;
+    departments: Map<string, boolean>;
+    groups: Map<string, boolean>;
     displayVacancies: boolean;
     displayNotVacancies: boolean;
 }
