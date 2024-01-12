@@ -7,7 +7,7 @@
          url('../../../assets/fonts/Inter-Regular.woff') format('woff');
 }
 
-* {
+*:not([class^="fa"]) {
     font-family: 'Inter', Courier, monospace;
     font-style: normal;
 }
@@ -25,6 +25,8 @@
     margin-right: 20px;
     padding: 20px;
     border: 2px solid gray;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 details[open] summary {
@@ -44,12 +46,8 @@ summary::-webkit-details-marker {
     display: none
 }
 
-summary::after {
-    content: ' ►';
-}
-
-details[open] summary:after {
-    content: " ▼";
+#filter-menu[open] #filters img, #locations[open] summary img, #employee-type[open] summary img, #divisions[open] summary img, #groups[open] summary img,  #departments[open] summary img {
+    rotate: 180deg;
 }
 
 fieldset {
@@ -91,4 +89,28 @@ input[type='checkbox']{
     border: 1px solid #121212;
     box-shadow: none;
     font-size: 1em;
+}
+
+.selected-units {
+    display: grid;
+    margin: 20px 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2%;
+}
+
+.selected-unit {
+    display: inline-grid;
+    padding: 3px 10px;
+    gap: 10%;
+    grid-template-columns: repeat(2, 1fr);
+    border: 2px solid gray;
+}
+
+.selected-unit-name {
+    justify-self: start;
+}
+
+.selected-unit-close {
+    justify-self: end;
+    cursor: pointer;
 }

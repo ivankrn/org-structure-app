@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { OrganizationalUnitService } from '../../service/organizational-unit.service';
-import { EmployeeService } from '../../service/employee.service';
-import * as d3 from 'd3';
-import { OrganizationalUnit } from '../../model/organizational-unit.model';
-import { EmployeeInfoComponent } from '../employee-info/employee-info.component';
-import { Employee } from '../../model/employee.model';
-import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
-import { FilterMenuSettings } from '../filter-menu/filter-menu-settings.model';
-import { OrganizationalTreeNode } from './organizational-tree-node.model';
-import { OrganizationalTreeNodeType } from './organizational-tree-node-type.enum';
-import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
-import { LocationService } from '../../service/location.service';
 import { CommonModule } from '@angular/common';
-import { TreeSearchBarComponent } from '../search-bar/tree-search-bar.component';
-import { concat, concatMap, forkJoin, map, pipe, tap } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import * as d3 from 'd3';
+import { concatMap, forkJoin, map, tap } from 'rxjs';
+import { Employee } from '../../model/employee.model';
 import { OrganizationalUnitHierarchy } from '../../model/organizational-unit-hierarchy.model';
+import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
 import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
+import { EmployeeService } from '../../service/employee.service';
+import { LocationService } from '../../service/location.service';
+import { OrganizationalUnitService } from '../../service/organizational-unit.service';
+import { EmployeeInfoComponent } from '../employee-info/employee-info.component';
+import { FilterMenuSettings } from '../filter-menu/filter-menu-settings.model';
+import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
+import { TreeSearchBarComponent } from '../search-bar/tree-search-bar.component';
+import { OrganizationalTreeNodeType } from './organizational-tree-node-type.enum';
+import { OrganizationalTreeNode } from './organizational-tree-node.model';
+import { filterTreeDataFromSettings } from './util/filter-tree-data';
+import { convertUnit, convertUnitGroupedByLocations } from './util/organizational-tree-util';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -28,23 +29,26 @@ import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
 export class OrganizationalTreeComponent implements OnInit {
 
   private treeData?: OrganizationalTreeNode;
-  private svg?: d3.Selection<any, any, any, any>
-  private graph?: d3.Selection<any, any, any, any>
+  private svg?: d3.Selection<any, any, any, any>;
+  private graph?: d3.Selection<any, any, any, any>;
   private zoom?: d3.ZoomBehavior<any, any>;
   private selectedUnitsIds: Set<number> = new Set();
   private filterSettings?: FilterMenuSettings;
   selectedEmployee?: Employee;
   locationNames?: string[];
+  divisionNames?: string[];
+  departmentNames?: string[];
+  groupNames?: string[];
 
   private width = 1200;
   private height = this.width;
   private cx = this.width * 0.5;
   private cy = this.height * 0.495;
   private radius = Math.min(this.width, this.height) / 2 - 350;
+  private redrawAnimationDurationInMs = 250;
 
   constructor(private organizationalUnitService: OrganizationalUnitService,
-    private employeeService: EmployeeService, private locationService: LocationService,
-    private withUnitTypeNamePipe: WithUnitTypeNamePipe) { }
+    private employeeService: EmployeeService, private locationService: LocationService) { }
 
   ngOnInit(): void {
     this.initTree();
@@ -53,11 +57,16 @@ export class OrganizationalTreeComponent implements OnInit {
   private initTree(): void {
     this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.LEGAL_ENTITY).subscribe(data => {
       this.createSvg();
-      this.treeData = this.convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
+      this.treeData = convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
       this.redrawTree();
     });
     this.locationService.findAll().subscribe(data => {
       this.locationNames = data.map(location => location.name);
+    });
+    this.organizationalUnitService.findNamesByTypes().subscribe(data => {
+      this.divisionNames = data[OrganizationalUnitType.DIVISION];
+      this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
+      this.groupNames = data[OrganizationalUnitType.GROUP];
     });
   }
 
@@ -70,6 +79,10 @@ export class OrganizationalTreeComponent implements OnInit {
     this.zoom = d3.zoom()
       .extent([[0, 0], [this.width, this.height]])
       .scaleExtent([0.5, 5])
+      .on("start", () => d3.selectAll(".label") // оптимизация скорости в Chromium браузерах на ПК
+        .style("will-change", "transform"))
+      .on("end", () => d3.selectAll(".label")
+        .style("will-change", null))
       .on("zoom", this.handleZoom);
     const delta = 300;
     this.svg = d3.select("figure#tree")
@@ -91,7 +104,7 @@ export class OrganizationalTreeComponent implements OnInit {
     if (this.treeData == undefined) {
       return;
     }
-    const filteredData: OrganizationalTreeNode = this.filterTreeDataFromSettings(this.treeData, this.filterSettings);
+    const filteredData: OrganizationalTreeNode = filterTreeDataFromSettings(this.treeData, this.filterSettings);
     const hierarchy = d3.hierarchy(filteredData)
       .sort((a, b) => d3.ascending(a.data.name, b.data.name));
     const tree = d3.tree()
@@ -119,10 +132,19 @@ export class OrganizationalTreeComponent implements OnInit {
         + "L" + targetX + " " + targetY
     };
 
-    this.graph?.selectAll(".link").remove();
-    this.graph?.selectAll(".link")
-      .data(root.links())
-      .join("path")
+    const u = this.graph?.selectAll(".link")
+      .data(root.links());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("path")
+      .merge(u)
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
       .attr("class", "link")
       .attr("fill", "none")
       .attr("stroke", "#555")
@@ -133,10 +155,17 @@ export class OrganizationalTreeComponent implements OnInit {
 
   private redrawTreeNodes(root: d3.HierarchyPointNode<any>): void {
     const nodeRadius = 6;
-    this.graph?.selectAll(".node").remove();
-    this.graph?.selectAll(".node")
-      .data(root.descendants())
-      .join("circle")
+    const u = this.graph?.selectAll(".node")
+      .data(root.descendants());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("circle")
+      .merge(u)
       .attr("class", d => {
         const classList: string[] = ["node"];
         if (d.data.type === OrganizationalTreeNodeType.EMPLOYEE) {
@@ -157,7 +186,7 @@ export class OrganizationalTreeComponent implements OnInit {
         return `UNIT-${d.data.id}`;
       })
       .on("click", (evt) => {
-        const elementId: string = evt.target.id;
+        const elementId: string = evt["target"].id;
         const splitted = elementId.split("-");
         const type = OrganizationalTreeNodeType[splitted[0]];
         const id: number = Number.parseInt(splitted[1]);
@@ -169,6 +198,8 @@ export class OrganizationalTreeComponent implements OnInit {
           }
         }
       })
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
       .attr("fill", d => {
         if (d.children) {
@@ -176,65 +207,34 @@ export class OrganizationalTreeComponent implements OnInit {
         }
         return d.data.isVacancy ? "#88ff50" : "#999";
       })
-      .attr("r", nodeRadius);
-    this.graph?.select(".selected-employee-node")
-      .join("circle")
       .attr("r", nodeRadius)
-      .attr("stroke", "#353535")
+      .attr("stroke", d => {
+        return d.data.type === OrganizationalTreeNodeType.EMPLOYEE && d.data.id == this.selectedEmployee?.id ? "#353535" : null;
+      })
       .attr("stroke-width", 2);
   }
 
   private redrawTreeLabels(root: d3.HierarchyPointNode<any>): void {
-    this.graph?.selectAll(".label").remove();
-    this.graph?.selectAll(".label")
-      .data(root.descendants())
-      .join("text")
+    const u = this.graph?.selectAll(".label")
+      .data(root.descendants());
+    u
+      ?.exit()
+      .transition()
+      .duration(this.redrawAnimationDurationInMs)
+      .style("opacity", 0)
+      .remove();
+    u
+      ?.join("text")
+      .merge(u)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
       .attr("dy", "0.31em")
       .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("paint-order", "stroke")
-      .attr("stroke", "white")
-      .attr("fill", "currentColor")
       .attr("class", "label")
-      .attr("stroke-linejoin", "round")
+      .attr("stroke", "white")
       .attr("stroke-width", 3)
       .text(d => d.data.name);
-  }
-
-  private filterTreeDataFromSettings(treeData: OrganizationalTreeNode, filterSettings?: FilterMenuSettings): OrganizationalTreeNode {
-    if (!filterSettings) {
-      return treeData;
-    }
-    let data: OrganizationalTreeNode = JSON.parse(JSON.stringify(treeData));
-    if (!data.children) {
-      return data;
-    }
-    data.children = data.children.filter(node => {
-      if (node.type === OrganizationalTreeNodeType.LOCATION && !filterSettings.locations[node.name]) {
-        return false;
-      } else {
-        if (node.location && !filterSettings.locations[node.location]) {
-          return false;
-        }
-      }
-      if (node.type === OrganizationalTreeNodeType.EMPLOYEE) {
-        if (filterSettings.displayNotVacancies && filterSettings.displayVacancies) {
-          return true;
-        } else if (filterSettings.displayNotVacancies) {
-          return !node.isVacancy;
-        } else if (filterSettings.displayVacancies) {
-          return node.isVacancy;
-        } else {
-          return false;
-        }
-      }
-      return true;
-    });
-    for (let i = 0; i < data.children.length; i++) {
-      data.children[i] = this.filterTreeDataFromSettings(data.children[i], filterSettings);
-    }
-    return data;
   }
 
   findEmployeeOnTreeById(employeeId: number): void {
@@ -245,17 +245,23 @@ export class OrganizationalTreeComponent implements OnInit {
     ).subscribe(hierarchy => {
       this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
       const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
-      this.expandUnits(idsToExpand, () => this.zoomToNodeWithId(`EMPLOYEE-` + employeeId));
+      const zoomToEmployee = () => this.zoomToNodeWithId(`EMPLOYEE-` + employeeId);
+      if (idsToExpand.length !== 0) {
+        this.expandUnits(idsToExpand, zoomToEmployee);
+      } else {
+        zoomToEmployee();
+      }
     });
   }
 
   findUnitOnTreeById(unitId: number): void {
+    const zoomToUnit = () => this.zoomToNodeWithId(`UNIT-` + unitId);
     if (this.isOrganizationalUnitExpanded(this.treeData!, unitId)) {
-      return;
+      zoomToUnit();
     }
     this.organizationalUnitService.findUnitHierarchy(unitId).subscribe(hierarchy => {
       const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
-      this.expandUnits(idsToExpand, () => this.zoomToNodeWithId(`UNIT-` + unitId));
+      this.expandUnits(idsToExpand, zoomToUnit);
     });
   }
 
@@ -272,7 +278,7 @@ export class OrganizationalTreeComponent implements OnInit {
         .translate(-sourceX, -sourceY);
       this.svg!
         .transition()
-        .duration(2000)
+        .duration(1500)
         .call(this.zoom!.transform, transform);
     }
   }
@@ -339,7 +345,7 @@ export class OrganizationalTreeComponent implements OnInit {
     forkJoin(ids.map(id => this.organizationalUnitService.findById(id)))
       .subscribe(units => {
         units.forEach(unit => {
-          const convertedUnit = this.convertUnit(unit);
+          const convertedUnit = convertUnit(this.treeData!, unit);
           this.updateUnitInTree(this.treeData!, convertedUnit);
         });
         this.redrawTree();
@@ -387,61 +393,6 @@ export class OrganizationalTreeComponent implements OnInit {
       }
     }
     return false;
-  }
-
-  private convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
-    const node: OrganizationalTreeNode = {
-      id: organizationalUnit.id,
-      name: this.withUnitTypeNamePipe.transform(organizationalUnit),
-      type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
-      children: []
-    };
-    organizationalUnit.locations?.forEach(location => {
-      const locationChild: OrganizationalTreeNode = {
-        id: location.id,
-        name: location.name,
-        type: OrganizationalTreeNodeType.LOCATION,
-        children: []
-      };
-      location.subsidiaries?.forEach(subsidiary => {
-        const newSubsidiary: OrganizationalTreeNode = {
-          id: subsidiary.id,
-          name: this.withUnitTypeNamePipe.transform(subsidiary),
-          type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
-          location: subsidiary.location
-        };
-        locationChild.children?.push(newSubsidiary);
-      });
-      node.children?.push(locationChild);
-    });
-    return node;
-  }
-
-  private convertUnit(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
-    const node: OrganizationalTreeNode = {
-      id: organizationalUnit.id,
-      name: this.withUnitTypeNamePipe.transform(organizationalUnit),
-      type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
-      children: []
-    };
-    organizationalUnit.subsidiaries?.forEach(subsidiary => {
-      const newSubsidiary: OrganizationalTreeNode = {
-        id: subsidiary.id,
-        name: this.withUnitTypeNamePipe.transform(subsidiary),
-        type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]]
-      };
-      node.children?.push(newSubsidiary);
-    });
-    organizationalUnit.employees?.forEach(employee => {
-      const newEmployee: OrganizationalTreeNode = {
-        id: employee.id,
-        name: employee.fullName,
-        type: OrganizationalTreeNodeType.EMPLOYEE,
-        isVacancy: employee.isVacancy
-      };
-      node.children?.push(newEmployee);
-    });
-    return node;
   }
 
 }

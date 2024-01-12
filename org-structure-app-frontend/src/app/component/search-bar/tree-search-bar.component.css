@@ -13,16 +13,40 @@
 }
 
 .search-bar {
-    padding: 10px;
+    padding: 10px 0;
     max-height: 20%;
     background-color: #f8f8f8;
     border: 2px solid gray;
+}
+
+.search-input {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar label {
+    padding-left: 10px;
 }
 
 .suggestions {
     max-height: 200px;
     overflow: hidden;
     overflow-y: scroll;
+}
+
+.suggestions div {
+    font-size: 15px;
+    padding: 10px 0;
+}
+
+.suggestions div div {
+    margin: 1px 0;
+    padding-left: 10px;
+    transition: all 0.5s ease-in-out;
+}
+
+.suggestions div div:hover {
+    outline: #121212 1px solid;
 }
 
 .buttons {
@@ -52,6 +76,7 @@ input[type=search] {
 
 .selected-button {
     background-color: #121212;
+    transition: all 0.3s ease-in-out;
     color: white;
     border: 2px solid #121212;
 }

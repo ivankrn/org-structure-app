@@ -28,7 +28,15 @@ export class OrganizationalUnitService {
     return this.httpClient.get<OrganizationalUnit[]>(`${this.apiUrl}?name=${name}`);
   }
 
+  public findByTypeNamesContaining(type: OrganizationalUnitType, text: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${this.apiUrl}/names?type=${type}&name=${text}`);
+  }
+
   public findUnitHierarchy(unitId: number): Observable<OrganizationalUnitHierarchy> {
     return this.httpClient.get<OrganizationalUnitHierarchy>(`${this.apiUrl}/${unitId}/hierarchy`);
+  }
+
+  public findNamesByTypes(): Observable<Map<string, string[]>> {
+    return this.httpClient.get<Map<string, string[]>>(`${this.apiUrl}/names`);
   }
 }

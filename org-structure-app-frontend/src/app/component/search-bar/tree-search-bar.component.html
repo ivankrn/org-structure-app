@@ -1,6 +1,8 @@
 <div class="search-bar">
-    <label for="search-field">⌕</label>
-    <input type="search" id="search-field" #searchBarInput placeholder="Введите запрос">
+    <div class="search-input">
+        <label for="search-field"><img src="../../../assets/img/carbon_search.svg"></label>
+        <input type="search" id="search-field" #searchBarInput placeholder="Введите запрос">
+    </div>
     <div class="suggestions" [hidden]="!showSearches">
         <div *ngIf="searchUnits">
             <div *ngFor="let unit of searchedOrganizationalUnits; trackBy: trackById" (click)="selectUnit(unit)">
