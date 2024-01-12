@@ -6,12 +6,20 @@ import com.ppteam.orgstructureserver.dto.OrganizationalUnitHierarchyDTO;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithLocationsDTO;
 import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Организационные единицы")
 @RestController
 @RequestMapping("/api/organizational-units")
 @RequiredArgsConstructor
@@ -19,46 +27,101 @@ public class OrganizationalUnitController {
 
     private final OrganizationalUnitService organizationalUnitService;
 
+    @Operation(summary = "Получить организационную единицу по ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Найденная организационная единица",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrganizationalUnitWithSubsidiariesDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Если организационная единица не найдена",
+                    content = @Content),
+    })
     @GetMapping("/{id}")
-    public OrganizationalUnitWithSubsidiariesDTO findUnitById(@PathVariable long id) {
+    public OrganizationalUnitWithSubsidiariesDTO findUnitById(@Parameter(description = "ID организационной единицы")
+                                                              @PathVariable long id) {
         return organizationalUnitService.findByIdWithSubsidiaries(id);
     }
 
+    @Operation(summary = "Найти организационные единицы по свойству")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Найденные организационные единицы",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = List.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Если указан неправильный тип или свойство для сортировки / группировки",
+                    content = @Content),
+    })
     @GetMapping(params = "type")
-    public List<OrganizationalUnitDTO> findUnitsByType(@RequestParam OrganizationalUnitType type) {
+    public List<OrganizationalUnitDTO> findUnitsByType(@Parameter(description = "Тип организационной единицы")
+                                                       @RequestParam(required = false) OrganizationalUnitType type) {
         return organizationalUnitService.findAllByType(type);
     }
 
     @GetMapping(params = {"type", "sort"})
-    public List<OrganizationalUnitDTO> findUnitsByTypeSortByProperty(@RequestParam OrganizationalUnitType type,
-                                                             @RequestParam("sort") String property) {
+    public List<OrganizationalUnitDTO> findUnitsByTypeSortByProperty(@Parameter(description = "Тип организационной единицы")
+                                                                     @RequestParam(required = false)
+                                                                     OrganizationalUnitType type,
+                                                                     @Parameter(
+                                                                             description = "Свойство для сортировки",
+                                                                             schema = @Schema(allowableValues = "name"))
+                                                                     @RequestParam(value = "sort", required = false)
+                                                                     String property) {
         return organizationalUnitService.findAllByTypeSortByProperty(type, property);
     }
 
     @GetMapping(params = {"type", "group-by"})
     public List<OrganizationalUnitWithLocationsDTO> findUnitsByTypeGroupByProperty(
-            @RequestParam OrganizationalUnitType type,
-            @RequestParam("group-by") String property) {
+            @Parameter(description = "Тип организационной единицы")
+            @RequestParam(required = false) OrganizationalUnitType type,
+            @Parameter(
+                    description = "Свойство для группировки",
+                    schema = @Schema(allowableValues = "location"))
+            @RequestParam(value = "group-by", required = false) String property) {
         return organizationalUnitService.findAllByTypeGroupByProperty(type, property);
     }
 
     @GetMapping(params = "name")
-    public List<OrganizationalUnitDTO> findUnitsByNameContaining(@RequestParam String name) {
+    public List<OrganizationalUnitDTO> findUnitsByNameContaining(@Parameter(description = "Название для поиска")
+                                                                 @RequestParam(required = false) String name) {
         return organizationalUnitService.findByNameContainingIgnoreCase(name);
     }
 
+    @Operation(summary = "Получить иерархию организационной единицы по её ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Иерархия найденной организационной единицы",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrganizationalUnitWithSubsidiariesDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Если организационная единица не найдена",
+                    content = @Content),
+    })
     @GetMapping("/{id}/hierarchy")
-    public OrganizationalUnitHierarchyDTO findUnitHierarchy(@PathVariable long id) {
+    public OrganizationalUnitHierarchyDTO findUnitHierarchy(@Parameter(description = "ID организационной единицы")
+                                                                @PathVariable long id) {
         return organizationalUnitService.findHierarchyByUnitId(id);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Найденные организационные единицы",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = List.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Если указан неправильный тип организационной единицы",
+                    content = @Content),
+    })
     @GetMapping(value = "/names", params = {"type", "name"})
     public List<String> findByTypeUnitNamesContaining(
-            @RequestParam OrganizationalUnitType type,
-            @RequestParam String name) {
+            @Parameter(description = "Тип организационной единицы")
+            @RequestParam(required = false) OrganizationalUnitType type,
+            @Parameter(description = "Название для поиска")
+            @RequestParam(required = false) String name) {
         return organizationalUnitService.findByTypeNamesContaining(type, name);
     }
 
+    @Operation(summary = "Получить список имен организационных единиц")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Названия организационных единиц",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class))})
+    })
     @GetMapping(value = "/names")
     public Map<String, List<String>> findNamesByTypes() {
         return organizationalUnitService.findNamesByTypes();
