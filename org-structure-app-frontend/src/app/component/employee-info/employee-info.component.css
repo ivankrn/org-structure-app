@@ -36,12 +36,8 @@ summary::-webkit-details-marker {
     display: none
 }
 
-summary::after {
-    content: ' ►';
-}
-
-details[open] summary:after {
-    content: " ▼";
+details[open] summary img {
+    rotate: 180deg;
 }
 
 fieldset {

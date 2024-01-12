@@ -25,6 +25,8 @@
     margin-right: 20px;
     padding: 20px;
     border: 2px solid gray;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 details[open] summary {
@@ -44,12 +46,8 @@ summary::-webkit-details-marker {
     display: none
 }
 
-summary::after {
-    content: ' ►';
-}
-
-details[open] summary:after {
-    content: " ▼";
+#filter-menu[open] #filters img, #locations[open] summary img, #employee-type[open] summary img, #divisions[open] summary img, #groups[open] summary img,  #departments[open] summary img {
+    rotate: 180deg;
 }
 
 fieldset {

@@ -1,8 +1,12 @@
 <details id="filter-menu">
-    <summary>Фильтры</summary>
+    <summary id="filters">Фильтры
+        <img src="../../../assets/img/arrow.svg" alt="">
+    </summary>
     <form [formGroup]="settingsForm">
         <details id="locations" formArrayName="locations">
-            <summary>Локации</summary>
+            <summary>Локации
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
             <ul>
                 <li *ngFor="let location of settingsForm.get('locations')?.value | keyvalue">
                     <input type="checkbox" [value]="location.value" [formControlName]="location.key">
@@ -11,7 +15,9 @@
             </ul>
         </details>
         <details id="divisions">
-            <summary>Подразделения</summary>
+            <summary>Подразделения
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
             <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)"></unit-search-bar>
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDivisionNames">
@@ -21,7 +27,9 @@
             </div>
         </details>
         <details id="departments">
-            <summary>Отделы</summary>
+            <summary>Отделы
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
             <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)"></unit-search-bar>
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDepartmentNames">
@@ -31,7 +39,9 @@
             </div>
         </details>
         <details id="groups">
-            <summary>Группы</summary>
+            <summary>Группы
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
             <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)"></unit-search-bar>
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedGroupNames">
@@ -41,7 +51,9 @@
             </div>
         </details>
         <details id="employee-type">
-            <summary>Тип места</summary>
+            <summary>Тип места
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
             <ul>
                 <li>
                     <input type="checkbox" id="vacancy" name="vacancy" value="vacancy" class="checkbox"
