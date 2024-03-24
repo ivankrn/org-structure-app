@@ -13,10 +13,10 @@ import { EmployeeInfoComponent } from '../employee-info/employee-info.component'
 import { FilterMenuSettings } from '../filter-menu/filter-menu-settings.model';
 import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
 import { TreeSearchBarComponent } from '../search-bar/tree-search-bar.component';
-import { OrganizationalTreeNodeType } from './organizational-tree-node-type.enum';
-import { OrganizationalTreeNode } from './organizational-tree-node.model';
-import { filterTreeDataFromSettings } from './util/filter-tree-data';
+import { OrganizationalTreeNodeType } from './model/organizational-tree-node-type.enum';
+import { OrganizationalTreeNode } from './model/organizational-tree-node.model';
 import { convertUnit, convertUnitGroupedByLocations } from './util/organizational-tree-util';
+import { EmployeeFilterChainNode, FilterChainNode, LocationFilterChainNode, UnitHierarchyFilterChainNode } from './util/filter/filter-chain-node';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -34,6 +34,7 @@ export class OrganizationalTreeComponent implements OnInit {
   private zoom?: d3.ZoomBehavior<any, any>;
   private selectedUnitsIds: Set<number> = new Set();
   private filterSettings?: FilterMenuSettings;
+  private filterChain?: FilterChainNode;
   selectedEmployee?: Employee;
   locationNames?: string[];
   divisionNames?: string[];
@@ -52,6 +53,7 @@ export class OrganizationalTreeComponent implements OnInit {
 
   ngOnInit(): void {
     this.initTree();
+    this.initFilters();
   }
 
   private initTree(): void {
@@ -70,9 +72,13 @@ export class OrganizationalTreeComponent implements OnInit {
     });
   }
 
-  updateSettings(filterSettings: FilterMenuSettings): void {
-    this.filterSettings = filterSettings;
-    this.redrawTree();
+  private initFilters() {
+    const locationFilterNode = new LocationFilterChainNode();
+    const employeeFilterNode = new EmployeeFilterChainNode();
+    const unitFilterNode = new UnitHierarchyFilterChainNode();
+    locationFilterNode.nextFilter = employeeFilterNode;
+    employeeFilterNode.nextFilter = unitFilterNode;
+    this.filterChain = locationFilterNode;
   }
 
   private createSvg(): void {
@@ -104,7 +110,7 @@ export class OrganizationalTreeComponent implements OnInit {
     if (this.treeData == undefined) {
       return;
     }
-    const filteredData: OrganizationalTreeNode = filterTreeDataFromSettings(this.treeData, this.filterSettings);
+    const filteredData: OrganizationalTreeNode = this.filterTreeDataFromSettings(this.treeData);
     const hierarchy = d3.hierarchy(filteredData)
       .sort((a, b) => d3.ascending(a.data.name, b.data.name));
     const tree = d3.tree()
@@ -235,6 +241,11 @@ export class OrganizationalTreeComponent implements OnInit {
       .attr("stroke", "white")
       .attr("stroke-width", 3)
       .text(d => d.data.name);
+  }
+
+  updateSettings(filterSettings: FilterMenuSettings): void {
+    this.filterSettings = filterSettings;
+    this.redrawTree();
   }
 
   findEmployeeOnTreeById(employeeId: number): void {
@@ -394,5 +405,20 @@ export class OrganizationalTreeComponent implements OnInit {
     }
     return false;
   }
+
+  private filterTreeDataFromSettings(treeData: OrganizationalTreeNode): OrganizationalTreeNode {
+    if (!this.filterSettings || !this.filterChain) {
+        return treeData;
+    }
+    let data: OrganizationalTreeNode = JSON.parse(JSON.stringify(treeData));
+    if (!data.children) {
+        return data;
+    }
+    data.children = data.children.filter(node => this.filterChain!.isValid(node, this.filterSettings!));
+    for (let i = 0; i < data.children.length; i++) {
+        data.children[i] = this.filterTreeDataFromSettings(data.children[i]);
+    }
+    return data;
+}
 
 }
