@@ -1,3 +1,4 @@
+import { OrganizationalTreeNodeHierarchy } from "./organizational-tree-node-hierarchy.model";
 import { OrganizationalTreeNodeType } from "./organizational-tree-node-type.enum";
 
 export interface OrganizationalTreeNode {
@@ -8,8 +9,6 @@ export interface OrganizationalTreeNode {
     location?: string;
     isVacancy?: boolean;
     parent?: OrganizationalTreeNode;
-    divisionName?: string;
-    departmentName?: string;
-    groupName?: string;
+    hierarchy?: OrganizationalTreeNodeHierarchy;
     children?: OrganizationalTreeNode[];
 }
