@@ -9,7 +9,6 @@ import com.ppteam.orgstructureserver.database.repository.OrganizationalUnitRepos
 import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.dto.mapper.OrganizationalUnitMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -42,19 +41,6 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     @Override
     public List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type) {
         return organizationalUnitRepository.findByType(type).stream()
-                .map(organizationalUnit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
-                    return mapper.convert(organizationalUnit, head);
-                })
-                .toList();
-    }
-
-    @Override
-    public List<OrganizationalUnitDTO> findAllByTypeSortByProperty(OrganizationalUnitType type, String property) {
-        if (!property.equalsIgnoreCase("name")) {
-            throw new WrongQueryParamException();
-        }
-        return organizationalUnitRepository.findByType(type, Sort.by(Sort.Direction.ASC, property)).stream()
                 .map(organizationalUnit -> {
                     EmployeeDTO head = employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
                     return mapper.convert(organizationalUnit, head);
@@ -138,10 +124,5 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
             unit = unit.getParent();
         }
         return hierarchy;
-    }
-
-    @Override
-    public List<String> findByTypeNamesContaining(OrganizationalUnitType type, String text) {
-        return organizationalUnitRepository.findByTypeNamesContaining(type, text);
     }
 }

@@ -19,7 +19,7 @@ public class OrganizationalUnit {
     @Id
     @SequenceGenerator(name = "organizational_unit_id_seq", sequenceName = "organizational_unit_id_seq",
             allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "organizational_unit_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organizational_unit_id_seq")
     private Long id;
 
     @ManyToOne

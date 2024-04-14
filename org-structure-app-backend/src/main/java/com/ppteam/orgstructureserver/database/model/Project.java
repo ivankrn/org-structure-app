@@ -2,32 +2,39 @@ package com.ppteam.orgstructureserver.database.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
-@Table(name = "job_type")
+@Table(name = "project")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JobType {
+public class Project {
 
     @Id
-    @SequenceGenerator(name = "job_type_id_seq", sequenceName = "job_type_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "job_type_id_seq")
+    @SequenceGenerator(name = "project_id_seq", sequenceName = "project_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_id_seq")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank
     private String name;
+
+    @ManyToMany(mappedBy = "projects", fetch = FetchType.LAZY)
+    private Set<Employee> employees;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JobType that = (JobType) o;
+        Project that = (Project) o;
         if (id == null && that.id == null) {
             return false;
         }
@@ -38,4 +45,5 @@ public class JobType {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
