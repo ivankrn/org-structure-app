@@ -3,6 +3,7 @@ package com.ppteam.orgstructureserver.controller;
 import com.ppteam.orgstructureserver.dto.LocationDTO;
 import com.ppteam.orgstructureserver.service.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +28,9 @@ public class LocationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Все локации",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = List.class))})
+                            array = @ArraySchema(
+                                schema = @Schema(implementation = LocationDTO.class)
+                            ))})
     })
     @GetMapping
     public List<LocationDTO> findAll() {

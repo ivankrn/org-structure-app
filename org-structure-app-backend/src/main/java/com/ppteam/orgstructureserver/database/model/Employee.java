@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "employee")
@@ -16,12 +17,20 @@ public class Employee {
 
     @Id
     @SequenceGenerator(name = "employee_id_seq", sequenceName = "employee_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "employee_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_id_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent_id", nullable = false)
     private OrganizationalUnit parent;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "employee_project",
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
+    private Set<Project> projects;
 
     @ManyToOne
     @JoinColumn(name = "job_title_id", nullable = false)

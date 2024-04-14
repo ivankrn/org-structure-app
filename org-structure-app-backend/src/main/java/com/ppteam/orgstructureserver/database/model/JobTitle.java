@@ -16,7 +16,7 @@ public class JobTitle {
 
     @Id
     @SequenceGenerator(name = "job_title_id_seq", sequenceName = "job_title_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "job_title_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "job_title_id_seq")
     private Long id;
 
     @Column(nullable = false)

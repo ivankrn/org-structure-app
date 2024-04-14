@@ -16,7 +16,7 @@ public class Location {
 
     @Id
     @SequenceGenerator(name = "location_id_seq", sequenceName = "location_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "location_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_id_seq")
     private Long id;
 
     @Column(nullable = false)
