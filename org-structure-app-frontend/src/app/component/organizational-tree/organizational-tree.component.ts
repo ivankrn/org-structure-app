@@ -41,7 +41,7 @@ export class OrganizationalTreeComponent implements OnInit {
   groupNames?: string[];
 
   private width = 1200;
-  private height = this.width;
+  private height = 1200;
   private cx = this.width * 0.5;
   private cy = this.height * 0.495;
   private radius = Math.min(this.width, this.height) / 2 - 350;
@@ -111,10 +111,40 @@ export class OrganizationalTreeComponent implements OnInit {
       .size([2 * Math.PI, this.radius * hierarchy.height])
       .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
     const root = tree(<any>hierarchy);
+    this.correctDepth(root);
 
     this.redrawTreeLinks(root);
     this.redrawTreeNodes(root);
     this.redrawTreeLabels(root);
+  }
+
+  private correctDepth(root: d3.HierarchyPointNode<any>): void {
+    switch ((root.data as OrganizationalTreeNode).type) {
+      case OrganizationalTreeNodeType.LEGAL_ENTITY:
+        root.y = 0;
+        break;
+      case OrganizationalTreeNodeType.LOCATION:
+        root.y = this.radius;
+        break;
+      case OrganizationalTreeNodeType.DIVISION:
+        root.y = this.radius * 2;
+        break;
+      case OrganizationalTreeNodeType.DEPARTMENT:
+        root.y = this.radius * 3;
+        break;
+      case OrganizationalTreeNodeType.GROUP:
+        root.y = this.radius * 4;
+        break;
+      case OrganizationalTreeNodeType.EMPLOYEE:
+        root.y = this.radius * 5;
+        break;
+    }
+
+    if (root.children?.length) {
+      root.children?.forEach((value) => {
+        this.correctDepth(value);
+      })
+    }
   }
 
   private redrawTreeLinks(root: d3.HierarchyPointNode<any>): void {
