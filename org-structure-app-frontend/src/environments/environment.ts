@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: "https://org-structure-app-vkkan.run-eu-central1.goorm.site/api/"
+    apiUrl: "http://45.95.234.130/api/"
 };

@@ -1,68 +1,7 @@
 import { OrganizationalUnitType } from "../../../model/organizational-unit-type.enum";
 import { OrganizationalUnit } from "../../../model/organizational-unit.model";
-import { OrganizationalTreeNodeType } from "../organizational-tree-node-type.enum";
-import { OrganizationalTreeNode } from "../organizational-tree-node.model";
-
-// export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
-//     const node: OrganizationalTreeNode = {
-//         id: organizationalUnit.id,
-//         name: getUnitNameWithType(organizationalUnit),
-//         nameWithoutType: organizationalUnit.name,
-//         type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
-//         children: []
-//     };
-//     organizationalUnit.locations?.forEach(location => {
-//         const locationChild: OrganizationalTreeNode = {
-//             id: location.id,
-//             name: location.name,
-//             nameWithoutType: location.name,
-//             type: OrganizationalTreeNodeType.LOCATION,
-//             children: []
-//         };
-//         location.subsidiaries?.forEach(subsidiary => {
-//             const newSubsidiary: OrganizationalTreeNode = {
-//                 id: subsidiary.id,
-//                 name: getUnitNameWithType(subsidiary),
-//                 nameWithoutType: subsidiary.name,
-//                 type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
-//                 location: subsidiary.location
-//             };
-//             locationChild.children?.push(newSubsidiary);
-//         });
-//         node.children?.push(locationChild);
-//     });
-//     return node;
-// }
-
-// export function convertUnit(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
-//     const node: OrganizationalTreeNode = {
-//         id: organizationalUnit.id,
-//         name: getUnitNameWithType(organizationalUnit),
-//         nameWithoutType: organizationalUnit.name,
-//         type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
-//         children: []
-//     };
-//     organizationalUnit.subsidiaries?.forEach(subsidiary => {
-//         const newSubsidiary: OrganizationalTreeNode = {
-//             id: subsidiary.id,
-//             name: getUnitNameWithType(subsidiary),
-//             nameWithoutType: subsidiary.name,
-//             type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]]
-//         };
-//         node.children?.push(newSubsidiary);
-//     });
-//     organizationalUnit.employees?.forEach(employee => {
-//         const newEmployee: OrganizationalTreeNode = {
-//             id: employee.id,
-//             name: employee.fullName,
-//             nameWithoutType: employee.fullName,
-//             type: OrganizationalTreeNodeType.EMPLOYEE,
-//             isVacancy: employee.isVacancy
-//         };
-//         node.children?.push(newEmployee);
-//     });
-//     return node;
-// }
+import { OrganizationalTreeNodeType } from "../model/organizational-tree-node-type.enum";
+import { OrganizationalTreeNode } from "../model/organizational-tree-node.model";
 
 export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
     const node: OrganizationalTreeNode = {
@@ -72,7 +11,7 @@ export function convertUnitGroupedByLocations(organizationalUnit: Organizational
         type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
         children: []
     };
-    updateNodeParentName(node, node);
+    updateNodeHierarchy(node, node);
     organizationalUnit.locations?.forEach(location => {
         const locationChild: OrganizationalTreeNode = {
             id: location.id,
@@ -89,7 +28,7 @@ export function convertUnitGroupedByLocations(organizationalUnit: Organizational
                 type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
                 location: subsidiary.location
             };
-            updateNodeParentName(locationChild, newSubsidiary);
+            updateNodeHierarchy(locationChild, newSubsidiary);
             locationChild.children?.push(newSubsidiary);
         });
         node.children?.push(locationChild);
@@ -116,7 +55,7 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         };
     }
     node.parent = parent;
-    updateNodeParentName(node.parent!, node);
+    updateNodeHierarchy(node.parent!, node);
     const nodeWithoutChildren: OrganizationalTreeNode = {
         id: organizationalUnit.id,
         name: getUnitNameWithType(organizationalUnit),
@@ -131,7 +70,7 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
             parent: nodeWithoutChildren
         };
-        updateNodeParentName(node, newSubsidiary);
+        updateNodeHierarchy(node, newSubsidiary);
         node.children?.push(newSubsidiary);
     });
     organizationalUnit.employees?.forEach(employee => {
@@ -143,46 +82,48 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
-        updateNodeParentName(node, newEmployee);
+        updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);
     });
     return node;
 }
 
-function updateNodeParentName(parent: OrganizationalTreeNode, node: OrganizationalTreeNode): void {
+function updateNodeHierarchy(parent: OrganizationalTreeNode, node: OrganizationalTreeNode): void {
+    if (node.hierarchy === undefined) {
+        node.hierarchy = {};
+    }
     switch (parent?.type) {
         case OrganizationalTreeNodeType.DIVISION: {
-            node.divisionName = parent.name;
+            node.hierarchy.divisionName = parent.nameWithoutType;
             break;
         }
         case OrganizationalTreeNodeType.DEPARTMENT: {
-            node.departmentName = parent.name;
+            node.hierarchy.departmentName = parent.nameWithoutType;
             break;
         }
         case OrganizationalTreeNodeType.GROUP: {
-            node.groupName = parent.name;
+            node.hierarchy.groupName = parent.nameWithoutType;
             break;
         }
     }
     switch (node?.type) {
         case OrganizationalTreeNodeType.DIVISION: {
-            node.divisionName = node.name;
+            node.hierarchy.divisionName = node.nameWithoutType;
             break;
         }
         case OrganizationalTreeNodeType.DEPARTMENT: {
-            node.departmentName = node.name;
+            node.hierarchy.departmentName = node.nameWithoutType;
             break;
         }
         case OrganizationalTreeNodeType.GROUP: {
-            node.groupName = node.name;
+            node.hierarchy.groupName = node.nameWithoutType;
             break;
         }
     }
     if (parent?.parent) {
-        updateNodeParentName(parent?.parent, node);
+        updateNodeHierarchy(parent?.parent, node);
     }
 }
-
 
 function getUnitParentInTree(root: OrganizationalTreeNode, unit: OrganizationalTreeNode): OrganizationalTreeNode | undefined {
     if (!root.children) {

@@ -2,10 +2,10 @@ package com.ppteam.orgstructureserver.controller;
 
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
 import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
 import com.ppteam.orgstructureserver.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,7 +28,7 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Найденный сотрудник",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = OrganizationalUnitWithSubsidiariesDTO.class))}),
+                            schema = @Schema(implementation = EmployeeFullDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Если сотрудник не найден",
                     content = @Content),
     })
@@ -42,7 +42,9 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Найденные сотрудники",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = List.class))})
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = EmployeeDTO.class)
+                            ))})
     })
     @GetMapping(params = "name")
     public List<EmployeeDTO> findEmployeesWithFullNameContaining(@Parameter(description = "Имя для поиска")
