@@ -16,7 +16,13 @@ import { TreeSearchBarComponent } from '../search-bar/tree-search-bar.component'
 import { OrganizationalTreeNodeType } from './model/organizational-tree-node-type.enum';
 import { OrganizationalTreeNode } from './model/organizational-tree-node.model';
 import { convertUnit, convertUnitGroupedByLocations } from './util/organizational-tree-util';
-import { EmployeeFilterChainNode, FilterChainNode, LocationFilterChainNode, UnitHierarchyFilterChainNode } from './util/filter/filter-chain-node';
+import {
+  EmployeeFilterChainNode,
+  FilterChainNode,
+  LocationFilterChainNode,
+  UnitHierarchyFilterChainNode
+} from './util/filter/filter-chain-node';
+import { OrganizationalUnit } from '../../model/organizational-unit.model';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -28,6 +34,9 @@ import { EmployeeFilterChainNode, FilterChainNode, LocationFilterChainNode, Unit
 })
 export class OrganizationalTreeComponent implements OnInit {
 
+  protected setCenter: boolean = false;
+
+  private mainTree?: OrganizationalTreeNode;
   private treeData?: OrganizationalTreeNode;
   private svg?: d3.Selection<any, any, any, any>;
   private graph?: d3.Selection<any, any, any, any>;
@@ -47,6 +56,7 @@ export class OrganizationalTreeComponent implements OnInit {
   private cy = this.height * 0.495;
   private radius = Math.min(this.width, this.height) / 2 - 350;
   private redrawAnimationDurationInMs = 250;
+  private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
 
   constructor(private organizationalUnitService: OrganizationalUnitService,
     private employeeService: EmployeeService, private locationService: LocationService) { }
@@ -57,19 +67,23 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   private initTree(): void {
-    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.LEGAL_ENTITY).subscribe(data => {
-      this.createSvg();
-      this.treeData = convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
-      this.redrawTree();
-    });
-    this.locationService.findAll().subscribe(data => {
-      this.locationNames = data.map(location => location.name);
-    });
-    this.organizationalUnitService.findNamesByTypes().subscribe(data => {
-      this.divisionNames = data[OrganizationalUnitType.DIVISION];
-      this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
-      this.groupNames = data[OrganizationalUnitType.GROUP];
-    });
+    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.LEGAL_ENTITY)
+      .subscribe(data => {
+        this.createSvg();
+        this.mainTree = convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
+        this.treeData = this.mainTree;
+        this.redrawTree();
+      });
+    this.locationService.findAll()
+      .subscribe(data => {
+        this.locationNames = data.map(location => location.name);
+      });
+    this.organizationalUnitService.findNamesByTypes()
+      .subscribe(data => {
+        this.divisionNames = data[OrganizationalUnitType.DIVISION];
+        this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
+        this.groupNames = data[OrganizationalUnitType.GROUP];
+      });
   }
 
   private initFilters() {
@@ -127,22 +141,22 @@ export class OrganizationalTreeComponent implements OnInit {
   private correctDepth(root: d3.HierarchyPointNode<any>): void {
     switch ((root.data as OrganizationalTreeNode).type) {
       case OrganizationalTreeNodeType.LEGAL_ENTITY:
-        root.y = 0;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.LEGAL_ENTITY) - this.getDefaultY(this.currentCenterType);
         break;
       case OrganizationalTreeNodeType.LOCATION:
-        root.y = this.radius;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.LOCATION) - this.getDefaultY(this.currentCenterType);
         break;
       case OrganizationalTreeNodeType.DIVISION:
-        root.y = this.radius * 2;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.DIVISION) - this.getDefaultY(this.currentCenterType);
         break;
       case OrganizationalTreeNodeType.DEPARTMENT:
-        root.y = this.radius * 3;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.DEPARTMENT) - this.getDefaultY(this.currentCenterType);
         break;
       case OrganizationalTreeNodeType.GROUP:
-        root.y = this.radius * 4;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.GROUP) - this.getDefaultY(this.currentCenterType);
         break;
       case OrganizationalTreeNodeType.EMPLOYEE:
-        root.y = this.radius * 5;
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.EMPLOYEE) - this.getDefaultY(this.currentCenterType);
         break;
     }
 
@@ -150,6 +164,23 @@ export class OrganizationalTreeComponent implements OnInit {
       root.children?.forEach((value) => {
         this.correctDepth(value);
       })
+    }
+  }
+
+  private getDefaultY(type: OrganizationalTreeNodeType) {
+    switch (type) {
+      case OrganizationalTreeNodeType.LEGAL_ENTITY:
+        return 0;
+      case OrganizationalTreeNodeType.LOCATION:
+        return this.radius;
+      case OrganizationalTreeNodeType.DIVISION:
+        return this.radius * 2;
+      case OrganizationalTreeNodeType.DEPARTMENT:
+        return this.radius * 3;
+      case OrganizationalTreeNodeType.GROUP:
+        return this.radius * 4;
+      case OrganizationalTreeNodeType.EMPLOYEE:
+        return this.radius * 5;
     }
   }
 
@@ -279,31 +310,48 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   findEmployeeOnTreeById(employeeId: number): void {
-    this.employeeService.findById(employeeId).pipe(
-      tap(employee => this.selectedEmployee = employee),
-      map(employee => employee.organizationalUnit?.id),
-      concatMap(unitId => this.organizationalUnitService.findUnitHierarchy(unitId!))
-    ).subscribe(hierarchy => {
-      this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
-      const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
-      const zoomToEmployee = () => this.zoomToNodeWithId(`EMPLOYEE-` + employeeId);
-      if (idsToExpand.length !== 0) {
-        this.expandUnits(idsToExpand, zoomToEmployee);
-      } else {
-        zoomToEmployee();
-      }
-    });
+    this.employeeService.findById(employeeId)
+      .pipe(
+        tap(employee => this.selectedEmployee = employee),
+        map(employee => employee.organizationalUnit?.id),
+        concatMap(unitId => this.organizationalUnitService.findUnitHierarchy(unitId!))
+      )
+      .subscribe(hierarchy => {
+        this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
+        const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
+        const zoomToEmployee = () => this.zoomToNodeWithId(`EMPLOYEE-` + employeeId);
+        if (idsToExpand.length !== 0) {
+          this.expandUnits(idsToExpand, zoomToEmployee);
+        } else {
+          zoomToEmployee();
+        }
+      });
   }
 
-  findUnitOnTreeById(unitId: number): void {
+  findUnitOnTreeById([unitId, setCenter]: [unitId: number, setCenter: boolean]): void {
+    if (setCenter) {
+      this.organizationalUnitService.findById(unitId)
+        .subscribe((unit: OrganizationalUnit) => {
+          this.treeData = convertUnit(this.treeData!, unit);
+          this.redrawTree();
+        });
+
+      return;
+    }
     const zoomToUnit = () => this.zoomToNodeWithId(`UNIT-` + unitId);
     if (this.isOrganizationalUnitExpanded(this.treeData!, unitId)) {
       zoomToUnit();
     }
-    this.organizationalUnitService.findUnitHierarchy(unitId).subscribe(hierarchy => {
-      const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
-      this.expandUnits(idsToExpand, zoomToUnit);
-    });
+    this.organizationalUnitService.findUnitHierarchy(unitId)
+      .subscribe(hierarchy => {
+        const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
+        this.expandUnits(idsToExpand, zoomToUnit);
+      });
+  }
+
+  backToMainTree(): void {
+    this.treeData = this.mainTree;
+    this.redrawTree();
   }
 
   private zoomToNodeWithId(id: string): void {
@@ -361,14 +409,16 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   private onEmployeeSelect(id: number): void {
-    this.employeeService.findById(id).pipe(
-      tap(employee => this.selectedEmployee = employee),
-      map(employee => employee.organizationalUnit?.id),
-      concatMap(id => this.organizationalUnitService.findUnitHierarchy(id!))
-    ).subscribe(hierarchy => {
-      this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
-      this.redrawTree();
-    });
+    this.employeeService.findById(id)
+      .pipe(
+        tap(employee => this.selectedEmployee = employee),
+        map(employee => employee.organizationalUnit?.id),
+        concatMap(id => this.organizationalUnitService.findUnitHierarchy(id!))
+      )
+      .subscribe(hierarchy => {
+        this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
+        this.redrawTree();
+      });
   }
 
   private updateTreeFromUnitId(id: number): void {
@@ -449,6 +499,6 @@ export class OrganizationalTreeComponent implements OnInit {
         data.children[i] = this.filterTreeDataFromSettings(data.children[i]);
     }
     return data;
-}
+  }
 
 }

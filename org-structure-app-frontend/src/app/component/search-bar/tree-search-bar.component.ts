@@ -17,8 +17,10 @@ import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
 })
 export class TreeSearchBarComponent implements AfterViewInit {
 
-  @ViewChild("searchBarInput")
+  @ViewChild('searchBarInput')
   searchBarInput?: ElementRef;
+  setCenter: boolean = false;
+  showCenterCheckBox: boolean = true;
   showSearches: boolean = false;
   isSearching: boolean = false;
 
@@ -32,7 +34,9 @@ export class TreeSearchBarComponent implements AfterViewInit {
   @Output()
   selectedEmployeeEvent = new EventEmitter<number>();
   @Output()
-  selectedUnitEvent = new EventEmitter<number>();
+  selectedUnitEvent = new EventEmitter<[number, boolean]>();
+  @Output()
+  backToMainEvent = new EventEmitter<void>();
   searchSubscription?: Subscription;
 
   constructor(private employeeService: EmployeeService, private organizationalUnitService: OrganizationalUnitService) { }
@@ -82,9 +86,15 @@ export class TreeSearchBarComponent implements AfterViewInit {
   }
 
   selectUnit(unit: OrganizationalUnit): void {
-    this.selectedUnitEvent.emit(unit.id);
+    this.selectedUnitEvent.emit([unit.id, this.setCenter]);
     this.searchBarInput!.nativeElement.value = unit.name;
     this.showSearches = false;
+    this.showCenterCheckBox = false;
+  }
+
+  backToMainTree(): void {
+    this.backToMainEvent.emit();
+    this.showCenterCheckBox = false;
   }
 
   private getEmployees(name: string): Observable<Employee[]> {

@@ -1,6 +1,6 @@
 export enum OrganizationalTreeNodeType {
-    LOCATION,
     LEGAL_ENTITY,
+    LOCATION,
     DIVISION,
     DEPARTMENT,
     GROUP,

@@ -1,23 +1,30 @@
 <div class="search-bar">
     <div class="search-input">
-        <label for="search-field"><img src="../../../assets/img/carbon_search.svg"></label>
+        <label for="search-field"><img src="../../../assets/img/carbon_search.svg" alt=""></label>
         <input type="search" id="search-field" #searchBarInput placeholder="Введите запрос">
     </div>
     <div class="suggestions" [hidden]="!showSearches">
-        <div *ngIf="searchUnits">
-            <div *ngFor="let unit of searchedOrganizationalUnits; trackBy: trackById" (click)="selectUnit(unit)">
+        @if (searchUnits) {
+            @for (unit of searchedOrganizationalUnits; track unit.id) {
+                <div (click)="selectUnit(unit)">
                 {{ unit | withUnitTypeName }} <span class="location-name">{{ unit.location }}</span>
-            </div>
-        </div>
-        <div *ngIf="!searchUnits">
-            <div *ngFor="let employee of searchedEmployees; trackBy: trackById" (click)="selectEmployee(employee)">
-                {{ employee.fullName }}
-            </div>
-        </div>
+                </div>
+            }
+        } @else {
+            @for (employee of searchedEmployees; track employee.id) {
+                <div>{{ employee.fullName }}</div>
+            }
+        }
     </div>
     <p class="search" [hidden]="!isSearching">Поиск...</p>
 </div>
 <div class="buttons">
     <button type="button" class="button" [ngClass]="{'selected-button': !this.searchUnits}" (click)="setSearchUnits(false)">По сотрудникам</button>
     <button type="button" class="button" style="margin-left: 1rem" [ngClass]="{'selected-button': this.searchUnits}" (click)="setSearchUnits(true)">По структурам</button>
+    @if (showCenterCheckBox) {
+        <input id="center" type="checkbox" [checked]="setCenter" (change)="setCenter = !setCenter">
+        <label for="center">Сделать центром</label>
+    } @else {
+        <button type="button" class="button" (click)="backToMainTree()">К основному дереву</button>
+    }
 </div>
