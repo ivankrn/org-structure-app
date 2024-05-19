@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { LocationService } from '../../service/location.service';
 import { FilterMenuSettings } from './filter-menu-settings.model';
 import { UnitNamesSearchBarComponent } from '../unit-search-bar/unit-search-bar.component';
-import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
 
 @Component({
   selector: 'filter-menu',
@@ -19,7 +18,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
 
   @Input()
   set locationNames(value: string[]) {
-    value.forEach(name => (<FormGroup>this.settingsForm.get("locations")).addControl(name, this.formBuilder.control(true)));
+    value.forEach(name => this.locations.addControl(name, this.formBuilder.control(true)));
   }
 
   _divisionNames!: string[];
@@ -46,18 +45,37 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   }
   selectedGroupNames: string[] = [];
 
+  _jobTitles!: string[];
+  @Input()
+  set jobTitles(value: string[]) {
+    this._jobTitles = value;
+    // @ts-ignore
+    value.forEach(name => this.jobTitles.addControl(name, this.formBuilder.control(false)));
+  }
+  selectedJobTitles: string[] = [];
+
+  _jobTypes!: string[];
+  @Input()
+  set jobTypes(value: string[]) {
+    this._jobTitles = value;
+    // @ts-ignore
+    value.forEach(name => this.jobTypes.addControl(name, this.formBuilder.control(false)));
+  }
+  selectedJobTypes: string[] = [];
+
   settingsForm = this.formBuilder.group({
     locations: this.formBuilder.group({}),
     divisions: this.formBuilder.group({}),
     departments: this.formBuilder.group({}),
     groups: this.formBuilder.group({}),
+    jobTitles: this.formBuilder.group({}),
+    jobTypes: this.formBuilder.group({}),
     displayVacancies: true,
     displayNotVacancies: true
   });
 
   @Output()
   newSettingsEvent = new EventEmitter<FilterMenuSettings>();
-  unitTypes = OrganizationalUnitType;
 
   private settingsUpdateSubscription?: Subscription;
 
@@ -91,6 +109,16 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     return this.settingsForm.get("groups") as FormGroup;
   }
 
+  get jobTitles() {
+    // @ts-ignore
+    return this.settingsForm.get("jobTitles") as FormGroup;
+  }
+
+  get jobTypes() {
+    // @ts-ignore
+    return this.settingsForm.get("jobTypes") as FormGroup;
+  }
+
   selectDivisionName(name: string): void {
     const isChecked = this.divisions.get(name)?.value;
     this.divisions.get(name)?.patchValue(!isChecked);
@@ -118,6 +146,30 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
       this.selectedGroupNames = this.selectedGroupNames.filter(n => n !== name);
     } else {
       this.selectedGroupNames.push(name);
+    }
+  }
+
+  selectJobTitle(name: string): void {
+    // @ts-ignore
+    const isChecked = this.jobTitles.get(name)?.value;
+    // @ts-ignore
+    this.jobTitles.get(name)?.patchValue(!isChecked);
+    if (this.selectedJobTitles.includes(name)) {
+      this.selectedJobTitles = this.selectedJobTitles.filter(n => n !== name);
+    } else {
+      this.selectedJobTitles.push(name);
+    }
+  }
+
+  selectJobType(name: string): void {
+    // @ts-ignore
+    const isChecked = this.jobTypes.get(name)?.value;
+    // @ts-ignore
+    this.jobTypes.get(name)?.patchValue(!isChecked);
+    if (this.selectedJobTypes.includes(name)) {
+      this.selectedJobTypes = this.selectedJobTypes.filter(n => n !== name);
+    } else {
+      this.selectedJobTypes.push(name);
     }
   }
 }

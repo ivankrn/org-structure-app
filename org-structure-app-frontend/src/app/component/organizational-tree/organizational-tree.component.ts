@@ -49,6 +49,8 @@ export class OrganizationalTreeComponent implements OnInit {
   divisionNames?: string[];
   departmentNames?: string[];
   groupNames?: string[];
+  jobTitles?: string[];
+  jobTypes?: string[];
 
   private width = 1200;
   private height = 1200;

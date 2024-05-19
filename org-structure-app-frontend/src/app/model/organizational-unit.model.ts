@@ -11,4 +11,6 @@ export interface OrganizationalUnit {
     subsidiaries?: OrganizationalUnit[];
     employees?: Employee[];
     locations?: Location[];
+    jobTitle?: string;
+    jobType?: string;
 }

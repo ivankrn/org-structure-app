@@ -18,7 +18,7 @@
             <summary>Подразделения
                 <img src="../../../assets/img/arrow.svg" alt="">
             </summary>
-            <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)"></unit-search-bar>
+            <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDivisionNames">
                     <span class="selected-unit-name">{{ name }}</span>
@@ -30,7 +30,7 @@
             <summary>Отделы
                 <img src="../../../assets/img/arrow.svg" alt="">
             </summary>
-            <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)"></unit-search-bar>
+            <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDepartmentNames">
                     <span class="selected-unit-name">{{ name }}</span>
@@ -42,11 +42,35 @@
             <summary>Группы
                 <img src="../../../assets/img/arrow.svg" alt="">
             </summary>
-            <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)"></unit-search-bar>
+            <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedGroupNames">
                     <span class="selected-unit-name">{{ name }}</span>
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectGroupName(name)"></i>
+                </div>
+            </div>
+        </details>
+        <details id="job-titles">
+            <summary>Должности
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+            <unit-search-bar [unitNames]="_jobTitles" (unitNameSelectedEvent)="selectJobTitle($event)" />
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedJobTitles">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobTitle(name)"></i>
+                </div>
+            </div>
+        </details>
+        <details id="job-types">
+            <summary>Типы работы
+                <img src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+            <unit-search-bar [unitNames]="_jobTypes" (unitNameSelectedEvent)="selectJobType($event)" />
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedJobTypes">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobType(name)"></i>
                 </div>
             </div>
         </details>

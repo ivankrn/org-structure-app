@@ -112,6 +112,34 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
                 return false;
             }
         }
+        const selectedJobTitles = Object.entries(filterSettings.jobTitles)
+            .filter(entry => entry[1])
+            .map(entry => entry[0]);
+        if (selectedJobTitles.length > 0) {
+            if (node.type !== OrganizationalTreeNodeType.EMPLOYEE) {
+                for (const selectedJobTitle of selectedJobTitles) {
+                    if (hasChildrenWithName(node, selectedJobTitle)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
+        const selectedJobTypes = Object.entries(filterSettings.jobTypes)
+            .filter(entry => entry[1])
+            .map(entry => entry[0]);
+        if (selectedJobTypes.length > 0) {
+            if (node.type !== OrganizationalTreeNodeType.EMPLOYEE) {
+                for (const selectedJobType of selectedJobTitles) {
+                    if (hasChildrenWithName(node, selectedJobType)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
         if (this.nextFilter !== undefined) {
             return this.nextFilter.isValid(node, filterSettings);
         }

@@ -24,7 +24,8 @@
 #filter-menu {
     margin-right: 20px;
     padding: 20px;
-    border: 2px solid gray;
+    background-color: white;
+    box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
     max-height: 90vh;
     overflow-y: auto;
 }
@@ -34,7 +35,7 @@ details[open] summary {
 }
 
 details {
-    background-color: #f8f8f8;
+    background-color: white;
 }
 
 details>summary {
