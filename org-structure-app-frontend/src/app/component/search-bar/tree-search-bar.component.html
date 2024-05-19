@@ -1,10 +1,13 @@
 <div class="search-bar">
     <div class="search-input">
-        <label for="search-field"><img src="../../../assets/img/carbon_search.svg" alt=""></label>
-        <input type="search" id="search-field" #searchBarInput placeholder="Введите запрос">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.5 14.5L16.5 16.5" stroke="#8A8C8C"/>
+            <circle cx="11" cy="11" r="3.5" stroke="#8A8C8C"/>
+        </svg>
+        <input type="search" id="search-field" #searchBarInput placeholder="Поиск">
     </div>
     <div class="suggestions" [hidden]="!showSearches">
-        @if (searchUnits) {
+        @if (isSearchUnits) {
             @for (unit of searchedOrganizationalUnits; track unit.id) {
                 <div (click)="selectUnit(unit)">
                 {{ unit | withUnitTypeName }} <span class="location-name">{{ unit.location }}</span>
@@ -16,15 +19,16 @@
             }
         }
     </div>
-    <p class="search" [hidden]="!isSearching">Поиск...</p>
-</div>
-<div class="buttons">
-    <button type="button" class="button" [ngClass]="{'selected-button': !this.searchUnits}" (click)="setSearchUnits(false)">По сотрудникам</button>
-    <button type="button" class="button" style="margin-left: 1rem" [ngClass]="{'selected-button': this.searchUnits}" (click)="setSearchUnits(true)">По структурам</button>
-    @if (showCenterCheckBox) {
-        <input id="center" type="checkbox" [checked]="setCenter" (change)="setCenter = !setCenter">
-        <label for="center">Сделать центром</label>
-    } @else {
-        <button type="button" class="button" (click)="backToMainTree()">К основному дереву</button>
-    }
+    <div class="buttons">
+        <span class="button-text">Искать по:</span>
+        <button type="button" class="button" [ngClass]="{'selected-button': this.isSearchEmployees}" (click)="setSearch('searchEmployees')">Сотрудникам</button>
+        <button type="button" class="button" [ngClass]="{'selected-button': this.isSearchProjects}" (click)="setSearch('searchProjects')">Проектам</button>
+        <button type="button" class="button button-last" [ngClass]="{'selected-button': this.isSearchUnits}" (click)="setSearch('searchUnits')">Структурам</button>
+        @if (showCenterCheckBox) {
+            <input id="center" type="checkbox" [checked]="setCenter" (change)="setCenter = !setCenter">
+            <label for="center">Сделать центром</label>
+        } @else {
+            <button type="button" class="button" (click)="backToMainTree()">Сбросить центр</button>
+        }
+    </div>
 </div>

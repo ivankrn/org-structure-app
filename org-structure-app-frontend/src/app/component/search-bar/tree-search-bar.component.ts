@@ -29,7 +29,9 @@ export class TreeSearchBarComponent implements AfterViewInit {
   organizationalUnits: OrganizationalUnit[] = [];
   searchedOrganizationalUnits: OrganizationalUnit[] = [];
 
-  searchUnits: boolean = false;
+  isSearchEmployees: boolean = true;
+  isSearchProjects: boolean = false;
+  isSearchUnits: boolean = false;
 
   @Output()
   selectedEmployeeEvent = new EventEmitter<number>();
@@ -54,9 +56,9 @@ export class TreeSearchBarComponent implements AfterViewInit {
       tap(() => this.isSearching = true),
       switchMap((term) => {
         if (term) {
-          return this.searchUnits ? this.getUnits(term) : this.getEmployees(term);
+          return this.isSearchEmployees ? this.getEmployees(term) : this.getUnits(term);
         }
-        return this.searchUnits ? of<any>(this.organizationalUnits) : of<any>(this.employees);
+        return this.isSearchEmployees ? of<any>(this.employees) : of<any>(this.organizationalUnits);
       }),
       tap(() => {
         this.isSearching = false;
@@ -66,16 +68,29 @@ export class TreeSearchBarComponent implements AfterViewInit {
 
     this.searchSubscription = search.subscribe(data => {
       this.isSearching = false;
-      if (this.searchUnits) {
-        this.searchedOrganizationalUnits = data;
-      } else {
+      if (this.isSearchEmployees) {
         this.searchedEmployees = data;
+      } else {
+        this.searchedOrganizationalUnits = data;
       }
     })
   }
 
-  setSearchUnits(search: boolean) {
-    this.searchUnits = search;
+  setSearch(name: string) {
+    this.isSearchEmployees = false;
+    this.isSearchProjects = false;
+    this.isSearchUnits = false;
+    switch (name) {
+      case 'searchEmployees':
+        this.isSearchEmployees = true;
+        break;
+      case 'searchProjects':
+        this.isSearchProjects = true;
+        break;
+      case 'searchUnits':
+        this.isSearchUnits = true;
+        break;
+    }
     this.initSearch();
   }
 

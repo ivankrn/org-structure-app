@@ -1,20 +1,22 @@
 <div class="container">
-    <div id="employee-info">
-        <employee-info [employee]="selectedEmployee" />
-    </div>
-    <div id="tree-search-bar">
-        <tree-search-bar 
-        (selectedEmployeeEvent)="findEmployeeOnTreeById($event)"
-        (selectedUnitEvent)="findUnitOnTreeById($event)"
-        (backToMainEvent)="backToMainTree()" />
-    </div>
-    <div id="filter-menu">
-        <filter-menu *ngIf="locationNames && divisionNames && departmentNames && groupNames"
-                     (newSettingsEvent)="updateSettings($event)"
-                     [locationNames]="locationNames"
-                     [divisionNames]="divisionNames"
-                     [departmentNames]="departmentNames"
-                     [groupNames]="groupNames" />
+    <div id="header">
+        <div id="employee-info">
+            <employee-info [employee]="selectedEmployee" />
+        </div>
+        <div id="tree-search-bar">
+            <tree-search-bar
+            (selectedEmployeeEvent)="findEmployeeOnTreeById($event)"
+            (selectedUnitEvent)="findUnitOnTreeById($event)"
+            (backToMainEvent)="backToMainTree()" />
+        </div>
+        <div id="filter-menu">
+            <filter-menu *ngIf="locationNames && divisionNames && departmentNames && groupNames"
+                         (newSettingsEvent)="updateSettings($event)"
+                         [locationNames]="locationNames"
+                         [divisionNames]="divisionNames"
+                         [departmentNames]="departmentNames"
+                         [groupNames]="groupNames" />
+        </div>
     </div>
     <div id="graph-area">
         <figure id="tree"></figure>
