@@ -488,15 +488,15 @@ export class OrganizationalTreeComponent implements OnInit {
 
   private filterTreeDataFromSettings(treeData: OrganizationalTreeNode): OrganizationalTreeNode {
     if (!this.filterSettings || !this.filterChain) {
-        return treeData;
+      return treeData;
     }
     let data: OrganizationalTreeNode = JSON.parse(JSON.stringify(treeData));
     if (!data.children) {
-        return data;
+      return data;
     }
     data.children = data.children.filter(node => this.filterChain!.isValid(node, this.filterSettings!));
     for (let i = 0; i < data.children.length; i++) {
-        data.children[i] = this.filterTreeDataFromSettings(data.children[i]);
+      data.children[i] = this.filterTreeDataFromSettings(data.children[i]);
     }
     return data;
   }

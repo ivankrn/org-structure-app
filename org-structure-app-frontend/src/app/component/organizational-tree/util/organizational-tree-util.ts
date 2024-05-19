@@ -49,7 +49,7 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         parent = {
             id: parent.id,
             name: parent.name,
-            nameWithoutType: parent.name,
+            nameWithoutType: parent.nameWithoutType,
             type: parent.type,
             parent: parent.parent
         };
