@@ -104,7 +104,7 @@ export class TreeSearchBarComponent implements AfterViewInit {
     this.selectedUnitEvent.emit([unit.id, this.setCenter]);
     this.searchBarInput!.nativeElement.value = unit.name;
     this.showSearches = false;
-    this.showCenterCheckBox = false;
+    this.showCenterCheckBox = !this.setCenter;
   }
 
   backToMainTree(): void {
