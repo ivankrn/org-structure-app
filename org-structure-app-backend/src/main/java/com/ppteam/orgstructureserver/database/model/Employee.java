@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -46,6 +47,9 @@ public class Employee {
 
     @Column(name = "is_vacancy", nullable = false)
     private boolean vacancy;
+
+    @Column(name = "employment_date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime employmentDate;
 
     @Override
     public boolean equals(Object o) {

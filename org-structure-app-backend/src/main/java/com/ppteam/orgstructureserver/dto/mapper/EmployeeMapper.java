@@ -14,7 +14,6 @@ public interface EmployeeMapper {
     @Mapping(source = "employee.vacancy", target = "isVacancy")
     EmployeeDTO convertToDTO(Employee employee);
 
-    @Mapping(source = "employee.id", target = "id")
     @Mapping(source = "employee.jobTitle.name", target = "jobTitle")
     @Mapping(source = "employee.jobType.name", target = "jobType")
     @Mapping(source = "employee.vacancy", target = "isVacancy")
