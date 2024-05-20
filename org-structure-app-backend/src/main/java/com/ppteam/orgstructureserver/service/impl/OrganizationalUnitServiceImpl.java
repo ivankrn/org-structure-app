@@ -1,4 +1,4 @@
-package com.ppteam.orgstructureserver.service;
+package com.ppteam.orgstructureserver.service.impl;
 
 import com.ppteam.orgstructureserver.controller.error.NotFoundException;
 import com.ppteam.orgstructureserver.controller.error.WrongQueryParamException;
@@ -8,6 +8,8 @@ import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
 import com.ppteam.orgstructureserver.database.repository.OrganizationalUnitRepository;
 import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.dto.mapper.OrganizationalUnitMapper;
+import com.ppteam.orgstructureserver.service.EmployeeService;
+import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

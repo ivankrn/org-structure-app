@@ -1,8 +1,9 @@
-package com.ppteam.orgstructureserver.service;
+package com.ppteam.orgstructureserver.service.impl;
 
 import com.ppteam.orgstructureserver.database.repository.LocationRepository;
 import com.ppteam.orgstructureserver.dto.LocationDTO;
 import com.ppteam.orgstructureserver.dto.mapper.LocationMapper;
+import com.ppteam.orgstructureserver.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

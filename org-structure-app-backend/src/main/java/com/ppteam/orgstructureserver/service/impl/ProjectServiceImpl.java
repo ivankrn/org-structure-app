@@ -1,10 +1,11 @@
-package com.ppteam.orgstructureserver.service;
+package com.ppteam.orgstructureserver.service.impl;
 
 import com.ppteam.orgstructureserver.controller.error.NotFoundException;
 import com.ppteam.orgstructureserver.database.repository.ProjectRepository;
 import com.ppteam.orgstructureserver.dto.ProjectDTO;
 import com.ppteam.orgstructureserver.dto.ProjectWithEmployeesDTO;
 import com.ppteam.orgstructureserver.dto.mapper.ProjectMapper;
+import com.ppteam.orgstructureserver.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
