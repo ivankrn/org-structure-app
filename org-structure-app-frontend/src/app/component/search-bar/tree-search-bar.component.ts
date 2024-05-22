@@ -109,7 +109,8 @@ export class TreeSearchBarComponent implements AfterViewInit {
 
   backToMainTree(): void {
     this.backToMainEvent.emit();
-    this.showCenterCheckBox = false;
+    this.setCenter = false;
+    this.showCenterCheckBox = true;
   }
 
   private getEmployees(name: string): Observable<Employee[]> {
