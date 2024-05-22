@@ -9,4 +9,5 @@ export interface Employee {
     isVacancy: boolean;
     organizationalUnit?: OrganizationalUnit;
     organizationalUnitHierarchy?: OrganizationalUnitHierarchy;
+    projects?: Array<{ id: number, name: string }>;
 }

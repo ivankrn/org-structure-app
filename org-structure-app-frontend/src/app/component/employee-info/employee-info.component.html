@@ -20,8 +20,15 @@
         </div>
         <div class="info">
             <div class="title">Проекты</div>
-            <div class="field">
-            </div>
+            @for (projectName of employee.projects; track projectName.id) {
+                <div class="field field_projects">
+                    <div class="value">{{ projectName.name }}</div>
+                </div>
+            } @empty {
+                <div class="field">
+                    <div class="value"></div>
+                </div>
+            }
         </div>
         <div class="info">
             <div class="title">Группа</div>
