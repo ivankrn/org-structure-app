@@ -1,27 +1,22 @@
-#header {
+#employee-info {
     position: fixed;
-    display: flex;
+    z-index: 100;
+    width: 248px;
     left: calc((100vw - 1200px) / 2);
 }
 
-#employee-info {
-    position: relative;
-    z-index: 100;
-    width: 248px;
-    margin-right: 109px;
-}
-
 #tree-search-bar {
-    position: relative;
+    position: fixed;
     z-index: 100;
     width: 486px;
-    margin-right: 109px;
+    left: calc((100vw - 1200px) / 2 + 248px + 109px);
 }
 
 #filter-menu {
-    position: relative;
+    position: fixed;
     z-index: 100;
     width: 248px;
+    right: calc((100vw - 1200px) / 2);
 }
 
 #graph-area {
