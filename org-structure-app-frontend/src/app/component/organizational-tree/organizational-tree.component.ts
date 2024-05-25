@@ -15,7 +15,7 @@ import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
 import { TreeSearchBarComponent } from '../search-bar/tree-search-bar.component';
 import { OrganizationalTreeNodeType } from './model/organizational-tree-node-type.enum';
 import { OrganizationalTreeNode } from './model/organizational-tree-node.model';
-import { convertUnit, convertUnitGroupedByLocations } from './util/organizational-tree-util';
+import { convertProject, convertUnit, convertUnitGroupedByLocations } from './util/organizational-tree-util';
 import {
   EmployeeFilterChainNode,
   FilterChainNode,
@@ -24,6 +24,7 @@ import {
 } from './util/filter/filter-chain-node';
 import { OrganizationalUnit } from '../../model/organizational-unit.model';
 import { ProjectService } from '../../service/project.service';
+import { Project } from '../../model/project.model';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -61,7 +62,7 @@ export class OrganizationalTreeComponent implements OnInit {
   private redrawAnimationDurationInMs = 250;
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
 
-  constructor(private organizationalUnitService: OrganizationalUnitService,
+  constructor(private organizationalUnitService: OrganizationalUnitService, private projectService: ProjectService,
     private employeeService: EmployeeService, private locationService: LocationService) { }
 
   ngOnInit(): void {
@@ -329,6 +330,16 @@ export class OrganizationalTreeComponent implements OnInit {
           zoomToEmployee();
         }
       });
+  }
+
+  redrawTreeByProject(projectId: number): void {
+    this.projectService.findById(projectId)
+        .subscribe((project: Project) => {
+          this.treeData = convertProject(project);
+          this.redrawTree();
+        });
+
+    return;
   }
 
   findUnitOnTreeById([unitId, setCenter]: [unitId: number, setCenter: boolean]): void {

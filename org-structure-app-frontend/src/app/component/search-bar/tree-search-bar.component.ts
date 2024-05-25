@@ -132,6 +132,7 @@ export class TreeSearchBarComponent implements AfterViewInit {
     this.selectedProjectEvent.emit(project.id);
     this.searchBarInput!.nativeElement.value = project.name;
     this.showSearches = false;
+    this.showCenterCheckBox = false;
   }
 
   selectUnit(unit: OrganizationalUnit): void {

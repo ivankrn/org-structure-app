@@ -2,6 +2,7 @@ import { OrganizationalUnitType } from "../../../model/organizational-unit-type.
 import { OrganizationalUnit } from "../../../model/organizational-unit.model";
 import { OrganizationalTreeNodeType } from "../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../model/organizational-tree-node.model";
+import { Project } from '../../../model/project.model';
 
 export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
     const node: OrganizationalTreeNode = {
@@ -81,6 +82,29 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             type: OrganizationalTreeNodeType.EMPLOYEE,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
+        };
+        updateNodeHierarchy(node, newEmployee);
+        node.children?.push(newEmployee);
+    });
+    return node;
+}
+
+export function convertProject(project: Project): OrganizationalTreeNode {
+    const node: OrganizationalTreeNode = {
+        id: project.id,
+        name: `Проект "${project.name}"`,
+        nameWithoutType: project.name,
+        type: OrganizationalTreeNodeType.GROUP
+    };
+    node.children = [];
+    project.employees?.forEach(employee => {
+        const newEmployee: OrganizationalTreeNode = {
+            id: employee.id,
+            name: employee.fullName,
+            nameWithoutType: employee.fullName,
+            type: OrganizationalTreeNodeType.EMPLOYEE,
+            isVacancy: employee.isVacancy,
+            parent: node
         };
         updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);

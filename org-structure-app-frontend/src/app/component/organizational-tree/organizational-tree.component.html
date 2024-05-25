@@ -5,6 +5,7 @@
     <div id="tree-search-bar">
         <tree-search-bar
         (selectedEmployeeEvent)="findEmployeeOnTreeById($event)"
+        (selectedProjectEvent)="redrawTreeByProject($event)"
         (selectedUnitEvent)="findUnitOnTreeById($event)"
         (backToMainEvent)="backToMainTree()" />
     </div>
