@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, inject, Output, ViewChild } from '@angular/core';
 import { Observable, Subscription, debounceTime, distinctUntilChanged, fromEvent, map, of, switchMap, tap } from 'rxjs';
 import { Employee } from '../../model/employee.model';
 import { EmployeeService } from '../../service/employee.service';
 import { OrganizationalUnit } from '../../model/organizational-unit.model';
 import { OrganizationalUnitService } from '../../service/organizational-unit.service';
 import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
+import { ProjectService } from '../../service/project.service';
+import { Project } from '../../model/project.model';
 
 @Component({
     selector: 'tree-search-bar',
     standalone: true,
-    providers: [EmployeeService, OrganizationalUnitService, WithUnitTypeNamePipe],
+    providers: [EmployeeService, OrganizationalUnitService, ProjectService, WithUnitTypeNamePipe],
     templateUrl: './tree-search-bar.component.html',
     styleUrl: './tree-search-bar.component.css',
     imports: [CommonModule, WithUnitTypeNamePipe]
@@ -26,6 +28,8 @@ export class TreeSearchBarComponent implements AfterViewInit {
 
   employees: Employee[] = [];
   searchedEmployees: Employee[] = [];
+  projects: Project[] = [];
+  searchedProjects: Project[] = [];
   organizationalUnits: OrganizationalUnit[] = [];
   searchedOrganizationalUnits: OrganizationalUnit[] = [];
 
@@ -36,12 +40,16 @@ export class TreeSearchBarComponent implements AfterViewInit {
   @Output()
   selectedEmployeeEvent = new EventEmitter<number>();
   @Output()
+  selectedProjectEvent = new EventEmitter<number>();
+  @Output()
   selectedUnitEvent = new EventEmitter<[number, boolean]>();
   @Output()
   backToMainEvent = new EventEmitter<void>();
   searchSubscription?: Subscription;
 
-  constructor(private employeeService: EmployeeService, private organizationalUnitService: OrganizationalUnitService) { }
+  private employeeService: EmployeeService = inject(EmployeeService);
+  private projectService: ProjectService = inject(ProjectService);
+  private organizationalUnitService: OrganizationalUnitService = inject(OrganizationalUnitService);
 
   ngAfterViewInit(): void {
     this.initSearch();
@@ -49,27 +57,47 @@ export class TreeSearchBarComponent implements AfterViewInit {
 
   private initSearch(): void {
     this.searchSubscription?.unsubscribe();
-    const search = fromEvent(this.searchBarInput?.nativeElement, 'keyup').pipe(
-      map((event: any) => event.target.value),
-      debounceTime(500),
-      distinctUntilChanged(),
-      tap(() => this.isSearching = true),
-      switchMap((term) => {
-        if (term) {
-          return this.isSearchEmployees ? this.getEmployees(term) : this.getUnits(term);
-        }
-        return this.isSearchEmployees ? of<any>(this.employees) : of<any>(this.organizationalUnits);
-      }),
-      tap(() => {
-        this.isSearching = false;
-        this.showSearches = true;
-      })
-    );
+    const search = fromEvent(this.searchBarInput?.nativeElement, 'keyup')
+      .pipe(
+        map((event: any) => event.target.value),
+        debounceTime(500),
+        distinctUntilChanged(),
+        tap(() => this.isSearching = true),
+        switchMap((term) => {
+          if (term) {
+            if (this.isSearchEmployees) {
+              return this.getEmployees(term);
+            }
+
+            if (this.isSearchProjects) {
+              return this.getProjects(term);
+            }
+
+            return this.getUnits(term);
+          }
+
+          if (this.isSearchEmployees) {
+            of<any>(this.employees)
+          }
+
+          if (this.isSearchProjects) {
+            of<any>(this.projects)
+          }
+
+          return of<any>(this.organizationalUnits);
+        }),
+        tap(() => {
+          this.isSearching = false;
+          this.showSearches = true;
+        })
+      );
 
     this.searchSubscription = search.subscribe(data => {
       this.isSearching = false;
       if (this.isSearchEmployees) {
         this.searchedEmployees = data;
+      } else if (this.isSearchProjects) {
+        this.searchedProjects = data;
       } else {
         this.searchedOrganizationalUnits = data;
       }
@@ -100,6 +128,12 @@ export class TreeSearchBarComponent implements AfterViewInit {
     this.showSearches = false;
   }
 
+  selectProject(project: Project): void {
+    this.selectedProjectEvent.emit(project.id);
+    this.searchBarInput!.nativeElement.value = project.name;
+    this.showSearches = false;
+  }
+
   selectUnit(unit: OrganizationalUnit): void {
     this.selectedUnitEvent.emit([unit.id, this.setCenter]);
     this.searchBarInput!.nativeElement.value = unit.name;
@@ -121,8 +155,8 @@ export class TreeSearchBarComponent implements AfterViewInit {
     return this.organizationalUnitService.findByName(name);
   }
 
-  trackById(index: number, item: Employee | OrganizationalUnit): number {
-    return item.id;
+  private getProjects(name: string): Observable<Project[]> {
+    return this.projectService.findByName(name);
   }
 
 }

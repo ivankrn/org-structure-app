@@ -8,15 +8,25 @@
     </div>
     @if (showSearches) {
         <div class="suggestions">
-            @if (isSearchUnits) {
+            @if (isSearchEmployees) {
+                @for (employee of searchedEmployees; track employee.id) {
+                    <div (click)="selectEmployee(employee)">
+                        <span>{{ employee.fullName }}</span>
+                        <span>Перейти к узлу</span>
+                    </div>
+                }
+            } @else if (isSearchProjects) {
+                @for (project of searchedProjects; track project.id) {
+                    <div (click)="selectProject(project)">
+                        <span>{{ project.name }}</span>
+                        <span>Сгенерировать дерево</span>
+                    </div>
+                }
+            } @else {
                 @for (unit of searchedOrganizationalUnits; track unit.id) {
                     <div (click)="selectUnit(unit)">
                         {{ unit | withUnitTypeName }} <span class="location-name">{{ unit.location }}</span>
                     </div>
-                }
-            } @else {
-                @for (employee of searchedEmployees; track employee.id) {
-                    <div>{{ employee.fullName }}</div>
                 }
             }
         </div>
@@ -38,11 +48,13 @@
                     (click)="setSearch('searchUnits')">
                 Структурам
             </button>
-            @if (showCenterCheckBox) {
-                <input id="center" type="checkbox" [checked]="setCenter" (change)="setCenter = !setCenter">
-                <label for="center">Сделать центром</label>
-            } @else {
-                <button type="button" class="button button-last" (click)="backToMainTree()">Сбросить центр</button>
+            @if (isSearchUnits) {
+                @if (showCenterCheckBox) {
+                    <input id="center" type="checkbox" [checked]="setCenter" (change)="setCenter = !setCenter">
+                    <label for="center">Сделать центром</label>
+                } @else {
+                    <button type="button" class="button button-last" (click)="backToMainTree()">Сбросить центр</button>
+                }
             }
         </div>
     }

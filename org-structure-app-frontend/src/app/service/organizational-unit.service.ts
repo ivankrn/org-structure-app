@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OrganizationalUnit } from '../model/organizational-unit.model';
 import { OrganizationalUnitHierarchy } from '../model/organizational-unit-hierarchy.model';
@@ -14,7 +14,7 @@ export class OrganizationalUnitService {
   private endpoint: string = "organizational-units";
   private apiUrl: string = environment.apiUrl + this.endpoint;
 
-  constructor(private httpClient: HttpClient) { }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public findById(id: number): Observable<OrganizationalUnit> {
     return this.httpClient.get<OrganizationalUnit>(this.apiUrl + "/" +id);

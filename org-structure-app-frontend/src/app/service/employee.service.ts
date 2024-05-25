@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Employee } from '../model/employee.model';
 import { environment } from '../../environments/environment';
@@ -12,7 +12,7 @@ export class EmployeeService {
   private endpoint: string = "employees";
   private apiUrl: string = environment.apiUrl + this.endpoint;
 
-  constructor(private httpClient: HttpClient) { }
+  private httpClient: HttpClient = inject(HttpClient);
 
   public findById(id: number): Observable<Employee> {
     return this.httpClient.get<Employee>(this.apiUrl + "/" +id);

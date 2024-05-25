@@ -23,12 +23,13 @@ import {
   UnitHierarchyFilterChainNode
 } from './util/filter/filter-chain-node';
 import { OrganizationalUnit } from '../../model/organizational-unit.model';
+import { ProjectService } from '../../service/project.service';
 
 @Component({
   selector: 'app-organizational-tree',
   standalone: true,
   imports: [CommonModule, EmployeeInfoComponent, FilterMenuComponent, TreeSearchBarComponent],
-  providers: [OrganizationalUnitService, EmployeeService, LocationService, WithUnitTypeNamePipe],
+  providers: [OrganizationalUnitService, EmployeeService, ProjectService, LocationService, WithUnitTypeNamePipe],
   templateUrl: './organizational-tree.component.html',
   styleUrl: './organizational-tree.component.css'
 })
