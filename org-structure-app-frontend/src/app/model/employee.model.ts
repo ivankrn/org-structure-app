@@ -7,6 +7,7 @@ export interface Employee {
     jobTitle: string;
     jobType: string;
     isVacancy: boolean;
+    employmentDate: string;
     organizationalUnit?: OrganizationalUnit;
     organizationalUnitHierarchy?: OrganizationalUnitHierarchy;
     projects?: Array<{ id: number, name: string }>;
