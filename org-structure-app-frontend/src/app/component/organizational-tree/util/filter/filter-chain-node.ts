@@ -39,13 +39,29 @@ export class EmployeeFilterChainNode extends FilterChainNode {
 
     isValid(node: OrganizationalTreeNode, filterSettings: FilterMenuSettings): boolean {
         if (node.type === OrganizationalTreeNodeType.EMPLOYEE) {
-            if (filterSettings.displayNotVacancies && filterSettings.displayVacancies) {
-                return true;
-            } else if (filterSettings.displayNotVacancies) {
-                return !node.isVacancy;
-            } else if (filterSettings.displayVacancies) {
-                return node.isVacancy!;
-            } else {
+            if (!filterSettings.displayNotVacancies && !filterSettings.displayVacancies) {
+                return false;
+            }
+            if (!(filterSettings.displayNotVacancies && filterSettings.displayVacancies)) {
+                if (filterSettings.displayVacancies && !node.isVacancy) {
+                    return false;
+                }
+                if (filterSettings.displayNotVacancies && node.isVacancy) {
+                    return false;
+                }
+            }
+
+            const selectedJobTitles: String[] = Object.entries(filterSettings.jobTitles)
+                .filter(entry => entry[1])
+                .map(entry => entry[0]);
+            if (selectedJobTitles.length > 0 && !selectedJobTitles.includes(node.jobTitle!)) {
+                return false;
+            }
+
+            const selectedJobTypes: String[] = Object.entries(filterSettings.jobTypes)
+                .filter(entry => entry[1])
+                .map(entry => entry[0]);
+            if (selectedJobTypes.length > 0 && !selectedJobTypes.includes(node.jobType!)) {
                 return false;
             }
         }
@@ -111,34 +127,6 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
             if (!filterSettings.groups[groupName]) {
                 return false;
             }
-        }
-        const selectedJobTitles = Object.entries(filterSettings.jobTitles)
-            .filter(entry => entry[1])
-            .map(entry => entry[0]);
-        if (selectedJobTitles.length > 0) {
-            if (node.type !== OrganizationalTreeNodeType.EMPLOYEE) {
-                for (const selectedJobTitle of selectedJobTitles) {
-                    if (hasChildrenWithName(node, selectedJobTitle)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            return true;
-        }
-        const selectedJobTypes = Object.entries(filterSettings.jobTypes)
-            .filter(entry => entry[1])
-            .map(entry => entry[0]);
-        if (selectedJobTypes.length > 0) {
-            if (node.type !== OrganizationalTreeNodeType.EMPLOYEE) {
-                for (const selectedJobType of selectedJobTitles) {
-                    if (hasChildrenWithName(node, selectedJobType)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            return true;
         }
         if (this.nextFilter !== undefined) {
             return this.nextFilter.isValid(node, filterSettings);

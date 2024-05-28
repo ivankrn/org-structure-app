@@ -7,6 +7,8 @@ export interface OrganizationalTreeNode {
     nameWithoutType: string;
     type: OrganizationalTreeNodeType;
     location?: string;
+    jobTitle?: string;
+    jobType?: string;
     isVacancy?: boolean;
     parent?: OrganizationalTreeNode;
     hierarchy?: OrganizationalTreeNodeHierarchy;

@@ -57,7 +57,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   _jobTypes!: string[];
   @Input()
   set jobTypes(value: string[]) {
-    this._jobTitles = value;
+    this._jobTypes = value;
     // @ts-ignore
     value.forEach(name => this.jobTypes.addControl(name, this.formBuilder.control(false)));
   }

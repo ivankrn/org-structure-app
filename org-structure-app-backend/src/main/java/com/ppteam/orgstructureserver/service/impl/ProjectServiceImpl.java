@@ -19,6 +19,11 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper mapper;
 
     @Override
+    public List<ProjectDTO> findAll() {
+        return projectRepository.findAll().stream().map(mapper::convert).toList();
+    }
+
+    @Override
     public ProjectWithEmployeesDTO findById(long id) {
         return projectRepository.findById(id).map(mapper::convertToFullDTO).orElseThrow(NotFoundException::new);
     }

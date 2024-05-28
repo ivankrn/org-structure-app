@@ -80,6 +80,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: employee.fullName,
             nameWithoutType: employee.fullName,
             type: OrganizationalTreeNodeType.EMPLOYEE,
+            jobTitle: employee.jobTitle,
+            jobType: employee.jobType,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
@@ -109,6 +111,8 @@ export function convertProject(project: Project): OrganizationalTreeNode {
             name: employee.fullName,
             nameWithoutType: employee.fullName,
             type: OrganizationalTreeNodeType.EMPLOYEE,
+            jobTitle: employee.jobTitle,
+            jobType: employee.jobType,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
