@@ -4,5 +4,6 @@ export enum OrganizationalTreeNodeType {
     DIVISION,
     DEPARTMENT,
     GROUP,
-    EMPLOYEE
+    EMPLOYEE,
+    PROJECT
 }

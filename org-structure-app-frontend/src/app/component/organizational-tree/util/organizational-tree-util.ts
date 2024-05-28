@@ -94,9 +94,15 @@ export function convertProject(project: Project): OrganizationalTreeNode {
         id: project.id,
         name: `Проект "${project.name}"`,
         nameWithoutType: project.name,
-        type: OrganizationalTreeNodeType.GROUP
+        type: OrganizationalTreeNodeType.PROJECT
     };
     node.children = [];
+    const nodeWithoutChildren: OrganizationalTreeNode = {
+        id: node.id,
+        name: node.name,
+        nameWithoutType: node.nameWithoutType,
+        type: OrganizationalTreeNodeType.PROJECT
+    }
     project.employees?.forEach(employee => {
         const newEmployee: OrganizationalTreeNode = {
             id: employee.id,
@@ -104,7 +110,7 @@ export function convertProject(project: Project): OrganizationalTreeNode {
             nameWithoutType: employee.fullName,
             type: OrganizationalTreeNodeType.EMPLOYEE,
             isVacancy: employee.isVacancy,
-            parent: node
+            parent: nodeWithoutChildren
         };
         updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);

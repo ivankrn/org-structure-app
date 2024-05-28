@@ -162,6 +162,9 @@ export class OrganizationalTreeComponent implements OnInit {
       case OrganizationalTreeNodeType.EMPLOYEE:
         root.y = this.getDefaultY(OrganizationalTreeNodeType.EMPLOYEE) - this.getDefaultY(this.currentCenterType);
         break;
+      case OrganizationalTreeNodeType.PROJECT:
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.PROJECT) - this.getDefaultY(this.currentCenterType);
+        break;
     }
 
     if (root.children?.length) {
@@ -185,6 +188,8 @@ export class OrganizationalTreeComponent implements OnInit {
         return this.radius * 4;
       case OrganizationalTreeNodeType.EMPLOYEE:
         return this.radius * 5;
+      case OrganizationalTreeNodeType.PROJECT:
+        return this.radius * 0;
     }
   }
 
