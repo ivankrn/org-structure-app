@@ -24,6 +24,19 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    @Operation(summary = "Получить список всех проектов")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Все проекты",
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = ProjectDTO.class)
+                            ))})
+    })
+    @GetMapping
+    public List<ProjectDTO> findAll() {
+        return projectService.findAll();
+    }
+
     @Operation(summary = "Получить проект по ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Найденный проект",
@@ -38,17 +51,9 @@ public class ProjectController {
         return projectService.findById(id);
     }
 
-    @Operation(summary = "Найти проекты по имени")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Найденные проекты",
-                    content = {@Content(mediaType = "application/json",
-                            array = @ArraySchema(
-                                    schema = @Schema(implementation = ProjectDTO.class)
-                            ))})
-    })
     @GetMapping(params = "name")
-    public List<ProjectDTO> findProjectsWithNameContaining(@Parameter(description = "Имя для поиска")
-                                                           @RequestParam String name) {
+    public List<ProjectDTO> findProjectsWithNameContaining(@Parameter(description = "Название для поиска")
+                                                           @RequestParam(required = false) String name) {
         return projectService.findByNameContainingIgnoreCase(name);
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ProjectService {
 
+    List<ProjectDTO> findAll();
     ProjectWithEmployeesDTO findById(long id);
     List<ProjectDTO> findByNameContainingIgnoreCase(String name);
 

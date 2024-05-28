@@ -1,5 +1,6 @@
 import { OrganizationalUnitHierarchy } from "./organizational-unit-hierarchy.model";
 import { OrganizationalUnit } from "./organizational-unit.model";
+import { Project } from "./project.model";
 
 export interface Employee {
     id: number;
@@ -9,5 +10,5 @@ export interface Employee {
     isVacancy: boolean;
     organizationalUnit?: OrganizationalUnit;
     organizationalUnitHierarchy?: OrganizationalUnitHierarchy;
-    projects?: Array<{ id: number, name: string }>;
+    projects?: Project[];
 }
