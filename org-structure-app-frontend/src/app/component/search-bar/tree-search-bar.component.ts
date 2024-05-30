@@ -57,6 +57,7 @@ export class TreeSearchBarComponent implements AfterViewInit {
 
   private initSearch(): void {
     this.searchSubscription?.unsubscribe();
+    this.showSearches = false;
     const search = fromEvent(this.searchBarInput?.nativeElement, 'keyup')
       .pipe(
         map((event: any) => event.target.value),
@@ -92,16 +93,17 @@ export class TreeSearchBarComponent implements AfterViewInit {
         })
       );
 
-    this.searchSubscription = search.subscribe(data => {
-      this.isSearching = false;
-      if (this.isSearchEmployees) {
-        this.searchedEmployees = data;
-      } else if (this.isSearchProjects) {
-        this.searchedProjects = data;
-      } else {
-        this.searchedOrganizationalUnits = data;
-      }
-    })
+    this.searchSubscription = search
+      .subscribe(data => {
+        this.isSearching = false;
+        if (this.isSearchEmployees) {
+          this.searchedEmployees = data;
+        } else if (this.isSearchProjects) {
+          this.searchedProjects = data;
+        } else {
+          this.searchedOrganizationalUnits = data;
+        }
+      });
   }
 
   setSearch(name: string) {

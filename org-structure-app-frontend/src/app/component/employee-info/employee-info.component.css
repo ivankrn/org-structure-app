@@ -24,6 +24,8 @@
 #employee-info {
     border-radius: 4px;
     box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
+    max-height: 80vh;
+    overflow-y: scroll;
 }
 
 details {

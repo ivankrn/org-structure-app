@@ -22,12 +22,11 @@
 }
 
 #filter-menu {
-    margin-right: 20px;
     padding: 20px;
     background-color: white;
     box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 80vh;
+    overflow-y: scroll;
 }
 
 details[open] summary {
@@ -94,7 +93,7 @@ input[type='checkbox']{
 
 .selected-units {
     display: grid;
-    margin: 20px 0;
+    margin: 12px 0;
     grid-template-columns: repeat(2, 1fr);
     gap: 2%;
 }
@@ -114,4 +113,12 @@ input[type='checkbox']{
 .selected-unit-close {
     justify-self: end;
     cursor: pointer;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: #14191A;
+    margin-bottom: 8px;
 }

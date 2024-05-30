@@ -16,10 +16,13 @@ import { UnitNamesSearchBarComponent } from '../unit-search-bar/unit-search-bar.
 })
 export class FilterMenuComponent implements OnInit, OnDestroy {
 
+  _locationNames!: string[];
   @Input()
   set locationNames(value: string[]) {
+    this._locationNames = value;
     value.forEach(name => this.locations.addControl(name, this.formBuilder.control(true)));
   }
+  selectedLocationNames!: string[];
 
   _divisionNames!: string[];
   @Input()
@@ -117,6 +120,16 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   get jobTypes() {
     // @ts-ignore
     return this.settingsForm.get("jobTypes") as FormGroup;
+  }
+
+  selectLocationName(name: string): void {
+    const isChecked = this.locations.get(name)?.value;
+    this.locations.get(name)?.patchValue(!isChecked);
+    if (this.selectedLocationNames.includes(name)) {
+      this.selectedLocationNames = this.selectedLocationNames.filter(n => n !== name);
+    } else {
+      this.selectedLocationNames.push(name);
+    }
   }
 
   selectDivisionName(name: string): void {

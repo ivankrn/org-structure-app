@@ -3,21 +3,18 @@
         <img src="../../../assets/img/arrow.svg" alt="">
     </summary>
     <form [formGroup]="settingsForm">
-        <details id="locations" formArrayName="locations">
-            <summary>Локации
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
-            <ul>
-                <li *ngFor="let location of settingsForm.get('locations')?.value | keyvalue">
-                    <input type="checkbox" [value]="location.value" [formControlName]="location.key">
-                    <label>{{ location.key }}</label>
-                </li>
-            </ul>
-        </details>
-        <details id="divisions">
-            <summary>Подразделения
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        <div id="locations" formArrayName="locations">
+            <div class="title">Локации</div>
+            <unit-search-bar [unitNames]="_locationNames" (unitNameSelectedEvent)="selectLocationName($event)" />
+            <div class="selected-units">
+                <div class="selected-unit" *ngFor="let name of selectedLocationNames">
+                    <span class="selected-unit-name">{{ name }}</span>
+                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectLocationName(name)"></i>
+                </div>
+            </div>
+        </div>
+        <div id="divisions">
+            <div class="title">Подразделения</div>
             <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDivisionNames">
@@ -25,11 +22,9 @@
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDivisionName(name)"></i>
                 </div>
             </div>
-        </details>
-        <details id="departments">
-            <summary>Отделы
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        </div>
+        <div id="departments">
+            <div class="title">Отделы</div>
             <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedDepartmentNames">
@@ -37,11 +32,9 @@
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDepartmentName(name)"></i>
                 </div>
             </div>
-        </details>
-        <details id="groups">
-            <summary>Группы
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        </div>
+        <div id="groups">
+            <div class="title">Группы</div>
             <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedGroupNames">
@@ -49,11 +42,9 @@
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectGroupName(name)"></i>
                 </div>
             </div>
-        </details>
-        <details id="job-titles">
-            <summary>Должности
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        </div>
+        <div id="job-titles">
+            <div class="title">Должности</div>
             <unit-search-bar [unitNames]="_jobTitles" (unitNameSelectedEvent)="selectJobTitle($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedJobTitles">
@@ -61,11 +52,9 @@
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobTitle(name)"></i>
                 </div>
             </div>
-        </details>
-        <details id="job-types">
-            <summary>Типы работы
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        </div>
+        <div id="job-types">
+            <div class="title">Типы работы</div>
             <unit-search-bar [unitNames]="_jobTypes" (unitNameSelectedEvent)="selectJobType($event)" />
             <div class="selected-units">
                 <div class="selected-unit" *ngFor="let name of selectedJobTypes">
@@ -73,11 +62,9 @@
                     <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobType(name)"></i>
                 </div>
             </div>
-        </details>
-        <details id="employee-type">
-            <summary>Тип места
-                <img src="../../../assets/img/arrow.svg" alt="">
-            </summary>
+        </div>
+        <div id="employee-type">
+            <div class="title">Тип места</div>
             <ul>
                 <li>
                     <input type="checkbox" id="vacancy" name="vacancy" value="vacancy" class="checkbox"
@@ -90,6 +77,6 @@
                     <label for="not-vacancy">Занятые места</label>
                 </li>
             </ul>
-        </details>
+        </div>
     </form>
 </details>
