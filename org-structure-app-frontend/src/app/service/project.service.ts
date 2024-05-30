@@ -14,6 +14,10 @@ export class ProjectService {
 
     private httpClient: HttpClient = inject(HttpClient);
 
+    public findAll(): Observable<Project[]> {
+        return this.httpClient.get<Project[]>(this.apiUrl);
+    }
+
     public findById(id: number): Observable<Project> {
         return this.httpClient.get<Project>(this.apiUrl + "/" +id);
     }

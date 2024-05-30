@@ -25,6 +25,8 @@ import {
 import { OrganizationalUnit } from '../../model/organizational-unit.model';
 import { ProjectService } from '../../service/project.service';
 import { Project } from '../../model/project.model';
+import { JobTitleService } from '../../service/job-title.service';
+import { JobTypeService } from '../../service/job-type.service';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -62,8 +64,13 @@ export class OrganizationalTreeComponent implements OnInit {
   private redrawAnimationDurationInMs = 250;
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
 
-  constructor(private organizationalUnitService: OrganizationalUnitService, private projectService: ProjectService,
-    private employeeService: EmployeeService, private locationService: LocationService) { }
+  constructor(
+    private organizationalUnitService: OrganizationalUnitService, 
+    private projectService: ProjectService,
+    private employeeService: EmployeeService, 
+    private locationService: LocationService,
+    private jobTitleService: JobTitleService,
+    private jobTypeService: JobTypeService) { }
 
   ngOnInit(): void {
     this.initTree();
@@ -88,6 +95,8 @@ export class OrganizationalTreeComponent implements OnInit {
         this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
         this.groupNames = data[OrganizationalUnitType.GROUP];
       });
+    this.jobTitleService.findAll().subscribe(data => this.jobTitles = data.map(jobTitle => jobTitle.name));
+    this.jobTypeService.findAll().subscribe(data => this.jobTypes = data.map(jobType => jobType.name));
   }
 
   private initFilters() {
@@ -162,6 +171,9 @@ export class OrganizationalTreeComponent implements OnInit {
       case OrganizationalTreeNodeType.EMPLOYEE:
         root.y = this.getDefaultY(OrganizationalTreeNodeType.EMPLOYEE) - this.getDefaultY(this.currentCenterType);
         break;
+      case OrganizationalTreeNodeType.PROJECT:
+        root.y = this.getDefaultY(OrganizationalTreeNodeType.PROJECT) - this.getDefaultY(this.currentCenterType);
+        break;
     }
 
     if (root.children?.length) {
@@ -185,6 +197,8 @@ export class OrganizationalTreeComponent implements OnInit {
         return this.radius * 4;
       case OrganizationalTreeNodeType.EMPLOYEE:
         return this.radius * 5;
+      case OrganizationalTreeNodeType.PROJECT:
+        return this.radius * 0;
     }
   }
 

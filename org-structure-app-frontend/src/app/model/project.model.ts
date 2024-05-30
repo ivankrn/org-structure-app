@@ -1,7 +1,7 @@
 import { Employee } from './employee.model';
 
-export class Project {
+export interface Project {
     id: number;
     name: string;
-    employees: Employee[];
+    employees?: Employee[];
 }

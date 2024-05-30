@@ -80,6 +80,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: employee.fullName,
             nameWithoutType: employee.fullName,
             type: OrganizationalTreeNodeType.EMPLOYEE,
+            jobTitle: employee.jobTitle,
+            jobType: employee.jobType,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
@@ -94,17 +96,25 @@ export function convertProject(project: Project): OrganizationalTreeNode {
         id: project.id,
         name: `Проект "${project.name}"`,
         nameWithoutType: project.name,
-        type: OrganizationalTreeNodeType.GROUP
+        type: OrganizationalTreeNodeType.PROJECT
     };
     node.children = [];
+    const nodeWithoutChildren: OrganizationalTreeNode = {
+        id: node.id,
+        name: node.name,
+        nameWithoutType: node.nameWithoutType,
+        type: OrganizationalTreeNodeType.PROJECT
+    }
     project.employees?.forEach(employee => {
         const newEmployee: OrganizationalTreeNode = {
             id: employee.id,
             name: employee.fullName,
             nameWithoutType: employee.fullName,
             type: OrganizationalTreeNodeType.EMPLOYEE,
+            jobTitle: employee.jobTitle,
+            jobType: employee.jobType,
             isVacancy: employee.isVacancy,
-            parent: node
+            parent: nodeWithoutChildren
         };
         updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);
