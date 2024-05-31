@@ -6,7 +6,7 @@
         </svg>
         <input type="search" id="search-field" #searchBarInput placeholder="Поиск">
     </div>
-    @if (showSearches && (searchedEmployees?.length || searchedProjects?.length || searchedOrganizationalUnits?.length)) {
+    @if (showSearches && (searchedEmployees.length || searchedProjects.length || searchedOrganizationalUnits.length)) {
         <div class="suggestions">
             @if (isSearchEmployees) {
                 @for (employee of searchedEmployees; track employee.id) {

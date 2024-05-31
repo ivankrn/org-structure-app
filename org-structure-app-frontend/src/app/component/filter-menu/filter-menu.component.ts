@@ -20,8 +20,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   @Input()
   set locationNames(value: string[]) {
     this._locationNames = value;
-    value.forEach(name => this.locations.addControl(name, this.formBuilder.control(true)));
-    this.selectedLocationNames = value;
+    value.forEach(name => this.locations.addControl(name, this.formBuilder.control(false)));
   }
   selectedLocationNames: string[] = [];
 
@@ -124,8 +123,8 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   }
 
   selectLocationName(name: string): void {
-    const isChecked = this.locations.get(name)?.value;
-    this.locations.get(name)?.patchValue(!isChecked);
+    const isChecked = this.locations.controls[name]?.value;
+    this.locations.controls[name]?.patchValue(!isChecked);
     if (this.selectedLocationNames.includes(name)) {
       this.selectedLocationNames = this.selectedLocationNames.filter(n => n !== name);
     } else {

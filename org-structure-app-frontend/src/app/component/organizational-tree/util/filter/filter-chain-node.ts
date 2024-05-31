@@ -22,10 +22,19 @@ export abstract class FilterChainNode {
 export class LocationFilterChainNode extends FilterChainNode {
 
     isValid(node: OrganizationalTreeNode, filterSettings: FilterMenuSettings): boolean {
-        if (node.type === OrganizationalTreeNodeType.LOCATION) {
-            return filterSettings.locations[node.name];
-        } else if (node.location && !filterSettings.locations[node.location]) {
-            return false;
+        const selectedLocations = Object.entries(filterSettings.locations)
+            .filter(entry => entry[1])
+            .map(entry => entry[0]);
+        if (selectedLocations.length > 0) {
+            if (node.type === OrganizationalTreeNodeType.LOCATION) {
+                if (!node.name) {
+                    return false;
+                }
+
+                return filterSettings.locations[node.name];
+            } else if (node.location && !filterSettings.locations[node.location]) {
+                return false;
+            }
         }
         if (this.nextFilter !== undefined) {
             return this.nextFilter.isValid(node, filterSettings);

@@ -198,7 +198,7 @@ export class OrganizationalTreeComponent implements OnInit {
       case OrganizationalTreeNodeType.EMPLOYEE:
         return this.radius * 5;
       case OrganizationalTreeNodeType.PROJECT:
-        return this.radius * 0;
+        return 0;
     }
   }
 
