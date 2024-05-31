@@ -92,27 +92,31 @@ input[type='checkbox']{
 }
 
 .selected-units {
-    display: grid;
     margin: 12px 0;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2%;
 }
 
 .selected-unit {
-    display: inline-grid;
-    padding: 3px 10px;
-    gap: 10%;
-    grid-template-columns: repeat(2, 1fr);
+    box-sizing: border-box;
+    padding: 4px 12px;
     border: 2px solid gray;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .selected-unit-name {
-    justify-self: start;
+    width: 156px;
+    word-wrap: break-word;
 }
 
 .selected-unit-close {
-    justify-self: end;
     cursor: pointer;
+    margin: auto;
 }
 
 .title {

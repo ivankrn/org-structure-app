@@ -21,8 +21,9 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   set locationNames(value: string[]) {
     this._locationNames = value;
     value.forEach(name => this.locations.addControl(name, this.formBuilder.control(true)));
+    this.selectedLocationNames = value;
   }
-  selectedLocationNames!: string[];
+  selectedLocationNames: string[] = [];
 
   _divisionNames!: string[];
   @Input()
