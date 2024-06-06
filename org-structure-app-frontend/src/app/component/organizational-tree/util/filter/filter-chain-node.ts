@@ -89,6 +89,14 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedDivisions.length > 0) {
+            if (node.type !== OrganizationalTreeNodeType.DIVISION) {
+                for (const selectedDivision of selectedDivisions) {
+                    if (hasChildrenWithName(node, selectedDivision)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
             if (node.hierarchy?.divisionName === undefined) {
                 return false;
             }

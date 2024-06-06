@@ -522,6 +522,7 @@ export class OrganizationalTreeComponent implements OnInit {
     if (!data.children) {
       return data;
     }
+    // this.expandUnits(data.children.map(node => node.id));
     data.children = data.children.filter(node => this.filterChain!.isValid(node, this.filterSettings!));
     for (let i = 0; i < data.children.length; i++) {
       data.children[i] = this.filterTreeDataFromSettings(data.children[i]);
