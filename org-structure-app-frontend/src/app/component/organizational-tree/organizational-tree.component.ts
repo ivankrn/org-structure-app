@@ -65,9 +65,9 @@ export class OrganizationalTreeComponent implements OnInit {
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
 
   constructor(
-    private organizationalUnitService: OrganizationalUnitService, 
+    private organizationalUnitService: OrganizationalUnitService,
     private projectService: ProjectService,
-    private employeeService: EmployeeService, 
+    private employeeService: EmployeeService,
     private locationService: LocationService,
     private jobTitleService: JobTitleService,
     private jobTypeService: JobTypeService) { }
@@ -140,7 +140,7 @@ export class OrganizationalTreeComponent implements OnInit {
     const filteredData: OrganizationalTreeNode = this.filterTreeDataFromSettings(this.treeData);
     const hierarchy = d3.hierarchy(filteredData)
       .sort((a, b) => d3.ascending(a.data.name, b.data.name));
-    const tree = d3.tree()
+    const tree = d3.cluster()
       .size([2 * Math.PI, this.radius * hierarchy.height])
       .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
     const root = tree(<any>hierarchy);
@@ -348,10 +348,10 @@ export class OrganizationalTreeComponent implements OnInit {
 
   redrawTreeByProject(projectId: number): void {
     this.projectService.findById(projectId)
-        .subscribe((project: Project) => {
-          this.treeData = convertProject(project);
-          this.redrawTree();
-        });
+      .subscribe((project: Project) => {
+        this.treeData = convertProject(project);
+        this.redrawTree();
+      });
 
     return;
   }
