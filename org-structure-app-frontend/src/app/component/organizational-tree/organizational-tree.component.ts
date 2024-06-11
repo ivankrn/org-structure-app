@@ -184,19 +184,21 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   private getDefaultY(type: OrganizationalTreeNodeType) {
+    const isCenterChanged = this.mainTree != this.treeData;
+    const multiplier = isCenterChanged ? 0.5 : 1;
     switch (type) {
       case OrganizationalTreeNodeType.LEGAL_ENTITY:
         return 0;
       case OrganizationalTreeNodeType.LOCATION:
-        return this.radius;
+        return this.radius * multiplier;
       case OrganizationalTreeNodeType.DIVISION:
-        return this.radius * 2;
+        return this.radius * 2 * multiplier;
       case OrganizationalTreeNodeType.DEPARTMENT:
-        return this.radius * 3;
+        return this.radius * 3 * multiplier;
       case OrganizationalTreeNodeType.GROUP:
-        return this.radius * 4;
+        return this.radius * 4 * multiplier;
       case OrganizationalTreeNodeType.EMPLOYEE:
-        return this.radius * 5;
+        return this.radius * 5 * multiplier;
       case OrganizationalTreeNodeType.PROJECT:
         return 0;
     }
