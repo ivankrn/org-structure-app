@@ -105,6 +105,9 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
                 return false;
             }
         }
+        if (node.type === OrganizationalTreeNodeType.LOCATION) {
+            return true;
+        }
         const selectedDepartments = Object.entries(filterSettings.departments)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
