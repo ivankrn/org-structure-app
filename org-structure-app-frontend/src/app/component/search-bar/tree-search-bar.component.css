@@ -56,10 +56,16 @@
     outline: #121212 1px solid;
 }
 
-.buttons {
+.options {
     margin-top: 12px;
-    border-radius: 4px;
+    padding: 0 16px;
     height: 24px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons {
+    border-radius: 4px;
 }
 
 input[type=search] {
@@ -86,13 +92,13 @@ input[type=search] {
 }
 
 .button-last {
-    border-right: 2px solid rgba(20, 25, 26, 0.16);
+    border-right: 1px solid rgba(20, 25, 26, 0.16);
 }
 
 .selected-button {
     background-color: rgba(20, 25, 26, 0.08);
     transition: all 0.3s ease-in-out;
-    border: 2px solid rgba(20, 25, 26, 0.72);
+    border: 1px solid rgba(20, 25, 26, 0.72);
 }
 
 .button-text {
@@ -100,13 +106,25 @@ input[type=search] {
     font-size: 12px;
     text-align: center;
     text-decoration: none;
+    margin: auto 0;
 }
 
 .center-checkbox {
-    width: 120px;
-    height: 16px;
+    display: flex;
+}
+
+.center-text {
+    font-size: 12px;
+}
+
+.center-text-container {
+    margin-top: 1px;
 }
 
 .hint {
     text-align: right;
+}
+
+.empty {
+    width: 123px;
 }
