@@ -21,8 +21,9 @@ export class UnitNamesSearchBarComponent {
   constructor() { }
 
   searchUnitNames(input: EventTarget) {
+    const inputValue: string = (<HTMLInputElement>input).value;
     this.searchedUnitNames =
-      this.unitNames.filter(value => value.toLowerCase().includes((<HTMLInputElement>input).value.toLowerCase()));
+      this.unitNames.filter(value => !!inputValue && value.toLowerCase().includes(inputValue.toLowerCase()));
   }
 
   selectUnitName(name: string) {
