@@ -127,3 +127,12 @@ input[type='checkbox']{
     color: #14191A;
     margin-bottom: 8px;
 }
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary-text {
+    line-height: 24px;
+}

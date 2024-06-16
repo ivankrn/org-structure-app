@@ -83,3 +83,13 @@ details[open] summary img {
     color: #14191A;
     margin: auto 0;
 }
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary-text {
+    font-size: 15px;
+    line-height: 24px;
+}
