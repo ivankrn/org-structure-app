@@ -1,33 +1,54 @@
-import { AsyncPipe, NgFor } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AsyncPipe, NgClass, NgFor, NgStyle } from '@angular/common';
+import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
+import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'unit-search-bar',
   standalone: true,
-  imports: [NgFor, WithUnitTypeNamePipe, AsyncPipe],
+  imports: [NgFor, NgClass, NgStyle, WithUnitTypeNamePipe, AsyncPipe, FormsModule],
   templateUrl: './unit-search-bar.component.html',
   styleUrl: './unit-search-bar.component.css'
 })
-export class UnitNamesSearchBarComponent {
+export class UnitNamesSearchBarComponent implements OnInit {
 
   @Input()
   unitNames!: string[];
-  searchedUnitNames: string[] = this.unitNames;
+
+  @Input()
+  clearSubject: Subject<void>;
+
+  selectedUnitNamesArray: string[] = [];
+  selectedUnitNamesString: string = '';
+  selectOpened: boolean = false;
 
   @Output()
   unitNameSelectedEvent = new EventEmitter<string>();
 
-  constructor() { }
+  destroyRef: DestroyRef = inject(DestroyRef);
 
-  searchUnitNames(input: EventTarget) {
-    const inputValue: string = (<HTMLInputElement>input).value;
-    this.searchedUnitNames =
-      this.unitNames.filter(value => !!inputValue && value.toLowerCase().includes(inputValue.toLowerCase()));
+  ngOnInit(): void {
+    this.clearSubject
+        ?.pipe(
+            takeUntilDestroyed(this.destroyRef)
+        )
+        .subscribe(() => {
+          this.selectedUnitNamesArray = [];
+          this.selectedUnitNamesString = '';
+        });
   }
 
   selectUnitName(name: string) {
+    if (this.selectedUnitNamesArray.includes(name)) {
+      this.selectedUnitNamesArray = this.selectedUnitNamesArray.filter(n => n !== name);
+    } else {
+      this.selectedUnitNamesArray.push(name);
+    }
+    this.selectedUnitNamesString = this.selectedUnitNamesArray.join(', ');
     this.unitNameSelectedEvent.emit(name);
   }
-  
+
+  protected readonly Math = Math;
 }

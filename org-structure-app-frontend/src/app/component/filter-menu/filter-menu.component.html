@@ -4,65 +4,77 @@
         <img src="../../../assets/img/arrow.svg" alt="">
     </summary>
     <form [formGroup]="settingsForm">
-        <div id="locations" formArrayName="locations">
-            <div class="title">Локации</div>
-            <unit-search-bar [unitNames]="_locationNames" (unitNameSelectedEvent)="selectLocationName($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedLocationNames">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectLocationName(name)"></i>
-                </div>
+        <div id="locations" formArrayName="locations" class="section">
+            <div class="title-container">
+                <div class="title">Локации</div>
+                @if (hasLocationsFilter) {
+                    <div class="clear" (click)="clearLocations()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_locationNames"
+                             [clearSubject]="clearLocationsFilter"
+                             (unitNameSelectedEvent)="selectLocationName($event)"
+            />
         </div>
-        <div id="divisions">
-            <div class="title">Подразделения</div>
-            <unit-search-bar [unitNames]="_divisionNames" (unitNameSelectedEvent)="selectDivisionName($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedDivisionNames">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDivisionName(name)"></i>
-                </div>
+        <div id="divisions" class="section">
+            <div class="title-container">
+                <div class="title">Подразделения</div>
+                @if (hasDivisionsFilter) {
+                    <div class="clear" (click)="clearDivisions()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_divisionNames"
+                             [clearSubject]="clearDivisionsFilter"
+                             (unitNameSelectedEvent)="selectDivisionName($event)"
+            />
         </div>
-        <div id="departments">
-            <div class="title">Отделы</div>
-            <unit-search-bar [unitNames]="_departmentNames" (unitNameSelectedEvent)="selectDepartmentName($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedDepartmentNames">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectDepartmentName(name)"></i>
-                </div>
+        <div id="departments" class="section">
+            <div class="title-container">
+                <div class="title">Отделы</div>
+                @if (hasDepartmentsFilter) {
+                    <div class="clear" (click)="cleardepartments()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_departmentNames"
+                             [clearSubject]="clearDepartmentsFilter"
+                             (unitNameSelectedEvent)="selectDepartmentName($event)"
+            />
         </div>
-        <div id="groups">
-            <div class="title">Группы</div>
-            <unit-search-bar [unitNames]="_groupNames" (unitNameSelectedEvent)="selectGroupName($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedGroupNames">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectGroupName(name)"></i>
-                </div>
+        <div id="groups" class="section">
+            <div class="title-container">
+                <div class="title">Группы</div>
+                @if (hasGroupsFilter) {
+                    <div class="clear" (click)="clearGroups()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_groupNames"
+                             [clearSubject]="clearGroupsFilter"
+                             (unitNameSelectedEvent)="selectGroupName($event)"
+            />
         </div>
-        <div id="job-titles">
-            <div class="title">Должности</div>
-            <unit-search-bar [unitNames]="_jobTitles" (unitNameSelectedEvent)="selectJobTitle($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedJobTitles">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobTitle(name)"></i>
-                </div>
+        <div id="job-titles" class="section">
+            <div class="title-container">
+                <div class="title">Должности</div>
+                @if (hasJobTitlesFilter) {
+                    <div class="clear" (click)="clearJobTitles()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_jobTitles"
+                             [clearSubject]="clearJobTitlesFilter"
+                             (unitNameSelectedEvent)="selectJobTitle($event)"
+            />
         </div>
-        <div id="job-types">
-            <div class="title">Типы работы</div>
-            <unit-search-bar [unitNames]="_jobTypes" (unitNameSelectedEvent)="selectJobType($event)" />
-            <div class="selected-units">
-                <div class="selected-unit" *ngFor="let name of selectedJobTypes">
-                    <span class="selected-unit-name">{{ name }}</span>
-                    <i class="fa-solid fa-xmark selected-unit-close" (click)="selectJobType(name)"></i>
-                </div>
+        <div id="job-types" class="section">
+            <div class="title-container">
+                <div class="title">Типы работы</div>
+                @if (hasJobTypesFilter) {
+                    <div class="clear" (click)="clearJobTypes()">Сбросить</div>
+                }
             </div>
+            <unit-search-bar [unitNames]="_jobTypes"
+                             [clearSubject]="clearJobTypesFilter"
+                             (unitNameSelectedEvent)="selectJobType($event)"
+            />
         </div>
         <div id="employee-type">
             <div class="title">Тип места</div>

@@ -1,6 +1,17 @@
-<input type="search" placeholder="Введите запрос" (input)="searchUnitNames($event.target!)">
-<div class="suggestions">
-    <div *ngFor="let name of searchedUnitNames" (click)="selectUnitName(name)">
-        {{ name }}
-    </div>
+<div class="search-container" (click)="selectOpened = !selectOpened">
+    <input type="search" placeholder="Выберите"
+           [readOnly]="true"
+           [(ngModel)]="selectedUnitNamesString"
+    >
+    <img class="arrow" [ngClass]="{'rotate': selectOpened}" src="../../../assets/img/select.svg" alt="">
 </div>
+@if (selectOpened) {
+    <div class="select" [ngStyle]="{'height': (Math.min(20 * unitNames.length, 160)).toString() + 'px'}">
+        @for (name of unitNames; track name) {
+            <label class="option" (click)="selectUnitName(name)">
+                <input type="checkbox" [checked]="selectedUnitNamesArray.includes(name)">
+                {{name}}
+            </label>
+        }
+    </div>
+}

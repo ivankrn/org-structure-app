@@ -128,6 +128,23 @@ input[type='checkbox']{
     margin-bottom: 8px;
 }
 
+.title-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.clear {
+    font-size: 10px;
+    height: 16px;
+    letter-spacing: 0.01em;
+    color: #ADADAD;
+    border-bottom: 1px dotted #ADADAD;
+}
+
+.section {
+    margin-bottom: 12px;
+}
+
 .summary {
     display: flex;
     justify-content: space-between;
