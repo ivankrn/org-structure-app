@@ -85,18 +85,18 @@ export class EmployeeFilterChainNode extends FilterChainNode {
 export class UnitHierarchyFilterChainNode extends FilterChainNode {
 
     isValid(node: OrganizationalTreeNode, filterSettings: FilterMenuSettings): boolean {
+        const isOrganizationalStructure = node.type === OrganizationalTreeNodeType.DIVISION
+            || node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP;
+        if (!isOrganizationalStructure) {
+            if (this.nextFilter !== undefined) {
+                return this.nextFilter.isValid(node, filterSettings);
+            }
+            return true;
+        }
         const selectedDivisions = Object.entries(filterSettings.divisions)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedDivisions.length > 0) {
-            if (node.type !== OrganizationalTreeNodeType.DIVISION) {
-                for (const selectedDivision of selectedDivisions) {
-                    if (hasChildrenWithName(node, selectedDivision)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
             if (node.hierarchy?.divisionName === undefined) {
                 return false;
             }
@@ -105,47 +105,46 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
                 return false;
             }
         }
-        if (node.type === OrganizationalTreeNodeType.LOCATION) {
-            return true;
-        }
         const selectedDepartments = Object.entries(filterSettings.departments)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedDepartments.length > 0) {
-            if (node.type !== OrganizationalTreeNodeType.DEPARTMENT) {
+            if (node.type === OrganizationalTreeNodeType.DIVISION) {
                 for (const selectedDepartment of selectedDepartments) {
                     if (hasChildrenWithName(node, selectedDepartment)) {
                         return true;
                     }
                 }
                 return false;
-            }
-            if (node.hierarchy?.departmentName === undefined) {
-                return false;
-            }
-            const departmentName = node.hierarchy.departmentName;
-            if (!filterSettings.departments[departmentName]) {
-                return false;
+            } else if (node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP) {
+                if (node.hierarchy?.departmentName === undefined) {
+                    return false;
+                }
+                const departmentName = node.hierarchy.departmentName;
+                if (!filterSettings.departments[departmentName]) {
+                    return false;
+                }
             }
         }
         const selectedGroups = Object.entries(filterSettings.groups)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedGroups.length > 0) {
-            if (node.type !== OrganizationalTreeNodeType.GROUP) {
+            if (node.type === OrganizationalTreeNodeType.DIVISION || node.type === OrganizationalTreeNodeType.DEPARTMENT) {
                 for (const selectedGroup of selectedGroups) {
                     if (hasChildrenWithName(node, selectedGroup)) {
                         return true;
                     }
                 }
                 return false;
-            }
-            if (node.hierarchy?.groupName === undefined) {
-                return false;
-            }
-            const groupName = node.hierarchy?.groupName;
-            if (!filterSettings.groups[groupName]) {
-                return false;
+            } else if (node.type === OrganizationalTreeNodeType.GROUP) {
+                if (node.hierarchy?.groupName === undefined) {
+                    return false;
+                }
+                const groupName = node.hierarchy?.groupName;
+                if (!filterSettings.groups[groupName]) {
+                    return false;
+                }
             }
         }
         if (this.nextFilter !== undefined) {
