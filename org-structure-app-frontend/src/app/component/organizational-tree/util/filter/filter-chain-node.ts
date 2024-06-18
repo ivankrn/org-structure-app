@@ -85,29 +85,25 @@ export class EmployeeFilterChainNode extends FilterChainNode {
 export class UnitHierarchyFilterChainNode extends FilterChainNode {
 
     isValid(node: OrganizationalTreeNode, filterSettings: FilterMenuSettings): boolean {
+        const isOrganizationalStructure = node.type === OrganizationalTreeNodeType.DIVISION
+            || node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP;
+        if (!isOrganizationalStructure) {
+            if (this.nextFilter !== undefined) {
+                return this.nextFilter.isValid(node, filterSettings);
+            }
+            return true;
+        }
         const selectedDivisions = Object.entries(filterSettings.divisions)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedDivisions.length > 0) {
-            if (node.type === OrganizationalTreeNodeType.LOCATION) {
-                for (const selectedDivision of selectedDivisions) {
-                    if (hasChildrenWithName(node, selectedDivision)) {
-                        return true;
-                    }
-                }
+            if (node.hierarchy?.divisionName === undefined) {
                 return false;
-            } else if (node.type === OrganizationalTreeNodeType.DIVISION) {
-                if (node.hierarchy?.divisionName === undefined) {
-                    return false;
-                }
-                const divisionName = node.hierarchy.divisionName;
-                if (!filterSettings.divisions[divisionName]) {
-                    return false;
-                }
             }
-        }
-        if (node.type === OrganizationalTreeNodeType.LOCATION) {
-            return true;
+            const divisionName = node.hierarchy.divisionName;
+            if (!filterSettings.divisions[divisionName]) {
+                return false;
+            }
         }
         const selectedDepartments = Object.entries(filterSettings.departments)
             .filter(entry => entry[1])
@@ -120,7 +116,7 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
                     }
                 }
                 return false;
-            } else if (node.type === OrganizationalTreeNodeType.DEPARTMENT) {
+            } else if (node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP) {
                 if (node.hierarchy?.departmentName === undefined) {
                     return false;
                 }
@@ -141,8 +137,7 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
                     }
                 }
                 return false;
-            }
-            else if (node.type === OrganizationalTreeNodeType.GROUP) {
+            } else if (node.type === OrganizationalTreeNodeType.GROUP) {
                 if (node.hierarchy?.groupName === undefined) {
                     return false;
                 }
