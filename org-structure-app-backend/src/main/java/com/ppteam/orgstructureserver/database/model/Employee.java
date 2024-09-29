@@ -1,9 +1,14 @@
 package com.ppteam.orgstructureserver.database.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -48,8 +53,29 @@ public class Employee {
     @Column(name = "is_vacancy", nullable = false)
     private boolean vacancy;
 
-    @Column(name = "employment_date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "employment_date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime employmentDate;
+
+    @Column(name = "salary")
+    private BigDecimal salary;
+
+    @Column(name = "gender", columnDefinition = "gender")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(name = "status", columnDefinition = "employee_status")
+    @Enumerated(EnumType.STRING)
+    private EmployeeStatus status;
+
+    @Column(name = "total_years_experience")
+    private Integer totalYearsExperience;
+
+    @Column(name = "birthdate", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private ZonedDateTime birthdate;
+
+    @Column(name = "email")
+    @Email
+    private String email;
 
     @Override
     public boolean equals(Object o) {
