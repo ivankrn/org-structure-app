@@ -28,6 +28,8 @@
     box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
     max-height: 80vh;
     overflow-y: scroll;
+    scrollbar-color: rgba(20, 25, 26, 0.2) rgba(255, 255, 255, 0);
+    scrollbar-width: thin;
 }
 
 details[open] summary {

@@ -32,9 +32,11 @@
 
 .suggestions {
     max-height: 200px;
+    background-color: white;
     overflow: hidden;
     overflow-y: scroll;
-    background-color: white;
+    scrollbar-color: rgba(20, 25, 26, 0.2) rgba(255, 255, 255, 0);
+    scrollbar-width: thin;
 }
 
 .suggestions div {
