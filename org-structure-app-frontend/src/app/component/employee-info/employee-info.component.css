@@ -52,7 +52,7 @@ details[open] summary img {
 
 .field {
     box-sizing: border-box;
-    width: 200px;
+    width: 100%;
     min-height: 32px;
     padding: 8px 12px;
     background-color: white;
@@ -92,4 +92,32 @@ details[open] summary img {
 .summary-text {
     font-size: 15px;
     line-height: 24px;
+}
+
+@media (min-width: 3024px) {
+    .summary-text {
+        font-size: 32px;
+    }
+
+    .title {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .value {
+        font-size: 22px;
+    }
+
+    .field {
+        min-height: 48px;
+        margin-bottom: 24px;
+    }
+
+    .info {
+        margin-top: 48px;
+    }
+
+    details {
+        padding: 48px;
+    }
 }

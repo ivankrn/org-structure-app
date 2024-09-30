@@ -153,3 +153,40 @@ input[type='checkbox']{
 .summary-text {
     line-height: 24px;
 }
+
+@media (min-width: 3024px) {
+    #filter-menu {
+        padding: 48px;
+    }
+
+    #locations {
+        margin-top: 48px;
+    }
+
+    .section {
+        margin-bottom: 24px;
+    }
+
+    .summary-text {
+        font-size: 32px;
+    }
+
+    .title {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .clear {
+        font-size: 20px;
+    }
+
+    input[type='checkbox'] {
+        width: 24px !important;
+        height: 24px !important;
+        margin-right: 4px;
+    }
+
+    input[type='checkbox'] label{
+        font-size: 22px;
+    }
+}

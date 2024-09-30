@@ -2,21 +2,21 @@
     position: fixed;
     z-index: 100;
     width: 248px;
-    left: calc((100vw - 1200px) / 2);
+    left: calc(50vw - 600px);
 }
 
 #tree-search-bar {
     position: fixed;
     z-index: 100;
     width: 486px;
-    left: calc((100vw - 1200px) / 2 + 248px + 109px);
+    left: calc(50vw - 600px + 248px + 109px);
 }
 
 #filter-menu {
     position: fixed;
     z-index: 100;
     width: 248px;
-    right: calc((100vw - 1200px) / 2);
+    right: calc(50vw - 600px);
 }
 
 #graph-area {
@@ -35,4 +35,40 @@
 svg {
     font-family: 'Inter', Courier, monospace !important;
     font-style: normal;
+}
+
+@media (min-width: 3024px) {
+    #employee-info {
+        width: 604px;
+        top: 48px;
+        left: 48px;
+    }
+
+    #tree-search-bar {
+        width: 926px;
+        top: 48px;
+        left: calc(50vw - 463px);
+    }
+
+    #filter-menu {
+        width: 604px;
+        top: 48px;
+        right: 48px;
+    }
+}
+
+@media (min-width: 3840px) {
+    #employee-info {
+        top: 64px;
+        left: 616px;
+    }
+
+    #tree-search-bar {
+        top: 64px;
+    }
+
+    #filter-menu {
+        top: 64px;
+        right: 616px;
+    }
 }
