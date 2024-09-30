@@ -104,6 +104,10 @@ export class TreeSearchBarComponent implements AfterViewInit {
           this.searchedOrganizationalUnits = data;
         }
       });
+
+    /** фикс бага, когда при нажатии на крестик не закрывался список предложений поиска */
+    fromEvent(this.searchBarInput?.nativeElement, 'search')
+        .subscribe(() => this.showSearches = false);
   }
 
   setSearch(name: string) {
