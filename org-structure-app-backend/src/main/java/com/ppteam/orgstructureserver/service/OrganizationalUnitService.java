@@ -1,11 +1,9 @@
 package com.ppteam.orgstructureserver.service;
 
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitHierarchyDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithLocationsDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
+import com.ppteam.orgstructureserver.dto.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -21,4 +19,6 @@ public interface OrganizationalUnitService {
 
     OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId);
     Map<String, List<String>> findNamesByTypes();
+
+    OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds);
 }
