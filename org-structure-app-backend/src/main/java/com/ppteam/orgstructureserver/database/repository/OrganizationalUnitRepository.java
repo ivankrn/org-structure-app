@@ -28,7 +28,7 @@ public interface OrganizationalUnitRepository extends CrudRepository<Organizatio
     @Query("SELECT DISTINCT unit.name FROM OrganizationalUnit unit WHERE unit.type = ?1 ORDER BY unit.name")
     List<String> findNamesByType(OrganizationalUnitType type);
 
-    OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsStatistics(List<Long> organizationalUnitsIds);
+    OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsAggregation(List<Long> organizationalUnitsIds);
 
-    List<JobTitlesStatisticsRecord> calculateJobTitleStatistics(List<Long> organizationalUnitsIds);
+    List<JobTitlesStatisticsRecord> calculateJobTitlesStatistics(List<Long> organizationalUnitsIds);
 }

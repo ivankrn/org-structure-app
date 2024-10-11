@@ -5,7 +5,6 @@ import com.ppteam.orgstructureserver.controller.error.WrongQueryParamException;
 import com.ppteam.orgstructureserver.database.model.Location;
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnit;
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
-import com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository;
 import com.ppteam.orgstructureserver.database.repository.OrganizationalUnitRepository;
 import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.dto.mapper.OrganizationalUnitMapper;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.OrganizationalUnitsAggregationRecord;
+import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.JobTitlesStatisticsRecord;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
@@ -123,9 +123,9 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     @Override
     public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds) {
         OrganizationalUnitsAggregationRecord record = organizationalUnitRepository
-                                                        .calculateOrganizationalUnitsStatistics(organizationalUnitsIds.stream().toList());
-        List<CustomAggregationStatisticsRepository.JobTitlesStatisticsRecord> list = organizationalUnitRepository
-                                                        .calculateJobTitleStatistics(organizationalUnitsIds.stream().toList());
+                                                        .calculateOrganizationalUnitsAggregation(organizationalUnitsIds.stream().toList());
+        List<JobTitlesStatisticsRecord> list = organizationalUnitRepository
+                                                        .calculateJobTitlesStatistics(organizationalUnitsIds.stream().toList());
         return mapper.convert(record,list);
     }
 

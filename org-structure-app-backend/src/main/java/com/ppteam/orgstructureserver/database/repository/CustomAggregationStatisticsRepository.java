@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface CustomAggregationStatisticsRepository {
 
-    OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsStatistics(List<Long> organizationalUnitsIds);
+    OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsAggregation(List<Long> organizationalUnitsIds);
 
-    List<JobTitlesStatisticsRecord> calculateJobTitleStatistics(List<Long> organizationalUnitsIds);
+    List<JobTitlesStatisticsRecord> calculateJobTitlesStatistics(List<Long> organizationalUnitsIds);
 
     record OrganizationalUnitsAggregationRecord(
             int totalPositionsAmount,
@@ -18,5 +18,5 @@ public interface CustomAggregationStatisticsRepository {
     record JobTitlesStatisticsRecord(
             Long id,
             String name,
-            int jobPositionsAmount){}
+            int amount){}
 }

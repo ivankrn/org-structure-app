@@ -1,7 +1,6 @@
 package com.ppteam.orgstructureserver.controller;
 
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
-import com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository;
 import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -108,7 +107,6 @@ public class OrganizationalUnitController {
     @GetMapping("/aggregation")
     public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(@Parameter(description = "Список id организационных единиц")
                                                     @RequestParam("ids") List<Long> ids) {
-
         return organizationalUnitService.calculateAggregationInfo(ids);
     }
 }

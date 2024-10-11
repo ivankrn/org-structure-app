@@ -11,7 +11,7 @@ public class CustomAggregationStatisticsRepositoryImpl implements CustomAggregat
     @PersistenceContext
     private EntityManager entityManager;
     @Override
-    public OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsStatistics(List<Long> organizationalUnitsIds) {
+    public OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsAggregation(List<Long> organizationalUnitsIds) {
         List<Object[]> organizationalUnitsAggregationObject =  entityManager.createNativeQuery("""
             SELECT
             COUNT(id) total_positions_amount,
@@ -21,11 +21,11 @@ public class CustomAggregationStatisticsRepositoryImpl implements CustomAggregat
             FROM public.employee e WHERE parent_id IN (:OUIDS)
             """).setParameter("OUIDS", organizationalUnitsIds).getResultList();
 
-        return organizationalUnitsAggregationRecordMapper(organizationalUnitsAggregationObject.get(0));
+        return organizationalUnitsAggregationRecordConverter(organizationalUnitsAggregationObject.get(0));
     }
 
     @Override
-    public List<JobTitlesStatisticsRecord> calculateJobTitleStatistics(List<Long> organizationalUnitsIds) {
+    public List<JobTitlesStatisticsRecord> calculateJobTitlesStatistics(List<Long> organizationalUnitsIds) {
         List<Object[]> jobTitleStatisticsObject =  entityManager.createNativeQuery("""
              SELECT jt.id, name,
              COUNT(CASE WHEN NOT e.is_vacancy THEN 1 ELSE NULL END) amount
@@ -35,10 +35,10 @@ public class CustomAggregationStatisticsRepositoryImpl implements CustomAggregat
              GROUP BY jt.id, jt.name
              """).setParameter("OUIDS", organizationalUnitsIds).getResultList();
 
-        return jobTitleStatisticsRecordMapper(jobTitleStatisticsObject);
+        return jobTitleStatisticsRecordConverter(jobTitleStatisticsObject);
     }
 
-    private OrganizationalUnitsAggregationRecord organizationalUnitsAggregationRecordMapper(Object[] result) {
+    private OrganizationalUnitsAggregationRecord organizationalUnitsAggregationRecordConverter(Object[] result) {
         return new OrganizationalUnitsAggregationRecord(
                 ((Long)result[0]).intValue(),
                 ((Long)result[1]).intValue(),
@@ -47,12 +47,12 @@ public class CustomAggregationStatisticsRepositoryImpl implements CustomAggregat
         );
     }
 
-    private List<JobTitlesStatisticsRecord> jobTitleStatisticsRecordMapper(List<Object[]> results) {
+    private List<JobTitlesStatisticsRecord> jobTitleStatisticsRecordConverter(List<Object[]> results) {
         return results.stream()
                 .map(result -> new JobTitlesStatisticsRecord(
-                        (Long) result[0],
-                        (String) result[1],
-                        ((Long) result[2]).intValue()
+                        (Long)result[0],
+                        (String)result[1],
+                        ((Long)result[2]).intValue()
                 ))
                 .collect(Collectors.toList());
     }
