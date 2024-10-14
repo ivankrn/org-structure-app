@@ -122,11 +122,12 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
 
     @Override
     public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds) {
-        OrganizationalUnitsAggregationRecord record = organizationalUnitRepository
-                                                        .calculateOrganizationalUnitsAggregation(organizationalUnitsIds.stream().toList());
-        List<JobTitlesStatisticsRecord> list = organizationalUnitRepository
-                                                        .calculateJobTitlesStatistics(organizationalUnitsIds.stream().toList());
-        return mapper.convert(record,list);
+        List<Long> idsList = organizationalUnitsIds.stream().toList();
+        OrganizationalUnitsAggregationRecord aggregationInfo = organizationalUnitRepository
+                                                        .calculateOrganizationalUnitsAggregation(idsList);
+        List<JobTitlesStatisticsRecord> jobTitlesStatistics = organizationalUnitRepository
+                                                        .calculateJobTitlesStatistics(idsList);
+        return mapper.convert(aggregationInfo,jobTitlesStatistics);
     }
 
     private List<OrganizationalUnit> findUnitHierarchy(OrganizationalUnit unit) {

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,15 +99,15 @@ public class OrganizationalUnitController {
         return organizationalUnitService.findNamesByTypes();
     }
 
-    @Operation(summary = "Получить агрегированную информацию по id организационных единиц")
+    @Operation(summary = "Получить агрегированную информацию по списку ID организационных единиц")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Агрегированная информация",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = OrganizationalUnitsAggregationInfoDTO.class))}),
     })
     @GetMapping("/aggregation")
-    public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(@Parameter(description = "Список id организационных единиц")
-                                                    @RequestParam("ids") List<Long> ids) {
+    public OrganizationalUnitsAggregationInfoDTO getAggregationInfo(@Parameter(description = "Список id организационных единиц")
+                                                    @RequestParam("ids") @NotNull List<Long> ids) {
         return organizationalUnitService.calculateAggregationInfo(ids);
     }
 }
