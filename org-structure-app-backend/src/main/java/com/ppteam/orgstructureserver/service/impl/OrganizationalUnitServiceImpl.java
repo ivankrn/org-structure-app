@@ -12,9 +12,12 @@ import com.ppteam.orgstructureserver.service.EmployeeService;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
@@ -116,6 +119,17 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
             result.put(type.toString(), organizationalUnitRepository.findNamesByType(type));
         }
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds) {
+        List<Long> idsList = organizationalUnitsIds.stream().toList();
+        OrganizationalUnitsAggregationRecord aggregationInfo = organizationalUnitRepository
+                                                        .calculateOrganizationalUnitsAggregation(idsList);
+        List<JobTitlesStatisticsRecord> jobTitlesStatistics = organizationalUnitRepository
+                                                        .calculateJobTitlesStatistics(idsList);
+        return mapper.convert(aggregationInfo,jobTitlesStatistics);
     }
 
     private List<OrganizationalUnit> findUnitHierarchy(OrganizationalUnit unit) {

@@ -7,6 +7,9 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
+
 @Mapper(componentModel = "spring")
 public interface OrganizationalUnitMapper {
 
@@ -36,4 +39,6 @@ public interface OrganizationalUnitMapper {
     OrganizationalUnitHierarchyDTO convert(OrganizationalUnit legalEntity, OrganizationalUnit division,
                                            OrganizationalUnit department, OrganizationalUnit group);
 
+    OrganizationalUnitsAggregationInfoDTO convert(OrganizationalUnitsAggregationRecord unitAggregation,
+                                                  List<JobTitlesStatisticsRecord> jobTitlesStatistics);
 }
