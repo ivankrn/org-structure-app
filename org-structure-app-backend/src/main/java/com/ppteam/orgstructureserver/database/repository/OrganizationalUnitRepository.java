@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrganizationalUnitRepository extends CrudRepository<OrganizationalUnit, Long>, CustomAggregationStatisticsRepository{
+public interface OrganizationalUnitRepository extends CrudRepository<OrganizationalUnit, Long>,
+        OrganizationalUnitCustomRepository {
 
 
     List<OrganizationalUnit> findByType(OrganizationalUnitType type);

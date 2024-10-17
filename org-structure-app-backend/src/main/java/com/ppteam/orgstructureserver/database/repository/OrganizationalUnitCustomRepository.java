@@ -4,7 +4,7 @@ package com.ppteam.orgstructureserver.database.repository;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface CustomAggregationStatisticsRepository {
+public interface OrganizationalUnitCustomRepository {
 
     OrganizationalUnitsAggregationRecord calculateOrganizationalUnitsAggregation(List<Long> organizationalUnitsIds);
 
@@ -14,10 +14,12 @@ public interface CustomAggregationStatisticsRepository {
             int totalPositionsAmount,
             int employeesAmount,
             int vacanciesAmount,
-            BigDecimal totalWageFund){}
+            BigDecimal totalWageFund
+    ) {}
 
     record JobTitlesStatisticsRecord(
             Long id,
             String name,
-            int amount){}
+            int amount
+    ) {}
 }

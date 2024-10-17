@@ -12,11 +12,12 @@ import com.ppteam.orgstructureserver.service.EmployeeService;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.OrganizationalUnitsAggregationRecord;
-import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.JobTitlesStatisticsRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
@@ -121,6 +122,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds) {
         List<Long> idsList = organizationalUnitsIds.stream().toList();
         OrganizationalUnitsAggregationRecord aggregationInfo = organizationalUnitRepository

@@ -18,6 +18,7 @@ public interface OrganizationalUnitService {
     List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name);
 
     OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId);
+
     Map<String, List<String>> findNamesByTypes();
 
     OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds);

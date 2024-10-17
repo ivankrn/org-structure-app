@@ -7,8 +7,8 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.OrganizationalUnitsAggregationRecord;
-import static com.ppteam.orgstructureserver.database.repository.CustomAggregationStatisticsRepository.JobTitlesStatisticsRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
 
 @Mapper(componentModel = "spring")
 public interface OrganizationalUnitMapper {

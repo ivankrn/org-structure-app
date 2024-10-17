@@ -106,8 +106,10 @@ public class OrganizationalUnitController {
                             schema = @Schema(implementation = OrganizationalUnitsAggregationInfoDTO.class))}),
     })
     @GetMapping("/aggregation")
-    public OrganizationalUnitsAggregationInfoDTO getAggregationInfo(@Parameter(description = "Список id организационных единиц")
-                                                    @RequestParam("ids") @NotNull List<Long> ids) {
+    public OrganizationalUnitsAggregationInfoDTO getAggregationInfo(
+            @Parameter(description = "Список id организационных единиц")
+            @RequestParam("ids") @NotNull List<Long> ids
+    ) {
         return organizationalUnitService.calculateAggregationInfo(ids);
     }
 }
