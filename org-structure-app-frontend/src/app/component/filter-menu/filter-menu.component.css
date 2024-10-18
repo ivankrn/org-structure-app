@@ -150,6 +150,7 @@ input[type='checkbox']{
 .summary {
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .summary-text {
@@ -190,5 +191,9 @@ input[type='checkbox']{
 
     input[type='checkbox'] label{
         font-size: 22px;
+    }
+
+    .summary-arrow {
+        width: 32px;
     }
 }

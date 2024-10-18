@@ -63,11 +63,11 @@
     padding: 0 16px;
     height: 24px;
     display: flex;
-    justify-content: space-between;
 }
 
 .buttons {
     border-radius: 4px;
+    margin-right: 12px;
 }
 
 input[type=search] {
@@ -108,7 +108,7 @@ input[type=search] {
     font-size: 12px;
     text-align: center;
     text-decoration: none;
-    margin: auto 0;
+    margin: auto 12px auto 0;
 }
 
 .center-checkbox {
@@ -162,7 +162,19 @@ input[type=search] {
         height: 44px;
     }
 
+    .button-text {
+        margin-right: 28px;
+    }
+
+    .buttons {
+        margin-right: 32px;
+    }
+
     #center {
-        margin-top: 4px;
+        width: 24px;
+    }
+
+    .center-text {
+        margin-left: 4px;
     }
 }

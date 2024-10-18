@@ -89,6 +89,7 @@ details[open] summary img {
 .summary {
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .summary-text {
@@ -113,6 +114,7 @@ details[open] summary img {
     .field {
         min-height: 48px;
         margin-bottom: 24px;
+        display: flex;
     }
 
     .info {
@@ -121,5 +123,9 @@ details[open] summary img {
 
     details {
         padding: 48px;
+    }
+
+    .summary-arrow {
+        width: 32px;
     }
 }

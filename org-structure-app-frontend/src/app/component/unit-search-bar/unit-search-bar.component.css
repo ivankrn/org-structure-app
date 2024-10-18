@@ -110,4 +110,9 @@ input[type='checkbox']:checked:after {
     .search-container {
         min-height: 48px;
     }
+
+    .arrow {
+        width: 15px;
+        margin-right: 16px;
+    }
 }
