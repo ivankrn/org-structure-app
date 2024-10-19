@@ -12,8 +12,8 @@ public interface OrganizationalUnitCustomRepository {
 
     record OrganizationalUnitsAggregationRecord(
             int totalPositionsAmount,
-            int employeesAmount,
             int vacanciesAmount,
+            int employeesAmount,
             BigDecimal totalWageFund
     ) {}
 
