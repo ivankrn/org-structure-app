@@ -1,10 +1,7 @@
 package com.ppteam.orgstructureserver.controller;
 
 import com.ppteam.orgstructureserver.database.model.OrganizationalUnitType;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitHierarchyDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithLocationsDTO;
-import com.ppteam.orgstructureserver.dto.OrganizationalUnitWithSubsidiariesDTO;
+import com.ppteam.orgstructureserver.dto.*;
 import com.ppteam.orgstructureserver.service.OrganizationalUnitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,4 +99,17 @@ public class OrganizationalUnitController {
         return organizationalUnitService.findNamesByTypes();
     }
 
+    @Operation(summary = "Получить агрегированную информацию по списку ID организационных единиц")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Агрегированная информация",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = OrganizationalUnitsAggregationInfoDTO.class))}),
+    })
+    @GetMapping("/aggregation")
+    public OrganizationalUnitsAggregationInfoDTO getAggregationInfo(
+            @Parameter(description = "Список id организационных единиц")
+            @RequestParam("ids") @NotNull List<Long> ids
+    ) {
+        return organizationalUnitService.calculateAggregationInfo(ids);
+    }
 }
