@@ -40,6 +40,10 @@ public class OrganizationalUnit {
     @NotBlank
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "head_id")
+    private Employee head;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

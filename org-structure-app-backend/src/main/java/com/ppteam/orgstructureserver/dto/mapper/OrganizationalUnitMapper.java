@@ -10,30 +10,30 @@ import java.util.List;
 import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
 import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { EmployeeMapper.class })
 public interface OrganizationalUnitMapper {
 
     @Mapping(source = "organizationalUnit.id", target = "id")
     @Mapping(source = "organizationalUnit.location.name", target = "location")
-    OrganizationalUnitDTO convert(OrganizationalUnit organizationalUnit, EmployeeDTO head);
+    OrganizationalUnitDTO convert(OrganizationalUnit organizationalUnit);
 
     @Mapping(source = "organizationalUnit.location.name", target = "location")
-    OrganizationalUnitSlimDTO convert(OrganizationalUnit organizationalUnit);
+    OrganizationalUnitSlimDTO convertToSlimDTO(OrganizationalUnit organizationalUnit);
 
     @Mapping(source = "organizationalUnit.id", target = "id")
     @Mapping(source = "organizationalUnit.name", target = "name")
     @Mapping(source = "organizationalUnit.type", target = "type")
     @Mapping(source = "organizationalUnit.location.name", target = "location")
     @Mapping(source = "subsidiaries", target = "subsidiaries")
-    OrganizationalUnitWithSubsidiariesDTO convert(OrganizationalUnit organizationalUnit, EmployeeDTO head,
-                                                  List<OrganizationalUnitDTO> subsidiaries, List<EmployeeDTO> employees);
+    OrganizationalUnitWithSubsidiariesDTO convert(OrganizationalUnit organizationalUnit,
+                                                  List<OrganizationalUnitDTO> subsidiaries,
+                                                  List<EmployeeDTO> employees);
 
     @Mapping(source = "organizationalUnit.id", target = "id")
     @Mapping(source = "organizationalUnit.name", target = "name")
     @Mapping(source = "organizationalUnit.type", target = "type")
     @Mapping(source = "organizationalUnit.location.name", target = "location")
-    @Mapping(source = "head", target = "head")
-    OrganizationalUnitWithLocationsDTO convert(OrganizationalUnit organizationalUnit, EmployeeDTO head,
+    OrganizationalUnitWithLocationsDTO convert(OrganizationalUnit organizationalUnit,
                                                List<LocationWithOrganizationalUnitsDTO> locations);
 
     OrganizationalUnitHierarchyDTO convert(OrganizationalUnit legalEntity, OrganizationalUnit division,
