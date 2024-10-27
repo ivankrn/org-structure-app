@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
 import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.JobTitlesStatisticsRecord;
+import static com.ppteam.orgstructureserver.database.repository.OrganizationalUnitCustomRepository.OrganizationalUnitsAggregationRecord;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
@@ -32,24 +32,17 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     public OrganizationalUnitWithSubsidiariesDTO findByIdWithSubsidiaries(long id) {
         OrganizationalUnit organizationalUnit = organizationalUnitRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
-        EmployeeDTO head = employeeService.findOrganizationalUnitHead(id);
         List<OrganizationalUnitDTO> subsidiaries = organizationalUnit.getSubsidiaries().stream()
-                .map(unit -> {
-                    EmployeeDTO unitHead = employeeService.findOrganizationalUnitHead(unit.getId());
-                    return mapper.convert(unit, unitHead);
-                })
+                .map(mapper::convert)
                 .toList();
         List<EmployeeDTO> employees = employeeService.findByParentIdSortByFullNameAsc(id);
-        return mapper.convert(organizationalUnit, head, subsidiaries, employees);
+        return mapper.convert(organizationalUnit, subsidiaries, employees);
     }
 
     @Override
     public List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type) {
         return organizationalUnitRepository.findByType(type).stream()
-                .map(organizationalUnit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
-                    return mapper.convert(organizationalUnit, head);
-                })
+                .map(mapper::convert)
                 .toList();
     }
 
@@ -61,7 +54,6 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
         }
         return organizationalUnitRepository.findByType(type).stream()
                 .map(unit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(unit.getId());
                     Set<OrganizationalUnit> subsidiaries = unit.getSubsidiaries();
                     Map<Location, List<OrganizationalUnit>> groupedByLocation = subsidiaries.stream()
                             .collect(groupingBy(OrganizationalUnit::getLocation));
@@ -69,16 +61,12 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
                             .map(entry -> {
                                 String location = entry.getKey().getName();
                                 List<OrganizationalUnitDTO> organizationalUnits = entry.getValue().stream()
-                                        .map(organizationalUnit -> {
-                                            EmployeeDTO organizationalUnitHead =
-                                                    employeeService.findOrganizationalUnitHead(organizationalUnit.getId());
-                                            return mapper.convert(organizationalUnit, organizationalUnitHead);
-                                        })
+                                        .map(mapper::convert)
                                         .toList();
                                 return new LocationWithOrganizationalUnitsDTO(location, organizationalUnits);
                             })
                             .toList();
-                    return mapper.convert(unit, head, locations);
+                    return mapper.convert(unit, locations);
                 })
                 .toList();
     }
@@ -86,10 +74,7 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     @Override
     public List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name) {
         return organizationalUnitRepository.findByNameContainingIgnoreCase(name).stream()
-                .map(unit -> {
-                    EmployeeDTO head = employeeService.findOrganizationalUnitHead(unit.getId());
-                    return mapper.convert(unit, head);
-                })
+                .map(mapper::convert)
                 .toList();
     }
 
@@ -126,10 +111,10 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     public OrganizationalUnitsAggregationInfoDTO calculateAggregationInfo(Collection<Long> organizationalUnitsIds) {
         List<Long> idsList = organizationalUnitsIds.stream().toList();
         OrganizationalUnitsAggregationRecord aggregationInfo = organizationalUnitRepository
-                                                        .calculateOrganizationalUnitsAggregation(idsList);
+                .calculateOrganizationalUnitsAggregation(idsList);
         List<JobTitlesStatisticsRecord> jobTitlesStatistics = organizationalUnitRepository
-                                                        .calculateJobTitlesStatistics(idsList);
-        return mapper.convert(aggregationInfo,jobTitlesStatistics);
+                .calculateJobTitlesStatistics(idsList);
+        return mapper.convert(aggregationInfo, jobTitlesStatistics);
     }
 
     private List<OrganizationalUnit> findUnitHierarchy(OrganizationalUnit unit) {

@@ -41,10 +41,4 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(mapper::convertToDTO).toList();
     }
 
-    @Override
-    public EmployeeDTO findOrganizationalUnitHead(long organizationalUnitId) {
-        return employeeRepository.findOrganizationalUnitHead(organizationalUnitId).map(mapper::convertToDTO)
-                .orElse(null);
-    }
-
 }
