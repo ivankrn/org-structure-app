@@ -1,68 +1,110 @@
 <details open id="employee-info">
     <div *ngIf="employee">
-        <div class="info">
-            <div class="title">Имя</div>
-            <div class="field">
-                <div class="value">{{ employee.fullName }}</div>
-            </div>
-        </div>
-        <div class="info">
-            <div class="title">Стаж</div>
-            <div class="field">
-                <div class="value">{{ getExperience(employee.employmentDate) }}</div>
-            </div>
-        </div>
-        <div class="info">
-            <div class="title">Должность</div>
-            <div class="field">
-                <div class="value">{{ employee.jobTitle }}</div>
-            </div>
-        </div>
-        <div class="info">
-            <div class="title">Тип работы</div>
-            <div class="field">
-                <div class="value">{{ employee.jobType }}</div>
-            </div>
-        </div>
-        <div class="info">
-            <div class="title">Проекты</div>
-            @for (projectName of employee.projects; track projectName.id) {
-                <div class="field field_projects">
-                    <div class="value">{{ projectName.name }}</div>
+        <div id="employee-profile">
+            <div class="title">Профиль</div>
+            <div id="employee-profile-details">
+                <div class="profile-image">
+                    <!-- TODO сделать получение изображения с бэкенда -->
+                    <img src="http://45.95.234.130/content/images/profile/default_profile_image.png" alt="Employee image">
                 </div>
-            } @empty {
-                <div class="field">
-                    <div class="value"></div>
+                <div class="profile-name">
+                    <div class="value">{{ employee.fullName }}</div>
+                    <!-- TODO спросить, одинаковые ли цвета у статусов -->
+                    <div *ngIf="employee.status" class="employee-status">{{ '• ' + (employee.status | asRussianText) }}</div>
                 </div>
-            }
-        </div>
-        <div class="info">
-            <div class="title">Группа</div>
-            <div class="field">
-                <div class="value">{{ employee.organizationalUnitHierarchy?.group?.name }}</div>
             </div>
         </div>
-        <div class="info">
-            <div class="title">Отдел</div>
-            <div class="field">
-                <div class="value">{{ employee.organizationalUnitHierarchy?.department?.name }}</div>
+        <details open id="employee-details">
+            <div>
+                <div class="info">
+                    <div class="title">Зарплата, рублей</div>
+                    <div class="field">
+                        <div class="value">{{ employee.salary }}</div>
+                    </div>
+                </div>
+                <div *ngIf="!employee.isVacancy" class="info">
+                    <div class="title">Стаж работы в компании, лет</div>
+                    <div class="field">
+                        <div class="value">{{ getExperience(employee.employmentDate) }}</div>
+                    </div>
+                </div>
+                <div *ngIf="!employee.isVacancy" class="info">
+                    <div class="title">Общий стаж работы, лет</div>
+                    <div class="field">
+                        <div class="value">{{ employee.totalYearsExperience }}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">Должность</div>
+                    <div class="field">
+                        <div class="value">{{ employee.jobTitle }}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">Тип работы</div>
+                    <div class="field">
+                        <div class="value">{{ employee.jobType }}</div>
+                    </div>
+                </div>
+                <div *ngIf="!employee.isVacancy" class="info">
+                    <div class="title">Электронная почта</div>
+                    <div class="field">
+                        <div class="value">{{ employee.email }}</div>
+                    </div>
+                </div>
+                <div *ngIf="!employee.isVacancy" class="info">
+                    <div class="title">Проекты</div>
+                    @for (projectName of employee.projects; track projectName.id) {
+                        <div class="field field_projects">
+                            <div class="value">{{ projectName.name }}</div>
+                        </div>
+                    } @empty {
+                        <div class="field">
+                            <div class="value"></div>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
-        <div class="info">
-            <div class="title">Подразделение</div>
-            <div class="field">
-                <div class="value">{{ employee.organizationalUnitHierarchy?.division?.name }}</div>
+            <summary class="summary">
+                <span class="summary-text">О сотруднике</span>
+                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+        </details>
+        <details open id="job-position-info">
+            <div>
+                <div class="info">
+                    <div class="title">Группа</div>
+                    <div class="field">
+                        <div class="value">{{ employee.organizationalUnitHierarchy?.group?.name }}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">Отдел</div>
+                    <div class="field">
+                        <div class="value">{{ employee.organizationalUnitHierarchy?.department?.name }}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">Подразделение</div>
+                    <div class="field">
+                        <div class="value">{{ employee.organizationalUnitHierarchy?.division?.name }}</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">Локация</div>
+                    <div class="field">
+                        <div class="value">{{ employee.organizationalUnit?.location }}</div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="info">
-            <div class="title">Локация</div>
-            <div class="field">
-                <div class="value">{{ employee.organizationalUnit?.location }}</div>
-            </div>
-        </div>
+            <summary class="summary">
+                <span class="summary-text">О позиции</span>
+                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+        </details>
     </div>
     <summary class="summary">
-        <span class="summary-text">Сведения о сотруднике</span>
+        <span class="summary-text" id="total-summary">Сведения</span>
         <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
     </summary>
 </details>

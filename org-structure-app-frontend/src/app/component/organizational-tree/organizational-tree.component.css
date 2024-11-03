@@ -1,7 +1,7 @@
 #employee-info {
     position: fixed;
     z-index: 100;
-    width: 248px;
+    width: 300px;
     left: calc(50vw - 600px);
 }
 
