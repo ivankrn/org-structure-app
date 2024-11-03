@@ -1,0 +1,6 @@
+export enum EmployeeStatus {
+    ON_MATERNITY_LEAVE = "ON_MATERNITY_LEAVE",
+    ON_VACATION = "ON_VACATION",
+    ON_SICK_LEAVE = "ON_SICK_LEAVE",
+    ACTIVE = "ACTIVE"
+}
