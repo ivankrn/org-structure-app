@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { OrganizationalUnit } from '../model/organizational-unit.model';
 import { OrganizationalUnitHierarchy } from '../model/organizational-unit-hierarchy.model';
 import { environment } from '../../environments/environment';
 import { OrganizationalUnitType } from '../model/organizational-unit-type.enum';
+import { OrganizationUnitAggregation } from '../model/organization-unit-aggregation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +39,22 @@ export class OrganizationalUnitService {
 
   public findNamesByTypes(): Observable<Map<string, string[]>> {
     return this.httpClient.get<Map<string, string[]>>(`${this.apiUrl}/names`);
+  }
+
+  public aggregateByIds(ids: number[]): Observable<OrganizationUnitAggregation> {
+    if (!ids?.length) {
+      return of({
+        totalPositionsAmount: 0,
+        employeesAmount: 0,
+        vacanciesAmount: 0,
+        totalWageFund: 0,
+        jobTitlesStatistics: [],
+      })
+    }
+
+    const queryParamsArray: string[] = ids.map((id: number)=> `ids=${id}`);
+    const queryParamsString: string = queryParamsArray.join('&');
+
+    return this.httpClient.get<OrganizationUnitAggregation>(`${this.apiUrl}/aggregation?${queryParamsString}`);
   }
 }

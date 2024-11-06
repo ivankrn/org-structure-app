@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import * as d3 from 'd3';
-import { concatMap, forkJoin, map, tap } from 'rxjs';
+import { concatMap, forkJoin, map, Subject, tap } from 'rxjs';
 import { Employee } from '../../model/employee.model';
 import { OrganizationalUnitHierarchy } from '../../model/organizational-unit-hierarchy.model';
 import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
@@ -27,18 +27,27 @@ import { ProjectService } from '../../service/project.service';
 import { Project } from '../../model/project.model';
 import { JobTitleService } from '../../service/job-title.service';
 import { JobTypeService } from '../../service/job-type.service';
+import { FooterComponent } from '../footer/footer.component';
+import { SELECTED_UNITS } from '../../tokens/selected-units.token';
 
 @Component({
   selector: 'app-organizational-tree',
   standalone: true,
-  imports: [CommonModule, EmployeeInfoComponent, FilterMenuComponent, TreeSearchBarComponent],
-  providers: [OrganizationalUnitService, EmployeeService, ProjectService, LocationService, WithUnitTypeNamePipe],
+  imports: [CommonModule, EmployeeInfoComponent, FilterMenuComponent, TreeSearchBarComponent, FooterComponent],
+  providers: [
+    OrganizationalUnitService,
+    EmployeeService,
+    ProjectService,
+    LocationService,
+    WithUnitTypeNamePipe,
+    { provide: SELECTED_UNITS, useValue: new Subject<number[]>() }
+  ],
   templateUrl: './organizational-tree.component.html',
   styleUrl: './organizational-tree.component.css'
 })
 export class OrganizationalTreeComponent implements OnInit {
 
-  protected setCenter: boolean = false;
+  protected isShowFooter: WritableSignal<boolean> = signal(false);
 
   private mainTree?: OrganizationalTreeNode;
   private treeData?: OrganizationalTreeNode;
@@ -64,13 +73,13 @@ export class OrganizationalTreeComponent implements OnInit {
   private redrawAnimationDurationInMs = 250;
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
 
-  constructor(
-    private organizationalUnitService: OrganizationalUnitService,
-    private projectService: ProjectService,
-    private employeeService: EmployeeService,
-    private locationService: LocationService,
-    private jobTitleService: JobTitleService,
-    private jobTypeService: JobTypeService) { }
+  private organizationalUnitService: OrganizationalUnitService = inject(OrganizationalUnitService);
+  private projectService: ProjectService = inject(ProjectService);
+  private employeeService: EmployeeService = inject(EmployeeService);
+  private locationService: LocationService = inject(LocationService);
+  private jobTitleService: JobTitleService = inject(JobTitleService);
+  private jobTypeService: JobTypeService = inject(JobTypeService);
+  private selectedUnits: Subject<number[]> = inject(SELECTED_UNITS);
 
   ngOnInit(): void {
     this.initTree();
@@ -84,6 +93,8 @@ export class OrganizationalTreeComponent implements OnInit {
         this.mainTree = convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
         this.treeData = this.mainTree;
         this.redrawTree();
+        /** У корня id=1, поэтому при его передаче мы получаем все дерево */
+        this.selectedUnits.next([1]);
       });
     this.locationService.findAll()
       .subscribe(data => {

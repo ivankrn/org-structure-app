@@ -83,6 +83,10 @@ details[open] summary img {
     rotate: 180deg;
 }
 
+details[open] summary {
+    margin-bottom: 16px;
+}
+
 .info {
     margin-top: 12px;
 }
@@ -130,10 +134,6 @@ details[open] summary img {
 .summary-text {
     font-size: 15px;
     line-height: 24px;
-}
-
-#total-summary {
-    margin-bottom: 16px;
 }
 
 @media (min-width: 3024px) {

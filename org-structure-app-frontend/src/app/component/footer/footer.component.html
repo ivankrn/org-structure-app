@@ -1,0 +1,89 @@
+<details>
+    <summary id="footer-button" (click)="changeFooterState()">
+        <img class="summary-arrow" src="../../../assets/img/footer-button.svg" alt="">
+    </summary>
+    <div id="footer-body">
+        <div class="table-row">
+            <div class="row-title row-title_header">
+                <span class="text"
+                      [ngClass]="{'disabled': currentSwitch() !== footerSwitch.quantity}"
+                      (click)="currentSwitch.set(footerSwitch.quantity)"
+                >Численность
+                </span>
+                <span class="text"
+                      [ngClass]="{'disabled': currentSwitch() !== footerSwitch.payroll}"
+                      (click)="currentSwitch.set(footerSwitch.payroll)"
+                >ФОТ</span>
+            </div>
+            <div class="row-amount">
+                <span class="text">Итого</span>
+            </div>
+        </div>
+        @switch (currentSwitch()) {
+            @case (footerSwitch.quantity) {
+                <details>
+                    <summary>
+                        <div class="table-row">
+                            <div class="row-title">
+                                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+                                <span class="text">Количество позиций</span>
+                            </div>
+                            <div class="row-amount">
+                                <span class="text">{{totalPositionsAmount()}}</span>
+                            </div>
+                        </div>
+                    </summary>
+                    <div class="table-row">
+                        <div class="row-title row-title_inner">
+                            <span class="text">Занятые позиции</span>
+                        </div>
+                        <div class="row-amount">
+                            <span class="text">{{employeesAmount()}}</span>
+                        </div>
+                    </div>
+                    <div class="table-row">
+                        <div class="row-title row-title_inner">
+                            <span class="text">Вакансии</span>
+                        </div>
+                        <div class="row-amount">
+                            <span class="text">{{vacanciesAmount()}}</span>
+                        </div>
+                    </div>
+                </details>
+                <details>
+                    <summary>
+                        <div class="table-row">
+                            <div class="row-title">
+                                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+                                <span class="text">Число сотрудников на должностях</span>
+                            </div>
+                            <div class="row-amount">
+                                <span class="text">{{totalPositionsAmount()}}</span>
+                            </div>
+                        </div>
+                    </summary>
+                    @for (jobTitle of jobTitleStatistic(); track jobTitle.id) {
+                        <div class="table-row">
+                            <div class="row-title row-title_inner">
+                                <span class="text">{{jobTitle.name}}</span>
+                            </div>
+                            <div class="row-amount">
+                                <span class="text">{{jobTitle.amount}}</span>
+                            </div>
+                        </div>
+                    }
+                </details>
+            }
+            @case (footerSwitch.payroll) {
+                <div class="table-row">
+                    <div class="row-title">
+                        <span class="text">ФОТ, тыс.рублей</span>
+                    </div>
+                    <div class="row-amount">
+                        <span class="text">{{totalWageFund()}}</span>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</details>
