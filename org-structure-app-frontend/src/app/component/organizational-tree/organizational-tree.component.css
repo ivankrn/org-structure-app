@@ -19,6 +19,10 @@
     right: calc(50vw - 600px);
 }
 
+#footer {
+    position: fixed;
+}
+
 #graph-area {
     z-index: -1;
 }
