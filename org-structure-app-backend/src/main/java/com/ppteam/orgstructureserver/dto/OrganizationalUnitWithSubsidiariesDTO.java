@@ -8,6 +8,7 @@ public record OrganizationalUnitWithSubsidiariesDTO(
         String type,
         String location,
         EmployeeDTO head,
+        EmployeeDTO deputy,
         List<OrganizationalUnitDTO> subsidiaries,
         List<EmployeeDTO> employees) {
 }
