@@ -59,9 +59,9 @@ export class OrganizationalTreeComponent implements OnInit {
   private filterChain?: FilterChainNode;
   selectedEmployee?: Employee;
   locationNames?: string[];
-  divisionNames?: string[];
-  departmentNames?: string[];
-  groupNames?: string[];
+  divisions?: OrganizationalUnit[];
+  departments?: OrganizationalUnit[];
+  groups?: OrganizationalUnit[];
   jobTitles?: string[];
   jobTypes?: string[];
 
@@ -100,12 +100,15 @@ export class OrganizationalTreeComponent implements OnInit {
       .subscribe(data => {
         this.locationNames = data.map(location => location.name);
       });
-    this.organizationalUnitService.findNamesByTypes()
-      .subscribe(data => {
-        this.divisionNames = data[OrganizationalUnitType.DIVISION];
-        this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
-        this.groupNames = data[OrganizationalUnitType.GROUP];
-      });
+    this.organizationalUnitService
+      .findByTypeAndName(OrganizationalUnitType.DIVISION)
+      .subscribe(data => this.divisions = data);
+    this.organizationalUnitService
+      .findByTypeAndName(OrganizationalUnitType.DEPARTMENT)
+      .subscribe(data => this.departments = data);
+    this.organizationalUnitService
+      .findByTypeAndName(OrganizationalUnitType.GROUP)
+      .subscribe(data => this.groups = data);
     this.jobTitleService.findAll().subscribe(data => this.jobTitles = data.map(jobTitle => jobTitle.name));
     this.jobTypeService.findAll().subscribe(data => this.jobTypes = data.map(jobType => jobType.name));
   }
@@ -337,6 +340,16 @@ export class OrganizationalTreeComponent implements OnInit {
 
   updateSettings(filterSettings: FilterMenuSettings): void {
     this.filterSettings = filterSettings;
+    const selectedUnitsIds = [
+      ...filterSettings.selectedDivisionsIds(),
+      ...filterSettings.selectedDepartmentsIds(),
+      ...filterSettings.selectedGroupsIds()
+    ];
+    if (selectedUnitsIds.length == 0) {
+      // если нет фильтров, считаем по корню
+      selectedUnitsIds.push(1)
+    }
+    this.selectedUnits.next(selectedUnitsIds);
     this.redrawTree();
   }
 

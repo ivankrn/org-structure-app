@@ -2,15 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
-import { LocationService } from '../../service/location.service';
 import { FilterMenuSettings } from './filter-menu-settings.model';
-import { UnitNamesSearchBarComponent } from '../unit-search-bar/unit-search-bar.component';
+import { UnitSearchBarComponent } from '../unit-search-bar/unit-search-bar.component';
+import { OrganizationalUnit } from '../../model/organizational-unit.model';
+import { NamesSearchBarComponent } from "../name-search-bar/name-search-bar.component";
 
 @Component({
   selector: 'filter-menu',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, UnitNamesSearchBarComponent],
-  providers: [LocationService],
+  imports: [ReactiveFormsModule, CommonModule, UnitSearchBarComponent, NamesSearchBarComponent],
   templateUrl: './filter-menu.component.html',
   styleUrl: './filter-menu.component.css'
 })
@@ -20,39 +20,39 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   @Input()
   set locationNames(value: string[]) {
     this._locationNames = value;
-    value.forEach(name => this.locations.addControl(name, this.formBuilder.control(false)));
+    value.forEach(name => this.locationsFormGroup.addControl(name, this.formBuilder.control(false)));
   }
   selectedLocationNames: string[] = [];
   hasLocationsFilter: boolean = false;
   clearLocationsFilter: Subject<void> = new Subject<void>();
 
-  _divisionNames!: string[];
+  _divisions!: OrganizationalUnit[];
   @Input()
-  set divisionNames(value: string[]) {
-    this._divisionNames = value;
-    value.forEach(name => this.divisions.addControl(name, this.formBuilder.control(false)));
+  set divisions(value: OrganizationalUnit[]) {
+    this._divisions = value;
+    value.forEach(u => this.divisionsFormGroup.addControl(u.id.toString(), this.formBuilder.control(false)));
   }
-  selectedDivisionNames: string[] = [];
+  selectedDivisionIds: number[] = [];
   hasDivisionsFilter: boolean = false;
   clearDivisionsFilter: Subject<void> = new Subject<void>();
 
-  _departmentNames!: string[];
+  _departments!: OrganizationalUnit[];
   @Input()
-  set departmentNames(value: string[]) {
-    this._departmentNames = value;
-    value.forEach(name => this.departments.addControl(name, this.formBuilder.control(false)));
+  set departments(value: OrganizationalUnit[]) {
+    this._departments = value;
+    value.forEach(u => this.departmentsFormGroup.addControl(u.id.toString(), this.formBuilder.control(false)));
   }
-  selectedDepartmentNames: string[] = [];
+  selectedDepartmentIds: number[] = [];
   hasDepartmentsFilter: boolean = false;
   clearDepartmentsFilter: Subject<void> = new Subject<void>();
 
-  _groupNames!: string[];
+  _groups!: OrganizationalUnit[];
   @Input()
-  set groupNames(value: string[]) {
-    this._groupNames = value;
-    value.forEach(name => this.groups.addControl(name, this.formBuilder.control(false)));
+  set groups(value: OrganizationalUnit[]) {
+    this._groups = value;
+    value.forEach(u => this.groupsFormGroup.addControl(u.id.toString(), this.formBuilder.control(false)));
   }
-  selectedGroupNames: string[] = [];
+  selectedGroupIds: number[] = [];
   hasGroupsFilter: boolean = false;
   clearGroupsFilter: Subject<void> = new Subject<void>();
 
@@ -61,7 +61,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   set jobTitles(value: string[]) {
     this._jobTitles = value;
     // @ts-ignore
-    value.forEach(name => this.jobTitles.addControl(name, this.formBuilder.control(false)));
+    value.forEach(name => this.jobTitlesFormGroup.addControl(name, this.formBuilder.control(false)));
   }
   selectedJobTitles: string[] = [];
   hasJobTitlesFilter: boolean = false;
@@ -72,7 +72,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   set jobTypes(value: string[]) {
     this._jobTypes = value;
     // @ts-ignore
-    value.forEach(name => this.jobTypes.addControl(name, this.formBuilder.control(false)));
+    value.forEach(name => this.jobTypesFormGroup.addControl(name, this.formBuilder.control(false)));
   }
   selectedJobTypes: string[] = [];
   hasJobTypesFilter: boolean = false;
@@ -105,38 +105,39 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   }
 
   updateSettings() {
-    this.newSettingsEvent.emit(<FilterMenuSettings>this.settingsForm.value);
+    const filterSettings: FilterMenuSettings = Object.assign(new FilterMenuSettings(), this.settingsForm.value);
+    this.newSettingsEvent.emit(filterSettings);
   }
 
-  get locations() {
+  get locationsFormGroup() {
     return this.settingsForm.get("locations") as FormGroup;
   }
 
-  get divisions() {
+  get divisionsFormGroup() {
     return this.settingsForm.get("divisions") as FormGroup;
   }
 
-  get departments() {
+  get departmentsFormGroup() {
     return this.settingsForm.get("departments") as FormGroup;
   }
 
-  get groups() {
+  get groupsFormGroup() {
     return this.settingsForm.get("groups") as FormGroup;
   }
 
-  get jobTitles() {
+  get jobTitlesFormGroup() {
     // @ts-ignore
     return this.settingsForm.get("jobTitles") as FormGroup;
   }
 
-  get jobTypes() {
+  get jobTypesFormGroup() {
     // @ts-ignore
     return this.settingsForm.get("jobTypes") as FormGroup;
   }
 
   selectLocationName(name: string): void {
-    const isChecked = this.locations.controls[name]?.value;
-    this.locations.controls[name]?.patchValue(!isChecked);
+    const isChecked = this.locationsFormGroup.controls[name]?.value;
+    this.locationsFormGroup.controls[name]?.patchValue(!isChecked);
     if (this.selectedLocationNames.includes(name)) {
       this.selectedLocationNames = this.selectedLocationNames.filter(n => n !== name);
     } else {
@@ -150,87 +151,87 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     this.hasLocationsFilter = false;
     this.clearLocationsFilter.next();
     this._locationNames.forEach((name: string) => {
-      const isChecked = this.locations.controls[name]?.value;
+      const isChecked = this.locationsFormGroup.controls[name]?.value;
       if (isChecked) {
-        this.locations.controls[name]?.patchValue(false);
+        this.locationsFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
 
-  selectDivisionName(name: string): void {
-    const isChecked = this.divisions.get(name)?.value;
-    this.divisions.get(name)?.patchValue(!isChecked);
-    if (this.selectedDivisionNames.includes(name)) {
-      this.selectedDivisionNames = this.selectedDivisionNames.filter(n => n !== name);
+  selectDivision(unit: OrganizationalUnit): void {
+    const isChecked = this.divisionsFormGroup.get(unit.id.toString())?.value;
+    this.divisionsFormGroup.get(unit.id.toString())?.patchValue(!isChecked);
+    if (this.selectedDivisionIds.includes(unit.id)) {
+      this.selectedDivisionIds = this.selectedDivisionIds.filter(n => n !== unit.id);
     } else {
-      this.selectedDivisionNames.push(name);
+      this.selectedDivisionIds.push(unit.id);
     }
-    this.hasDivisionsFilter = !!this.selectedDivisionNames.length;
+    this.hasDivisionsFilter = !!this.selectedDivisionIds.length;
   }
 
   clearDivisions(): void {
-    this.selectedDivisionNames = [];
+    this.selectedDivisionIds = [];
     this.hasDivisionsFilter = false;
     this.clearDivisionsFilter.next();
-    this._divisionNames.forEach((name: string) => {
-      const isChecked = this.divisions.controls[name]?.value;
+    Object.keys(this.divisionsFormGroup.controls).forEach((name: string) => {
+      const isChecked = this.divisionsFormGroup.controls[name]?.value;
       if (isChecked) {
-        this.divisions.controls[name]?.patchValue(false);
+        this.divisionsFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
 
-  selectDepartmentName(name: string): void {
-    const isChecked = this.departments.get(name)?.value;
-    this.departments.get(name)?.patchValue(!isChecked);
-    if (this.selectedDepartmentNames.includes(name)) {
-      this.selectedDepartmentNames = this.selectedDepartmentNames.filter(n => n !== name);
+  selectDepartment(unit: OrganizationalUnit): void {
+    const isChecked = this.departmentsFormGroup.get(unit.id.toString())?.value;
+    this.departmentsFormGroup.get(unit.id.toString())?.patchValue(!isChecked);
+    if (this.selectedDepartmentIds.includes(unit.id)) {
+      this.selectedDepartmentIds = this.selectedDepartmentIds.filter(n => n !== unit.id);
     } else {
-      this.selectedDepartmentNames.push(name);
+      this.selectedDepartmentIds.push(unit.id);
     }
-    this.hasDepartmentsFilter = !!this.selectedDepartmentNames.length;
+    this.hasDepartmentsFilter = !!this.selectedDepartmentIds.length;
   }
 
-  cleardepartments(): void {
-    this.selectedDepartmentNames = [];
+  clearDepartments(): void {
+    this.selectedDepartmentIds = [];
     this.hasDepartmentsFilter = false;
     this.clearDepartmentsFilter.next();
-    this._departmentNames.forEach((name: string) => {
-      const isChecked = this.departments.controls[name]?.value;
+    Object.keys(this.departmentsFormGroup.controls).forEach((name: string) => {
+      const isChecked = this.departmentsFormGroup.controls[name]?.value;
       if (isChecked) {
-        this.departments.controls[name]?.patchValue(false);
+        this.departmentsFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
 
-  selectGroupName(name: string): void {
-    const isChecked = this.groups.get(name)?.value;
-    this.groups.get(name)?.patchValue(!isChecked);
-    if (this.selectedGroupNames.includes(name)) {
-      this.selectedGroupNames = this.selectedGroupNames.filter(n => n !== name);
+  selectGroup(unit: OrganizationalUnit): void {
+    const isChecked = this.groupsFormGroup.get(unit.id.toString())?.value;
+    this.groupsFormGroup.get(unit.id.toString())?.patchValue(!isChecked);
+    if (this.selectedGroupIds.includes(unit.id)) {
+      this.selectedGroupIds = this.selectedGroupIds.filter(n => n !== unit.id);
     } else {
-      this.selectedGroupNames.push(name);
+      this.selectedGroupIds.push(unit.id);
     }
-    this.hasGroupsFilter = !!this.selectedGroupNames.length;
+    this.hasGroupsFilter = !!this.selectedGroupIds.length;
   }
 
   clearGroups(): void {
-    this.selectedGroupNames = [];
+    this.selectedGroupIds = [];
     this.hasGroupsFilter = false;
     this.clearGroupsFilter.next();
-    this._groupNames.forEach((name: string) => {
-      const isChecked = this.groups.controls[name]?.value;
+    Object.keys(this.groupsFormGroup.controls).forEach((name: string) => {
+      const isChecked = this.groupsFormGroup.controls[name]?.value;
       if (isChecked) {
-        this.groups.controls[name]?.patchValue(false);
+        this.groupsFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
 
   selectJobTitle(name: string): void {
     // @ts-ignore
-    const isChecked = this.jobTitles.get(name)?.value;
+    const isChecked = this.jobTitlesFormGroup.get(name)?.value;
     // @ts-ignore
-    this.jobTitles.get(name)?.patchValue(!isChecked);
+    this.jobTitlesFormGroup.get(name)?.patchValue(!isChecked);
     if (this.selectedJobTitles.includes(name)) {
       this.selectedJobTitles = this.selectedJobTitles.filter(n => n !== name);
     } else {
@@ -245,19 +246,19 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     this.clearJobTitlesFilter.next();
     this._jobTitles.forEach((name: string) => {
       // @ts-ignore
-      const isChecked = this.jobTitles.controls[name]?.value;
+      const isChecked = this.jobTitlesFormGroup.controls[name]?.value;
       if (isChecked) {
         // @ts-ignore
-        this.jobTitles.controls[name]?.patchValue(false);
+        this.jobTitlesFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
 
   selectJobType(name: string): void {
     // @ts-ignore
-    const isChecked = this.jobTypes.get(name)?.value;
+    const isChecked = this.jobTypesFormGroup.get(name)?.value;
     // @ts-ignore
-    this.jobTypes.get(name)?.patchValue(!isChecked);
+    this.jobTypesFormGroup.get(name)?.patchValue(!isChecked);
     if (this.selectedJobTypes.includes(name)) {
       this.selectedJobTypes = this.selectedJobTypes.filter(n => n !== name);
     } else {
@@ -272,11 +273,12 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     this.clearJobTypesFilter.next();
     this._jobTypes.forEach((name: string) => {
       // @ts-ignore
-      const isChecked = this.jobTypes.controls[name]?.value;
+      const isChecked = this.jobTypesFormGroup.controls[name]?.value;
       if (isChecked) {
         // @ts-ignore
-        this.jobTypes.controls[name]?.patchValue(false);
+        this.jobTypesFormGroup.controls[name]?.patchValue(false);
       }
     });
   }
+
 }

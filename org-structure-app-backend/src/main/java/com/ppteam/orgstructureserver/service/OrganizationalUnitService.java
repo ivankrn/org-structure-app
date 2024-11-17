@@ -11,11 +11,16 @@ public interface OrganizationalUnitService {
 
     OrganizationalUnitWithSubsidiariesDTO findByIdWithSubsidiaries(long id);
 
-    List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type);
+    List<OrganizationalUnitDTO> findAllWithFilter(
+        OrganizationalUnitType type,
+        String name
+    );
 
-    List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type, String property);
-
-    List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name);
+    List<OrganizationalUnitWithLocationsDTO> findAllWithFilterGroupByProperty(
+        OrganizationalUnitType type,
+        String name,
+        String property
+    );
 
     OrganizationalUnitHierarchyDTO findHierarchyByUnitId(long unitId);
 

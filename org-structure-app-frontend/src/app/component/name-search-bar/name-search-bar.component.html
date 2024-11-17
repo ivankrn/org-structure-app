@@ -1,0 +1,17 @@
+<div class="search-container" (click)="selectOpened = !selectOpened">
+    <input type="search" placeholder="Выберите"
+           [readOnly]="true"
+           [(ngModel)]="selectedNamesString"
+    >
+    <img class="arrow" [ngClass]="{'rotate': selectOpened}" src="../../../assets/img/select.svg" alt="">
+</div>
+@if (selectOpened) {
+    <div class="select" [ngStyle]="{'height': (Math.min(20 * names.length, 160)).toString() + 'px'}">
+        @for (name of names; track name) {
+            <label class="option" (click)="selectName(name)">
+                <input type="checkbox" [checked]="selectedNamesArray.includes(name)">
+                {{name}}
+            </label>
+        }
+    </div>
+}
