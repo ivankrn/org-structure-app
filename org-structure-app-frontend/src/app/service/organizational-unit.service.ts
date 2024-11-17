@@ -29,6 +29,17 @@ export class OrganizationalUnitService {
     return this.httpClient.get<OrganizationalUnit[]>(`${this.apiUrl}?name=${name}`);
   }
 
+  public findByTypeAndName(type?: OrganizationalUnitType, name?: string): Observable<OrganizationalUnit[]> {
+    let url = this.apiUrl;
+    if (type) {
+      url += `?type=${type}`
+    }
+    if (name) {
+      name += `?name=${name}`
+    }
+    return this.httpClient.get<OrganizationalUnit[]>(url);
+  }
+
   public findByTypeNamesContaining(type: OrganizationalUnitType, text: string): Observable<string[]> {
     return this.httpClient.get<string[]>(`${this.apiUrl}/names?type=${type}&name=${text}`);
   }

@@ -51,27 +51,29 @@ public class OrganizationalUnitController {
                     description = "Если указан неправильный тип или свойство для группировки",
                     content = @Content),
     })
-    @GetMapping(params = "type")
-    public List<OrganizationalUnitDTO> findUnitsByType(@Parameter(description = "Тип организационной единицы")
-                                                       @RequestParam(required = false) OrganizationalUnitType type) {
-        return organizationalUnitService.findAllByType(type);
+    @GetMapping
+    public List<OrganizationalUnitDTO> findUnitsWithFilter(
+        @Parameter(description = "Тип организационной единицы")
+        @RequestParam(required = false) OrganizationalUnitType type,
+        @Parameter(description = "Название для поиска")
+        @RequestParam(required = false) String name
+    ) {
+        return organizationalUnitService.findAllWithFilter(type, name);
     }
 
     @GetMapping(params = {"type", "group-by"})
-    public List<OrganizationalUnitWithLocationsDTO> findUnitsByTypeGroupByProperty(
+    public List<OrganizationalUnitWithLocationsDTO> findUnitsWithFilterGroupByProperty(
             @Parameter(description = "Тип организационной единицы")
             @RequestParam(required = false) OrganizationalUnitType type,
+            @Parameter(description = "Название для поиска")
+            @RequestParam(required = false) String name,
             @Parameter(
                     description = "Свойство для группировки",
-                    schema = @Schema(allowableValues = "location"))
-            @RequestParam(value = "group-by", required = false) String property) {
-        return organizationalUnitService.findAllByTypeGroupByProperty(type, property);
-    }
-
-    @GetMapping(params = "name")
-    public List<OrganizationalUnitDTO> findUnitsByNameContaining(@Parameter(description = "Название для поиска")
-                                                                 @RequestParam(required = false) String name) {
-        return organizationalUnitService.findByNameContainingIgnoreCase(name);
+                    schema = @Schema(allowableValues = "location")
+            )
+            @RequestParam(value = "group-by", required = false) String property
+    ) {
+        return organizationalUnitService.findAllWithFilterGroupByProperty(type, name, property);
     }
 
     @Operation(summary = "Получить иерархию организационной единицы по её ID")

@@ -37,6 +37,7 @@
 }
 
 #employee-profile .title {
+    margin-top: 16px;
     margin-bottom: 10px;
 }
 
@@ -81,10 +82,6 @@ summary::-webkit-details-marker {
 
 details[open] summary img {
     rotate: 180deg;
-}
-
-details[open] summary {
-    margin-bottom: 16px;
 }
 
 .info {

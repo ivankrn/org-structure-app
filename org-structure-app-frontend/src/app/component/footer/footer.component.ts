@@ -4,7 +4,7 @@ import { Observable, switchMap } from 'rxjs';
 import { OrganizationUnitAggregation } from '../../model/organization-unit-aggregation.model';
 import { JobTitleStatistic } from '../../model/job-title-statistic.model';
 import { FooterSwitch } from '../../model/footer-switch.enum';
-import { NgClass } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
 import { SELECTED_UNITS } from '../../tokens/selected-units.token';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   selector: 'footer-quantity-and-payroll',
   standalone: true,
   imports: [
-    NgClass
+    NgClass, DecimalPipe
   ],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css'

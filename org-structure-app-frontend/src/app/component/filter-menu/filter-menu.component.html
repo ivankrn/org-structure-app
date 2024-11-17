@@ -11,9 +11,9 @@
                     <div class="clear" (click)="clearLocations()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_locationNames"
+            <name-search-bar [names]="_locationNames"
                              [clearSubject]="clearLocationsFilter"
-                             (unitNameSelectedEvent)="selectLocationName($event)"
+                             (nameSelectedEvent)="selectLocationName($event)"
             />
         </div>
         <div id="divisions" class="section">
@@ -23,21 +23,21 @@
                     <div class="clear" (click)="clearDivisions()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_divisionNames"
+            <unit-search-bar [units]="_divisions"
                              [clearSubject]="clearDivisionsFilter"
-                             (unitNameSelectedEvent)="selectDivisionName($event)"
+                             (unitSelectedEvent)="selectDivision($event)"
             />
         </div>
         <div id="departments" class="section">
             <div class="title-container">
                 <div class="title">Отделы</div>
                 @if (hasDepartmentsFilter) {
-                    <div class="clear" (click)="cleardepartments()">Сбросить</div>
+                    <div class="clear" (click)="clearDepartments()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_departmentNames"
+            <unit-search-bar [units]="_departments"
                              [clearSubject]="clearDepartmentsFilter"
-                             (unitNameSelectedEvent)="selectDepartmentName($event)"
+                             (unitSelectedEvent)="selectDepartment($event)"
             />
         </div>
         <div id="groups" class="section">
@@ -47,9 +47,9 @@
                     <div class="clear" (click)="clearGroups()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_groupNames"
+            <unit-search-bar [units]="_groups"
                              [clearSubject]="clearGroupsFilter"
-                             (unitNameSelectedEvent)="selectGroupName($event)"
+                             (unitSelectedEvent)="selectGroup($event)"
             />
         </div>
         <div id="job-titles" class="section">
@@ -59,9 +59,9 @@
                     <div class="clear" (click)="clearJobTitles()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_jobTitles"
+            <name-search-bar [names]="_jobTitles"
                              [clearSubject]="clearJobTitlesFilter"
-                             (unitNameSelectedEvent)="selectJobTitle($event)"
+                             (nameSelectedEvent)="selectJobTitle($event)"
             />
         </div>
         <div id="job-types" class="section">
@@ -71,9 +71,9 @@
                     <div class="clear" (click)="clearJobTypes()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_jobTypes"
+            <name-search-bar [names]="_jobTypes"
                              [clearSubject]="clearJobTypesFilter"
-                             (unitNameSelectedEvent)="selectJobType($event)"
+                             (nameSelectedEvent)="selectJobType($event)"
             />
         </div>
         <div id="employee-type">

@@ -6,11 +6,20 @@
     <img class="arrow" [ngClass]="{'rotate': selectOpened}" src="../../../assets/img/select.svg" alt="">
 </div>
 @if (selectOpened) {
-    <div class="select" [ngStyle]="{'height': (Math.min(20 * unitNames.length, 160)).toString() + 'px'}">
-        @for (name of unitNames; track name) {
-            <label class="option" (click)="selectUnitName(name)">
-                <input type="checkbox" [checked]="selectedUnitNamesArray.includes(name)">
-                {{name}}
+    <div class="select" [ngStyle]="{'height': (Math.min(20 * units.length, 160)).toString() + 'px'}">
+        @for (unit of units; track unit.id) {
+            <label class="option" (click)="selectUnit(unit)">
+                <input type="checkbox" [checked]="selectedUnitsArray.includes(unit)">
+                <span>
+
+                    <span class="unit-name">
+                        {{unit.name}}
+                    </span>
+                    <br>
+                    <span class="unit-location">
+                        {{unit.location}}
+                    </span>
+                </span>
             </label>
         }
     </div>

@@ -1,7 +1,7 @@
 import { FilterMenuSettings } from "../../../filter-menu/filter-menu-settings.model";
 import { OrganizationalTreeNodeType } from "../../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../../model/organizational-tree-node.model";
-import { hasChildrenWithName } from "../organizational-tree-util";
+import { hasChildrenWithId } from "../organizational-tree-util";
 
 export abstract class FilterChainNode {
 
@@ -93,56 +93,51 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
             }
             return true;
         }
-        const selectedDivisions = Object.entries(filterSettings.divisions)
-            .filter(entry => entry[1])
-            .map(entry => entry[0]);
-        if (selectedDivisions.length > 0) {
-            if (node.hierarchy?.divisionName === undefined) {
+
+        if (filterSettings.selectedDivisionsIds().length > 0) {
+            if (node.hierarchy?.divisionId === undefined) {
                 return false;
             }
-            const divisionName = node.hierarchy.divisionName;
-            if (!filterSettings.divisions[divisionName]) {
+            const divisionId = node.hierarchy.divisionId;
+            if (!filterSettings.divisions[divisionId]) {
                 return false;
             }
         }
-        const selectedDepartments = Object.entries(filterSettings.departments)
-            .filter(entry => entry[1])
-            .map(entry => entry[0]);
+
+        const selectedDepartments = filterSettings.selectedDepartmentsIds();
         if (selectedDepartments.length > 0) {
             if (node.type === OrganizationalTreeNodeType.DIVISION) {
-                for (const selectedDepartment of selectedDepartments) {
-                    if (hasChildrenWithName(node, selectedDepartment)) {
+                for (const selectedDepartmentId of selectedDepartments) {
+                    if (hasChildrenWithId(node, selectedDepartmentId)) {
                         return true;
                     }
                 }
                 return false;
             } else if (node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP) {
-                if (node.hierarchy?.departmentName === undefined) {
+                if (node.hierarchy?.departmentId === undefined) {
                     return false;
                 }
-                const departmentName = node.hierarchy.departmentName;
-                if (!filterSettings.departments[departmentName]) {
+                const departmentId = node.hierarchy.departmentId;
+                if (!filterSettings.departments[departmentId]) {
                     return false;
                 }
             }
         }
-        const selectedGroups = Object.entries(filterSettings.groups)
-            .filter(entry => entry[1])
-            .map(entry => entry[0]);
+        const selectedGroups = filterSettings.selectedGroupsIds();
         if (selectedGroups.length > 0) {
             if (node.type === OrganizationalTreeNodeType.DIVISION || node.type === OrganizationalTreeNodeType.DEPARTMENT) {
-                for (const selectedGroup of selectedGroups) {
-                    if (hasChildrenWithName(node, selectedGroup)) {
+                for (const selectedGroupId of selectedGroups) {
+                    if (hasChildrenWithId(node, selectedGroupId)) {
                         return true;
                     }
                 }
                 return false;
             } else if (node.type === OrganizationalTreeNodeType.GROUP) {
-                if (node.hierarchy?.groupName === undefined) {
+                if (node.hierarchy?.groupId === undefined) {
                     return false;
                 }
-                const groupName = node.hierarchy?.groupName;
-                if (!filterSettings.groups[groupName]) {
+                const groupId = node.hierarchy?.groupId;
+                if (!filterSettings.groups[groupId]) {
                     return false;
                 }
             }

@@ -1,32 +1,31 @@
-import { AsyncPipe, NgClass, NgFor, NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
-import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { OrganizationalUnit } from '../../model/organizational-unit.model';
 
 @Component({
   selector: 'unit-search-bar',
   standalone: true,
-  imports: [NgFor, NgClass, NgStyle, WithUnitTypeNamePipe, AsyncPipe, FormsModule],
+  imports: [NgClass, NgStyle, FormsModule],
   templateUrl: './unit-search-bar.component.html',
   styleUrl: './unit-search-bar.component.css'
 })
-export class UnitNamesSearchBarComponent implements OnInit {
-
+export class UnitSearchBarComponent implements OnInit {
+  
   @Input()
-  unitNames!: string[];
-
+  units!: OrganizationalUnit[];
   @Input()
   clearSubject: Subject<void>;
+  @Output()
+  unitSelectedEvent = new EventEmitter<OrganizationalUnit>();
 
-  selectedUnitNamesArray: string[] = [];
+  selectedUnitsArray: OrganizationalUnit[] = [];
   selectedUnitNamesString: string = '';
   selectOpened: boolean = false;
 
-  @Output()
-  unitNameSelectedEvent = new EventEmitter<string>();
-
+  searchSubscription?: Subscription;
   destroyRef: DestroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -35,19 +34,20 @@ export class UnitNamesSearchBarComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef)
         )
         .subscribe(() => {
-          this.selectedUnitNamesArray = [];
+          this.selectedUnitsArray = [];
           this.selectedUnitNamesString = '';
         });
   }
 
-  selectUnitName(name: string) {
-    if (this.selectedUnitNamesArray.includes(name)) {
-      this.selectedUnitNamesArray = this.selectedUnitNamesArray.filter(n => n !== name);
+  selectUnit(unit: OrganizationalUnit) {
+    const alreadyContains = this.selectedUnitsArray.filter(u => u.id === unit.id).length > 0;
+    if (alreadyContains) {
+      this.selectedUnitsArray = this.selectedUnitsArray.filter(u => u.id !== unit.id);
     } else {
-      this.selectedUnitNamesArray.push(name);
+      this.selectedUnitsArray.push(unit);
     }
-    this.selectedUnitNamesString = this.selectedUnitNamesArray.join(', ');
-    this.unitNameSelectedEvent.emit(name);
+    this.selectedUnitNamesString = this.selectedUnitsArray.map(u => u.name).join(', ');
+    this.unitSelectedEvent.emit(unit);
   }
 
   protected readonly Math = Math;

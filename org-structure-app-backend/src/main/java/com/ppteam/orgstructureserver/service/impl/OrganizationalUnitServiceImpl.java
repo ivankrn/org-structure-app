@@ -40,19 +40,22 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
     }
 
     @Override
-    public List<OrganizationalUnitDTO> findAllByType(OrganizationalUnitType type) {
-        return organizationalUnitRepository.findByType(type).stream()
+    public List<OrganizationalUnitDTO> findAllWithFilter(OrganizationalUnitType type, String name) {
+        return organizationalUnitRepository.findByTypeAndNameContainingIgnoreCase(type, name).stream()
                 .map(mapper::convert)
                 .toList();
     }
 
     @Override
-    public List<OrganizationalUnitWithLocationsDTO> findAllByTypeGroupByProperty(OrganizationalUnitType type,
-                                                                                 String property) {
+    public List<OrganizationalUnitWithLocationsDTO> findAllWithFilterGroupByProperty(
+        OrganizationalUnitType type,
+        String name,
+        String property
+    ) {
         if (!property.equalsIgnoreCase("location")) {
             throw new WrongQueryParamException();
         }
-        return organizationalUnitRepository.findByType(type).stream()
+        return organizationalUnitRepository.findByTypeAndNameContainingIgnoreCase(type, name).stream()
                 .map(unit -> {
                     Set<OrganizationalUnit> subsidiaries = unit.getSubsidiaries();
                     Map<Location, List<OrganizationalUnit>> groupedByLocation = subsidiaries.stream()
@@ -68,13 +71,6 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
                             .toList();
                     return mapper.convert(unit, locations);
                 })
-                .toList();
-    }
-
-    @Override
-    public List<OrganizationalUnitDTO> findByNameContainingIgnoreCase(String name) {
-        return organizationalUnitRepository.findByNameContainingIgnoreCase(name).stream()
-                .map(mapper::convert)
                 .toList();
     }
 

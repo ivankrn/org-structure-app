@@ -128,29 +128,29 @@ function updateNodeHierarchy(parent: OrganizationalTreeNode, node: Organizationa
     }
     switch (parent?.type) {
         case OrganizationalTreeNodeType.DIVISION: {
-            node.hierarchy.divisionName = parent.nameWithoutType;
+            node.hierarchy.divisionId = parent.id;
             break;
         }
         case OrganizationalTreeNodeType.DEPARTMENT: {
-            node.hierarchy.departmentName = parent.nameWithoutType;
+            node.hierarchy.departmentId = parent.id;
             break;
         }
         case OrganizationalTreeNodeType.GROUP: {
-            node.hierarchy.groupName = parent.nameWithoutType;
+            node.hierarchy.groupId = parent.id;
             break;
         }
     }
     switch (node?.type) {
         case OrganizationalTreeNodeType.DIVISION: {
-            node.hierarchy.divisionName = node.nameWithoutType;
+            node.hierarchy.divisionId = node.id;
             break;
         }
         case OrganizationalTreeNodeType.DEPARTMENT: {
-            node.hierarchy.departmentName = node.nameWithoutType;
+            node.hierarchy.departmentId = node.id;
             break;
         }
         case OrganizationalTreeNodeType.GROUP: {
-            node.hierarchy.groupName = node.nameWithoutType;
+            node.hierarchy.groupId = node.id;
             break;
         }
     }
@@ -198,17 +198,17 @@ function getUnitNameWithType(unit: OrganizationalUnit): string {
     return `${type} "${unit.name}"`;
 }
 
-export function hasChildrenWithName(unit: OrganizationalTreeNode, name: string): boolean {
+export function hasChildrenWithId(unit: OrganizationalTreeNode, id: number): boolean {
     if (!unit.children) {
         return false;
     }
     let has = false;
     for (const child of unit.children) {
-        if (child.nameWithoutType === name) {
+        if (child.id === id) {
             has = true;
             return has;
         }
-        has = hasChildrenWithName(child, name);
+        has = hasChildrenWithId(child, id);
         if (has) {
             return has;
         }

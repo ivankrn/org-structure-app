@@ -58,7 +58,7 @@
                                 <span class="text">Число сотрудников на должностях</span>
                             </div>
                             <div class="row-amount">
-                                <span class="text">{{totalPositionsAmount()}}</span>
+                                <span class="text">{{employeesAmount()}}</span>
                             </div>
                         </div>
                     </summary>
@@ -80,7 +80,7 @@
                         <span class="text">ФОТ, тыс.рублей</span>
                     </div>
                     <div class="row-amount">
-                        <span class="text">{{totalWageFund()}}</span>
+                        <span class="text">{{(totalWageFund() / 1000) | number: '1.1-1' : 'ru'}}</span>
                     </div>
                 </div>
             }
