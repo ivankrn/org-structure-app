@@ -1,6 +1,10 @@
 <div class="container">
     <div id="employee-info">
-        <employee-info [employee]="selectedEmployee" />
+        <info [type]="selectedType$.asObservable()"
+              [employee]="selectedEmployee"
+              [unit]="selectedUnit"
+              (enterToEmployee)="findEmployeeOnTreeById($event)"
+        />
     </div>
     <div id="tree-search-bar">
         <tree-search-bar

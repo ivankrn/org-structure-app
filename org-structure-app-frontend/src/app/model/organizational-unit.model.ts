@@ -8,6 +8,7 @@ export interface OrganizationalUnit {
     type: OrganizationalUnitType;
     location?: string;
     head?: Employee;
+    deputy?: Employee;
     subsidiaries?: OrganizationalUnit[];
     employees?: Employee[];
     locations?: Location[];

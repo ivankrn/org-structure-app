@@ -1,0 +1,76 @@
+@font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Muller'),
+    url('../../../assets/fonts/Inter-Regular.woff2') format('woff2'),
+    url('../../../assets/fonts/Inter-Regular.woff') format('woff');
+}
+
+* {
+    font-family: 'Inter', Courier, monospace;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-style: bold;
+    src: local('Muller'),
+    url('../../../assets/fonts/Inter-SemiBold.woff2') format('woff2'),
+    url('../../../assets/fonts/Inter-SemiBold.woff') format('woff');
+}
+
+#info {
+    padding: 20px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
+    max-height: 80vh;
+    overflow-y: scroll;
+    scrollbar-color: rgba(20, 25, 26, 0.2) rgba(255, 255, 255, 0);
+    scrollbar-width: thin;
+}
+
+details>summary {
+    list-style: none;
+    font-weight: 600;
+}
+
+#info details > div {
+    border-left: 1px solid #C2C2C2;
+    padding-left: 12px;
+}
+
+summary::-webkit-details-marker {
+    display: none
+}
+
+details[open] summary img {
+    rotate: 180deg;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.summary-text {
+    font-size: 15px;
+    line-height: 24px;
+}
+
+@media (min-width: 3024px) {
+    .summary-text {
+        font-size: 32px;
+    }
+
+    details {
+        padding: 48px;
+    }
+
+    .summary-arrow {
+        width: 32px;
+    }
+}

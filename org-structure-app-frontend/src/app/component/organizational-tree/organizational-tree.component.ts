@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import * as d3 from 'd3';
-import { concatMap, forkJoin, map, Subject, tap } from 'rxjs';
+import { BehaviorSubject, concatMap, forkJoin, map, Subject, takeUntil, tap, timer } from 'rxjs';
 import { Employee } from '../../model/employee.model';
 import { OrganizationalUnitHierarchy } from '../../model/organizational-unit-hierarchy.model';
 import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
@@ -29,11 +29,13 @@ import { JobTitleService } from '../../service/job-title.service';
 import { JobTypeService } from '../../service/job-type.service';
 import { FooterComponent } from '../footer/footer.component';
 import { SELECTED_UNITS } from '../../tokens/selected-units.token';
+import { SelectedUnit } from '../../model/selected-unit.model';
+import { InfoComponent } from '../info/info.component';
 
 @Component({
   selector: 'app-organizational-tree',
   standalone: true,
-  imports: [CommonModule, EmployeeInfoComponent, FilterMenuComponent, TreeSearchBarComponent, FooterComponent],
+  imports: [CommonModule, EmployeeInfoComponent, FilterMenuComponent, TreeSearchBarComponent, FooterComponent, InfoComponent],
   providers: [
     OrganizationalUnitService,
     EmployeeService,
@@ -58,6 +60,8 @@ export class OrganizationalTreeComponent implements OnInit {
   private filterSettings?: FilterMenuSettings;
   private filterChain?: FilterChainNode;
   selectedEmployee?: Employee;
+  selectedUnit?: SelectedUnit;
+  selectedType$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   locationNames?: string[];
   divisions?: OrganizationalUnit[];
   departments?: OrganizationalUnit[];
@@ -72,6 +76,8 @@ export class OrganizationalTreeComponent implements OnInit {
   private radius = Math.min(this.width, this.height) / 2 - 350;
   private redrawAnimationDurationInMs = 250;
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
+  private lastClickedDate: Date = new Date();
+  private notExpand$: Subject<void> = new Subject<void>();
 
   private organizationalUnitService: OrganizationalUnitService = inject(OrganizationalUnitService);
   private projectService: ProjectService = inject(ProjectService);
@@ -295,7 +301,20 @@ export class OrganizationalTreeComponent implements OnInit {
           if (type === OrganizationalTreeNodeType.EMPLOYEE) {
             this.onEmployeeSelect(id);
           } else {
-            this.updateTreeFromUnitId(id);
+            const currentDate: Date = new Date();
+            if (currentDate.getTime() - this.lastClickedDate.getTime() < 500) {
+              this.notExpand$.next();
+              this.onUnitSelect(id);
+            } else {
+              this.lastClickedDate = currentDate;
+              timer(500)
+                .pipe(
+                  takeUntil(this.notExpand$)
+                )
+                .subscribe(() => {
+                  this.updateTreeFromUnitId(id);
+                });
+            }
           }
         }
       })
@@ -356,7 +375,10 @@ export class OrganizationalTreeComponent implements OnInit {
   findEmployeeOnTreeById(employeeId: number): void {
     this.employeeService.findById(employeeId)
       .pipe(
-        tap(employee => this.selectedEmployee = employee),
+        tap(employee => {
+          this.selectedEmployee = employee;
+          this.selectedType$.next('employee');
+        }),
         map(employee => employee.organizationalUnit?.id),
         concatMap(unitId => this.organizationalUnitService.findUnitHierarchy(unitId!))
       )
@@ -465,7 +487,10 @@ export class OrganizationalTreeComponent implements OnInit {
   private onEmployeeSelect(id: number): void {
     this.employeeService.findById(id)
       .pipe(
-        tap(employee => this.selectedEmployee = employee),
+        tap(employee => {
+          this.selectedEmployee = employee;
+          this.selectedType$.next('employee');
+        }),
         map(employee => employee.organizationalUnit?.id),
         concatMap(id => this.organizationalUnitService.findUnitHierarchy(id!))
       )
@@ -473,6 +498,21 @@ export class OrganizationalTreeComponent implements OnInit {
         this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
         this.redrawTree();
       });
+  }
+
+  private onUnitSelect(id: number): void {
+    this.organizationalUnitService.findById(id)
+      .pipe(
+        tap(unit => {
+          this.selectedUnit = unit;
+          this.selectedType$.next('unit');
+        }),
+        concatMap(() => this.organizationalUnitService.findUnitHierarchy(id))
+      )
+      .subscribe(hierarchy => {
+        this.selectedUnit!.hierarchy = hierarchy;
+        this.redrawTree();
+      })
   }
 
   private updateTreeFromUnitId(id: number): void {
@@ -548,7 +588,6 @@ export class OrganizationalTreeComponent implements OnInit {
     if (!data.children) {
       return data;
     }
-    // this.expandUnits(data.children.map(node => node.id));
     data.children = data.children.filter(node => this.filterChain!.isValid(node, this.filterSettings!));
     for (let i = 0; i < data.children.length; i++) {
       data.children[i] = this.filterTreeDataFromSettings(data.children[i]);

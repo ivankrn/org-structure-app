@@ -1,0 +1,79 @@
+<div *ngIf="unit">
+    <div id="employee-profile">
+        <div class="title">Руководство</div>
+        <div class="employee-profile-details" (click)="onClickEmployee(unit.head)">
+            <div class="profile-image">
+                <img src="http://45.95.234.130/content/images/profile/default_profile_image.png" alt="Employee image">
+            </div>
+            <div class="profile-name">
+                <div class="value">{{ unit.head?.fullName }}</div>
+                <div class="employee-status">руководитель</div>
+            </div>
+        </div>
+        <div class="employee-profile-details" [ngClass]="{ 'last': true }" (click)="onClickEmployee(unit.deputy)">
+            <div class="profile-image">
+                <img src="http://45.95.234.130/content/images/profile/default_profile_image.png" alt="Employee image">
+            </div>
+            <div class="profile-name">
+                <div class="value">{{ unit.deputy?.fullName }}</div>
+                <div class="employee-status">заместитель руководителя</div>
+            </div>
+        </div>
+    </div>
+    <details open id="employee-details">
+        <summary class="summary">
+            <span class="summary-text">О структуре</span>
+            <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+        </summary>
+        <div>
+            <div class="info">
+                <div class="title">Название</div>
+                <div class="field">
+                    <div class="value">{{ unit.name }}</div>
+                </div>
+            </div>
+            <div class="info">
+                <div class="title">Число сотрудников</div>
+                <div class="field">
+                    <div class="value">{{ unit.employees?.length || 0 }}</div>
+                </div>
+            </div>
+            <div class="info">
+                <div class="title">Тип структуры</div>
+                <div class="field">
+                    <div class="value">{{ russianType(unit.type) }}</div>
+                </div>
+            </div>
+        </div>
+    </details>
+    <details open id="job-position-info">
+        <summary class="summary">
+            <span class="summary-text">Расположение</span>
+            <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+        </summary>
+        <div>
+            @if (unit.type === organizationalUnitType.GROUP) {
+                <div class="info">
+                    <div class="title">Отдел</div>
+                    <div class="field">
+                        <div class="value">{{ unit.hierarchy?.department?.name }}</div>
+                    </div>
+                </div>
+            }
+            @if (unit.type === organizationalUnitType.GROUP || unit.type === organizationalUnitType.DEPARTMENT) {
+                <div class="info">
+                    <div class="title">Подразделение</div>
+                    <div class="field">
+                        <div class="value">{{ unit.hierarchy?.division?.name }}</div>
+                    </div>
+                </div>
+            }
+            <div class="info">
+                <div class="title">Локация</div>
+                <div class="field">
+                    <div class="value">{{ unit.location }}</div>
+                </div>
+            </div>
+        </div>
+    </details>
+</div>

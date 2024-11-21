@@ -13,7 +13,7 @@ import { EmployeeStatusPipe } from '../../pipe/employee-status.pipe';
 })
 export class EmployeeInfoComponent {
 
-  @Input()
+  @Input({ required: true })
   public employee?: Employee;
 
   public getExperience(employmentDate: string): string {
