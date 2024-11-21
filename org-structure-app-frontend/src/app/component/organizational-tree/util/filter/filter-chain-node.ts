@@ -1,7 +1,7 @@
 import { FilterMenuSettings } from "../../../filter-menu/filter-menu-settings.model";
 import { OrganizationalTreeNodeType } from "../../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../../model/organizational-tree-node.model";
-import { hasChildrenWithName } from "../organizational-tree-util";
+import { hasChildrenWithId } from "../organizational-tree-util";
 
 export abstract class FilterChainNode {
 
@@ -22,17 +22,17 @@ export abstract class FilterChainNode {
 export class LocationFilterChainNode extends FilterChainNode {
 
     isValid(node: OrganizationalTreeNode, filterSettings: FilterMenuSettings): boolean {
-        const selectedLocations = Object.entries(filterSettings.locations)
+        const selectedLocations: string[] = Object.entries(filterSettings.locations)
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedLocations.length > 0) {
             if (node.type === OrganizationalTreeNodeType.LOCATION) {
-                if (!node.name) {
+                if (!node.id || !node.name) {
                     return false;
                 }
 
-                return filterSettings.locations[node.name];
-            } else if (node.location && !filterSettings.locations[node.location]) {
+                return filterSettings.locations[node.id + '_' + node.name];
+            } else if (node.location && !selectedLocations.some((location: string) => location.includes(node.location!))) {
                 return false;
             }
         }
@@ -97,11 +97,11 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
             .filter(entry => entry[1])
             .map(entry => entry[0]);
         if (selectedDivisions.length > 0) {
-            if (node.hierarchy?.divisionName === undefined) {
+            if (node.id === undefined) {
                 return false;
             }
-            const divisionName = node.hierarchy.divisionName;
-            if (!filterSettings.divisions[divisionName]) {
+
+            if (!filterSettings.divisions[node.id.toString()]) {
                 return false;
             }
         }
@@ -111,17 +111,17 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
         if (selectedDepartments.length > 0) {
             if (node.type === OrganizationalTreeNodeType.DIVISION) {
                 for (const selectedDepartment of selectedDepartments) {
-                    if (hasChildrenWithName(node, selectedDepartment)) {
+                    if (hasChildrenWithId(node, selectedDepartment)) {
                         return true;
                     }
                 }
                 return false;
             } else if (node.type === OrganizationalTreeNodeType.DEPARTMENT || node.type === OrganizationalTreeNodeType.GROUP) {
-                if (node.hierarchy?.departmentName === undefined) {
+                if (node.id === undefined) {
                     return false;
                 }
-                const departmentName = node.hierarchy.departmentName;
-                if (!filterSettings.departments[departmentName]) {
+
+                if (!filterSettings.departments[node.id.toString()]) {
                     return false;
                 }
             }
@@ -132,17 +132,17 @@ export class UnitHierarchyFilterChainNode extends FilterChainNode {
         if (selectedGroups.length > 0) {
             if (node.type === OrganizationalTreeNodeType.DIVISION || node.type === OrganizationalTreeNodeType.DEPARTMENT) {
                 for (const selectedGroup of selectedGroups) {
-                    if (hasChildrenWithName(node, selectedGroup)) {
+                    if (hasChildrenWithId(node, selectedGroup)) {
                         return true;
                     }
                 }
                 return false;
             } else if (node.type === OrganizationalTreeNodeType.GROUP) {
-                if (node.hierarchy?.groupName === undefined) {
+                if (node.id === undefined) {
                     return false;
                 }
-                const groupName = node.hierarchy?.groupName;
-                if (!filterSettings.groups[groupName]) {
+
+                if (!filterSettings.groups[node.id.toString()]) {
                     return false;
                 }
             }

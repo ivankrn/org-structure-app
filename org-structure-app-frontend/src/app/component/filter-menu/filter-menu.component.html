@@ -11,7 +11,7 @@
                     <div class="clear" (click)="clearLocations()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_locationNames"
+            <unit-search-bar [units]="_locationNames"
                              [clearSubject]="clearLocationsFilter"
                              (unitNameSelectedEvent)="selectLocationName($event)"
             />
@@ -23,7 +23,7 @@
                     <div class="clear" (click)="clearDivisions()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_divisionNames"
+            <unit-search-bar [units]="_divisionNames"
                              [clearSubject]="clearDivisionsFilter"
                              (unitNameSelectedEvent)="selectDivisionName($event)"
             />
@@ -32,10 +32,10 @@
             <div class="title-container">
                 <div class="title">Отделы</div>
                 @if (hasDepartmentsFilter) {
-                    <div class="clear" (click)="cleardepartments()">Сбросить</div>
+                    <div class="clear" (click)="clearDepartments()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_departmentNames"
+            <unit-search-bar [units]="_departmentNames"
                              [clearSubject]="clearDepartmentsFilter"
                              (unitNameSelectedEvent)="selectDepartmentName($event)"
             />
@@ -47,7 +47,7 @@
                     <div class="clear" (click)="clearGroups()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_groupNames"
+            <unit-search-bar [units]="_groupNames"
                              [clearSubject]="clearGroupsFilter"
                              (unitNameSelectedEvent)="selectGroupName($event)"
             />
@@ -59,7 +59,7 @@
                     <div class="clear" (click)="clearJobTitles()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_jobTitles"
+            <unit-search-bar [units]="_jobTitles"
                              [clearSubject]="clearJobTitlesFilter"
                              (unitNameSelectedEvent)="selectJobTitle($event)"
             />
@@ -71,7 +71,7 @@
                     <div class="clear" (click)="clearJobTypes()">Сбросить</div>
                 }
             </div>
-            <unit-search-bar [unitNames]="_jobTypes"
+            <unit-search-bar [units]="_jobTypes"
                              [clearSubject]="clearJobTypesFilter"
                              (unitNameSelectedEvent)="selectJobType($event)"
             />

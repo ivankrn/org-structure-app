@@ -3,8 +3,9 @@ import { OrganizationalUnit } from "../../../model/organizational-unit.model";
 import { OrganizationalTreeNodeType } from "../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../model/organizational-tree-node.model";
 import { Project } from '../../../model/project.model';
+import { Location } from '../../../model/location.model';
 
-export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
+export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit, locations: Location[]): OrganizationalTreeNode {
     const node: OrganizationalTreeNode = {
         id: organizationalUnit.id,
         name: getUnitNameWithType(organizationalUnit),
@@ -14,8 +15,9 @@ export function convertUnitGroupedByLocations(organizationalUnit: Organizational
     };
     updateNodeHierarchy(node, node);
     organizationalUnit.locations?.forEach(location => {
+        const id = locations.find((loc: Location) => loc.name === location.name)!.id;
         const locationChild: OrganizationalTreeNode = {
-            id: location.id,
+            id: id,
             name: location.name,
             nameWithoutType: location.name,
             type: OrganizationalTreeNodeType.LOCATION,
@@ -198,17 +200,17 @@ function getUnitNameWithType(unit: OrganizationalUnit): string {
     return `${type} "${unit.name}"`;
 }
 
-export function hasChildrenWithName(unit: OrganizationalTreeNode, name: string): boolean {
+export function hasChildrenWithId(unit: OrganizationalTreeNode, id: string): boolean {
     if (!unit.children) {
         return false;
     }
     let has = false;
     for (const child of unit.children) {
-        if (child.nameWithoutType === name) {
+        if (child.id.toString() === id) {
             has = true;
             return has;
         }
-        has = hasChildrenWithName(child, name);
+        has = hasChildrenWithId(child, id);
         if (has) {
             return has;
         }

@@ -29,6 +29,8 @@ import { JobTitleService } from '../../service/job-title.service';
 import { JobTypeService } from '../../service/job-type.service';
 import { FooterComponent } from '../footer/footer.component';
 import { SELECTED_UNITS } from '../../tokens/selected-units.token';
+import { FilterItem } from '../../model/filter-item.model';
+import { Location } from '../../model/location.model';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -47,8 +49,6 @@ import { SELECTED_UNITS } from '../../tokens/selected-units.token';
 })
 export class OrganizationalTreeComponent implements OnInit {
 
-  protected isShowFooter: WritableSignal<boolean> = signal(false);
-
   private mainTree?: OrganizationalTreeNode;
   private treeData?: OrganizationalTreeNode;
   private svg?: d3.Selection<any, any, any, any>;
@@ -58,12 +58,12 @@ export class OrganizationalTreeComponent implements OnInit {
   private filterSettings?: FilterMenuSettings;
   private filterChain?: FilterChainNode;
   selectedEmployee?: Employee;
-  locationNames?: string[];
-  divisionNames?: string[];
-  departmentNames?: string[];
-  groupNames?: string[];
-  jobTitles?: string[];
-  jobTypes?: string[];
+  locations?: FilterItem[];
+  divisions?: FilterItem[];
+  departments?: FilterItem[];
+  groups?: FilterItem[];
+  jobTitles?: FilterItem[];
+  jobTypes?: FilterItem[];
 
   private width = 1200;
   private height = 1200;
@@ -87,27 +87,26 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   private initTree(): void {
-    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.LEGAL_ENTITY)
-      .subscribe(data => {
+    forkJoin({
+      units: this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.LEGAL_ENTITY),
+      locations: this.locationService.findAll()
+    })
+      .subscribe(({ units, locations }: { units: OrganizationalUnit[], locations: Location[] }) => {
         this.createSvg();
-        this.mainTree = convertUnitGroupedByLocations(data[0]); // на текущем этапе у нас только одно юр. лицо
+        this.mainTree = convertUnitGroupedByLocations(units[0], locations); // на текущем этапе у нас только одно юр. лицо
         this.treeData = this.mainTree;
         this.redrawTree();
-        /** У корня id=1, поэтому при его передаче мы получаем все дерево */
-        this.selectedUnits.next([1]);
+        this.selectedUnits.next([this.mainTree.id]);
+        this.locations = locations;
       });
-    this.locationService.findAll()
-      .subscribe(data => {
-        this.locationNames = data.map(location => location.name);
-      });
-    this.organizationalUnitService.findNamesByTypes()
-      .subscribe(data => {
-        this.divisionNames = data[OrganizationalUnitType.DIVISION];
-        this.departmentNames = data[OrganizationalUnitType.DEPARTMENT];
-        this.groupNames = data[OrganizationalUnitType.GROUP];
-      });
-    this.jobTitleService.findAll().subscribe(data => this.jobTitles = data.map(jobTitle => jobTitle.name));
-    this.jobTypeService.findAll().subscribe(data => this.jobTypes = data.map(jobType => jobType.name));
+    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.DIVISION)
+      .subscribe(data => this.divisions = data);
+    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.DEPARTMENT)
+      .subscribe(data => this.departments = data);
+    this.organizationalUnitService.findByTypeGroupedByLocation(OrganizationalUnitType.GROUP)
+      .subscribe(data => this.groups = data);
+    this.jobTitleService.findAll().subscribe(data => this.jobTitles = data);
+    this.jobTypeService.findAll().subscribe(data => this.jobTypes = data);
   }
 
   private initFilters() {
@@ -160,6 +159,72 @@ export class OrganizationalTreeComponent implements OnInit {
     this.redrawTreeLinks(root);
     this.redrawTreeNodes(root);
     this.redrawTreeLabels(root);
+
+    this.updateDifference();
+  }
+
+  private updateDifference(): void {
+    if (!this.filterSettings) {
+      this.selectedUnits.next([this.mainTree!.id]);
+
+      return;
+    }
+
+    const selectedLocations: string[] = Object.entries(this.filterSettings.locations)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedLocations?.length > 0) {
+      this.selectedUnits.next(selectedLocations.map((id: string) => +(id.split('_')[0])));
+
+      return;
+    }
+
+    const selectedJobTitles: string[] = Object.entries(this.filterSettings.jobTitles)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedJobTitles?.length > 0) {
+      this.selectedUnits.next(selectedJobTitles.map((id: string) => +id));
+
+      return;
+    }
+
+    const selectedJobTypes: string[] = Object.entries(this.filterSettings.jobTypes)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedJobTypes.length > 0) {
+      this.selectedUnits.next(selectedJobTypes.map((id: string) => +id));
+
+      return;
+    }
+
+    const selectedDivisions: string[] = Object.entries(this.filterSettings.divisions)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedDivisions?.length > 0) {
+      this.selectedUnits.next(selectedDivisions.map((id: string) => +id));
+
+      return;
+    }
+
+    const selectedDepartments: string[] = Object.entries(this.filterSettings.departments)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedDepartments?.length > 0) {
+      this.selectedUnits.next(selectedDepartments.map((id: string) => +id));
+
+      return;
+    }
+
+    const selectedGroups: string[] = Object.entries(this.filterSettings.groups)
+      .filter(entry => entry[1])
+      ?.map(entry => entry[0]);
+    if (selectedGroups?.length > 0) {
+      this.selectedUnits.next(selectedGroups.map((id: string) => +id));
+
+      return;
+    }
+
+    this.selectedUnits.next([this.mainTree!.id]);
   }
 
   private correctDepth(root: d3.HierarchyPointNode<any>): void {

@@ -10,12 +10,12 @@
         (backToMainEvent)="backToMainTree()" />
     </div>
     <div id="filter-menu">
-        <filter-menu *ngIf="locationNames && divisionNames && departmentNames && groupNames && jobTitles && jobTypes"
+        <filter-menu *ngIf="locations && divisions && departments && groups && jobTitles && jobTypes"
                      (newSettingsEvent)="updateSettings($event)"
-                     [locationNames]="locationNames"
-                     [divisionNames]="divisionNames"
-                     [departmentNames]="departmentNames"
-                     [groupNames]="groupNames" 
+                     [locationNames]="locations"
+                     [divisionNames]="divisions"
+                     [departmentNames]="departments"
+                     [groupNames]="groups"
                      [jobTitles]="jobTitles"
                      [jobTypes]="jobTypes" />
     </div>

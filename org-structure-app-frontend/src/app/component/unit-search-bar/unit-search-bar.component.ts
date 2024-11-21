@@ -4,6 +4,7 @@ import { WithUnitTypeNamePipe } from '../../pipe/with-unit-type-name.pipe';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FilterItem } from '../../model/filter-item.model';
 
 @Component({
   selector: 'unit-search-bar',
@@ -15,17 +16,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class UnitNamesSearchBarComponent implements OnInit {
 
   @Input()
-  unitNames!: string[];
+  units!: FilterItem[];
 
   @Input()
   clearSubject: Subject<void>;
 
-  selectedUnitNamesArray: string[] = [];
+  selectedUnitsArray: FilterItem[] = [];
   selectedUnitNamesString: string = '';
   selectOpened: boolean = false;
 
   @Output()
-  unitNameSelectedEvent = new EventEmitter<string>();
+  unitNameSelectedEvent = new EventEmitter<FilterItem>();
 
   destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -35,19 +36,19 @@ export class UnitNamesSearchBarComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef)
         )
         .subscribe(() => {
-          this.selectedUnitNamesArray = [];
+          this.selectedUnitsArray = [];
           this.selectedUnitNamesString = '';
         });
   }
 
-  selectUnitName(name: string) {
-    if (this.selectedUnitNamesArray.includes(name)) {
-      this.selectedUnitNamesArray = this.selectedUnitNamesArray.filter(n => n !== name);
+  selectUnit(item: FilterItem) {
+    if (this.selectedUnitsArray.includes(item)) {
+      this.selectedUnitsArray = this.selectedUnitsArray.filter(n => n.id !== item.id);
     } else {
-      this.selectedUnitNamesArray.push(name);
+      this.selectedUnitsArray.push(item);
     }
-    this.selectedUnitNamesString = this.selectedUnitNamesArray.join(', ');
-    this.unitNameSelectedEvent.emit(name);
+    this.selectedUnitNamesString = this.selectedUnitsArray.map((unit: FilterItem) => unit.name).join(', ');
+    this.unitNameSelectedEvent.emit(item);
   }
 
   protected readonly Math = Math;

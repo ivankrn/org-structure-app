@@ -1,6 +1,6 @@
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { OrganizationalUnitService } from '../../service/organizational-unit.service';
-import { Observable, switchMap } from 'rxjs';
+import { distinctUntilChanged, Observable, switchMap } from 'rxjs';
 import { OrganizationUnitAggregation } from '../../model/organization-unit-aggregation.model';
 import { JobTitleStatistic } from '../../model/job-title-statistic.model';
 import { FooterSwitch } from '../../model/footer-switch.enum';
@@ -35,6 +35,9 @@ export class FooterComponent {
   constructor() {
     this.selectedUnits
         .pipe(
+            distinctUntilChanged((previous: number[], current: number[])=> {
+              return previous.join() === current.join();
+            }),
             switchMap((ids: number[]) => this.organizationalUnitService.aggregateByIds(ids)),
             takeUntilDestroyed()
         )
