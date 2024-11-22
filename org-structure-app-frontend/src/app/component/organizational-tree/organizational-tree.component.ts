@@ -304,7 +304,6 @@ export class OrganizationalTreeComponent implements OnInit {
             const currentDate: Date = new Date();
             if (currentDate.getTime() - this.lastClickedDate.getTime() < 500) {
               this.notExpand$.next();
-              this.onUnitSelect(id);
             } else {
               this.lastClickedDate = currentDate;
               timer(500)
@@ -316,6 +315,17 @@ export class OrganizationalTreeComponent implements OnInit {
                 });
             }
           }
+        }
+      })
+      .on('dblclick', (event) => {
+        event.stopPropagation(); // убираем зум на двойной клик по ноде
+        const elementId: string = event["target"].id;
+        const split: string[] = elementId.split("-");
+        const type: string = split[0];
+
+        if (type === 'UNIT') {
+          const id: number = Number.parseInt(split[1]);
+          this.onUnitSelect(id);
         }
       })
       .transition()
@@ -501,6 +511,7 @@ export class OrganizationalTreeComponent implements OnInit {
   }
 
   private onUnitSelect(id: number): void {
+
     this.organizationalUnitService.findById(id)
       .pipe(
         tap(unit => {
