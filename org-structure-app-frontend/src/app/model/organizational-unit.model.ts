@@ -6,6 +6,9 @@ export interface OrganizationalUnit {
     id: number;
     name: string;
     type: OrganizationalUnitType;
+    totalPositionsAmount?: number;
+    vacanciesAmount?: number;
+    employeesAmount?: number;
     location?: string;
     head?: Employee;
     deputy?: Employee;

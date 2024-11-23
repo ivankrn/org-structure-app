@@ -27,7 +27,8 @@ public interface OrganizationalUnitMapper {
     @Mapping(source = "subsidiaries", target = "subsidiaries")
     OrganizationalUnitWithSubsidiariesDTO convert(OrganizationalUnit organizationalUnit,
                                                   List<OrganizationalUnitDTO> subsidiaries,
-                                                  List<EmployeeDTO> employees);
+                                                  List<EmployeeDTO> employees,
+                                                  OrganizationalUnitsAggregationRecord aggregationInfo);
 
     @Mapping(source = "organizationalUnit.id", target = "id")
     @Mapping(source = "organizationalUnit.name", target = "name")

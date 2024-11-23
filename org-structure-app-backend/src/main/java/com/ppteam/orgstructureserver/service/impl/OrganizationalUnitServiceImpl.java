@@ -36,7 +36,9 @@ public class OrganizationalUnitServiceImpl implements OrganizationalUnitService 
                 .map(mapper::convert)
                 .toList();
         List<EmployeeDTO> employees = employeeService.findByParentIdSortByFullNameAsc(id);
-        return mapper.convert(organizationalUnit, subsidiaries, employees);
+        OrganizationalUnitsAggregationRecord aggregationInfo =
+            organizationalUnitRepository.calculateOrganizationalUnitsAggregation(List.of(id));
+        return mapper.convert(organizationalUnit, subsidiaries, employees, aggregationInfo);
     }
 
     @Override
