@@ -19,6 +19,7 @@ public record EmployeeFullDTO(long id,
                               ZonedDateTime employmentDate,
                               Integer totalYearsExperience,
                               ZonedDateTime birthdate,
+                              String imageUrl,
                               OrganizationalUnitSlimDTO organizationalUnit,
                               List<ProjectDTO> projects) {
 }
