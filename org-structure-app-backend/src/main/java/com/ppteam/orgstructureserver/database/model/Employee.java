@@ -77,6 +77,9 @@ public class Employee {
     @Email
     private String email;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
