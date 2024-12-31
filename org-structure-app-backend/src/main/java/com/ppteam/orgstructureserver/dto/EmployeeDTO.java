@@ -6,23 +6,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.ZonedDateTime;
 
-@Schema(description = "DTO сотрудника")
+@Schema(description = "Сотрудник")
 public record EmployeeDTO (
-        @Schema(description = "ID сотрудника")
+        @Schema(description = "ID")
         long id,
-        @Schema(description = "Полное имя сотрудника")
+        @Schema(description = "ФИО")
         String fullName,
-        @Schema(description = "Пол сотрудника")
+        @Schema(description = "Пол")
         Gender gender,
-        @Schema(description = "Должность сотрудника")
+        @Schema(description = "Должность")
         String jobTitle,
-        @Schema(description = "Тип работы сотрудника")
+        @Schema(description = "Тип работы")
         String jobType,
-        @Schema(description = "Электронная почта сотрудника")
+        @Schema(description = "Электронная почта")
         String email,
         @Schema(description = "Является ли позиция вакансией")
         boolean isVacancy,
-        @Schema(description = "Статус сотрудника")
+        @Schema(description = "Статус")
         EmployeeStatus status,
         @Schema(description = "Дата трудоустройства")
         ZonedDateTime employmentDate) {

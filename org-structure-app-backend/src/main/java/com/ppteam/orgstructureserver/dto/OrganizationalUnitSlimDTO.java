@@ -2,14 +2,14 @@ package com.ppteam.orgstructureserver.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "Сокращенная версия DTO организацинной единицы")
+@Schema(description = "Сокращенная информация об организацинной единице")
 public record OrganizationalUnitSlimDTO(
-        @Schema(description = "ID организационной единицы")
+        @Schema(description = "ID")
         long id,
-        @Schema(description = "Название организационной единицы")
+        @Schema(description = "Организационная единица")
         String name,
-        @Schema(description = "Тип организационной единицы")
+        @Schema(description = "Тип")
         String type,
-        @Schema(description = "Локация организационной единицы")
+        @Schema(description = "Локация")
         String location) {
 }

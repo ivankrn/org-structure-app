@@ -3,10 +3,10 @@ package com.ppteam.orgstructureserver.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "DTO проекта")
+@Schema(description = "Проект")
 public record ProjectDTO(
-        @Schema(description = "ID проекта")
+        @Schema(description = "ID")
         long id,
-        @Schema(description = "Название проекта")
+        @Schema(description = "Проект")
         String name) {
 }

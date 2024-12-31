@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Schema(description = "Расширенное DTO сотрудника")
+@Schema(description = "Полная информация о сотруднике")
 public record EmployeeFullDTO(
         @Schema(description = "ID сотрудника")
         long id,
-        @Schema(description = "Полное имя")
+        @Schema(description = "ФИО")
         String fullName,
         @Schema(description = "Пол")
         Gender gender,
@@ -36,8 +36,8 @@ public record EmployeeFullDTO(
         ZonedDateTime birthdate,
         @Schema(description = "Ссылка на фото сотрудника")
         String imageUrl,
-        @Schema(description = "Организационной единица, на которой находится сотрудник")
+        @Schema(description = "Организационная единица, в которой находится сотрудник")
         OrganizationalUnitSlimDTO organizationalUnit,
-        @Schema(description = "Список проектов")
+        @Schema(description = "Список проектов, к которым причастен сотрудник")
         List<ProjectDTO> projects) {
 }

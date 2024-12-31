@@ -2,9 +2,9 @@ package com.ppteam.orgstructureserver.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "DTO должности")
+@Schema(description = "Должность")
 public record JobTitleDTO(
-        @Schema(description = "ID должности")
+        @Schema(description = "ID")
         long id,
         @Schema(description = "Должность")
         String name) {

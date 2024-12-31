@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@Schema(description = "DTO проекта с сотрудниками, причастных к проекту")
+@Schema(description = "Проект с сотрудниками, причастных к проекту")
 public record ProjectWithEmployeesDTO(
-        @Schema(description = "ID проекта")
+        @Schema(description = "ID")
         long id,
-        @Schema(description = "Название проекта")
+        @Schema(description = "Проект")
         String name,
         @Schema(description = "Список сотрудников, причастных к проекту")
         List<EmployeeDTO> employees) {

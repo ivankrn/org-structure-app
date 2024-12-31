@@ -4,17 +4,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@Schema(description = "DTO организационной единицы с локациями")
+@Schema(description = "Организационная единица с группировкой дочерних орг. единиц по локациям")
 public record OrganizationalUnitWithLocationsDTO(
-        @Schema(description = "ID организационной единицы")
+        @Schema(description = "ID")
         long id,
-        @Schema(description = "Название организационной единицы")
+        @Schema(description = "Организационная единица")
         String name,
-        @Schema(description = "Тип организационной единицы")
+        @Schema(description = "Тип")
         String type,
-        @Schema(description = "Локация организационной единицы")
+        @Schema(description = "Локация")
         String location,
-        @Schema(description = "Глава организационной единицы")
+        @Schema(description = "Глава")
         EmployeeDTO head,
         @Schema(description = "Локации организационной единицы")
         List<LocationWithOrganizationalUnitsDTO> locations) {
