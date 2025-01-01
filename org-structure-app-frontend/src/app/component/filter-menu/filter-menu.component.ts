@@ -1,20 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, signal, WritableSignal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { FilterMenuSettings } from './filter-menu-settings.model';
 import { UnitSearchBarComponent } from '../unit-search-bar/unit-search-bar.component';
 import { OrganizationalUnit } from '../../model/organizational-unit.model';
 import { NamesSearchBarComponent } from "../name-search-bar/name-search-bar.component";
+import { Gender } from '../../model/gender.enum';
+import { CompanyWorkExperience } from '../../model/company-work-experience.enum';
+import { EmployeeStatus } from '../../model/employee-status.enum';
+import { CustomStepDefinition, NgxSliderModule, Options } from '@angular-slider/ngx-slider';
 
 @Component({
   selector: 'filter-menu',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, UnitSearchBarComponent, NamesSearchBarComponent],
+  imports: [ReactiveFormsModule, CommonModule, NgxSliderModule, UnitSearchBarComponent, NamesSearchBarComponent],
   templateUrl: './filter-menu.component.html',
   styleUrl: './filter-menu.component.css'
 })
 export class FilterMenuComponent implements OnInit, OnDestroy {
+
+  readonly DEFAULT_MIN_SALARY = 0;
+  readonly DEFAULT_MAX_SALARY = 500000;
+  readonly DEFAULT_STEP_SALARY = 500;
 
   _locationNames!: string[];
   @Input()
@@ -78,6 +86,17 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   hasJobTypesFilter: boolean = false;
   clearJobTypesFilter: Subject<void> = new Subject<void>();
 
+  _genders!: Gender[];
+  @Input()
+  set genders(value: Gender[]) {
+    this._genders = value;
+    // @ts-ignore
+    value.forEach(name => this.gendersFormGroup.addControl(name, this.formBuilder.control(true)));
+  }
+  selectedGenders: Gender[] = [];
+  hasGendersFilter: boolean = false;
+  clearGendersFilter: Subject<void> = new Subject<void>();
+
   settingsForm = this.formBuilder.group({
     locations: this.formBuilder.group({}),
     divisions: this.formBuilder.group({}),
@@ -86,27 +105,61 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     jobTitles: this.formBuilder.group({}),
     jobTypes: this.formBuilder.group({}),
     displayVacancies: true,
-    displayNotVacancies: true
+    displayNotVacancies: true,
+    minSalary: this.DEFAULT_MIN_SALARY,
+    maxSalary: this.DEFAULT_MAX_SALARY,
+    salary: new UntypedFormControl([this.DEFAULT_MIN_SALARY, this.DEFAULT_MAX_SALARY]),
+    companyWorkExperience: CompanyWorkExperience.DOES_NOT_MATTER,
+    totalWorkExperience: CompanyWorkExperience.DOES_NOT_MATTER,
+    status: EmployeeStatus.DOES_NOT_MATTER,
+    genders: this.formBuilder.group({})
+  });
+  salarySliderOptions: WritableSignal<Options> = signal({
+    floor: this.DEFAULT_MIN_SALARY,
+    ceil: this.DEFAULT_MAX_SALARY,
+    pushRange: true
   });
 
   @Output()
   newSettingsEvent = new EventEmitter<FilterMenuSettings>();
 
   private settingsUpdateSubscription?: Subscription;
+  private minSalaryUpdateSubscription?: Subscription;
+  private maxSalaryUpdateSubscription?: Subscription;
 
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    const stepsArray: CustomStepDefinition[] = [];
+    for (let breakPoint = this.DEFAULT_MIN_SALARY; breakPoint <= this.DEFAULT_MAX_SALARY; breakPoint += this.DEFAULT_STEP_SALARY) {
+      stepsArray.push({ value: breakPoint });
+    }
+    const options: Options = this.salarySliderOptions();
+    options.stepsArray = stepsArray;
+
     this.settingsUpdateSubscription = this.settingsForm.valueChanges.subscribe(() => this.updateSettings());
+    this.minSalaryUpdateSubscription = this.settingsForm.get("minSalary")?.valueChanges.subscribe(() => this.updateSliderValues());
+    this.maxSalaryUpdateSubscription = this.settingsForm.get("maxSalary")?.valueChanges.subscribe(() => this.updateSliderValues());
   }
 
   ngOnDestroy(): void {
     this.settingsUpdateSubscription?.unsubscribe();
+    this.minSalaryUpdateSubscription?.unsubscribe();
+    this.maxSalaryUpdateSubscription?.unsubscribe();
   }
 
   updateSettings() {
     const filterSettings: FilterMenuSettings = Object.assign(new FilterMenuSettings(), this.settingsForm.value);
     this.newSettingsEvent.emit(filterSettings);
+  }
+
+  updateSliderValues() {
+    this.settingsForm.get("salary")?.patchValue(
+      [
+        this.settingsForm.get("minSalary")?.value, 
+        this.settingsForm.get("maxSalary")?.value
+      ]
+    );
   }
 
   get locationsFormGroup() {
@@ -133,6 +186,11 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   get jobTypesFormGroup() {
     // @ts-ignore
     return this.settingsForm.get("jobTypes") as FormGroup;
+  }
+
+  get gendersFormGroup() {
+    // @ts-ignore
+    return this.settingsForm.get("genders") as FormGroup;
   }
 
   selectLocationName(name: string): void {
@@ -277,6 +335,86 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
       if (isChecked) {
         // @ts-ignore
         this.jobTypesFormGroup.controls[name]?.patchValue(false);
+      }
+    });
+  }
+
+  hasSalaryFilter(): boolean {
+    return this.settingsForm.get('minSalary')?.value !== this.DEFAULT_MIN_SALARY
+      || this.settingsForm.get('maxSalary')?.value !== this.DEFAULT_MAX_SALARY;
+  }
+
+  clearSalary(): void {
+    this.settingsForm.get("minSalary")?.patchValue(this.DEFAULT_MIN_SALARY);
+    this.settingsForm.get("maxSalary")?.patchValue(this.DEFAULT_MAX_SALARY);
+  }
+
+  onSalarySliderLowerValueChange(newLowerValue: number): void {
+    this.minSalaryUpdateSubscription?.unsubscribe();
+    this.settingsForm.get("minSalary")?.patchValue(newLowerValue);
+    this.minSalaryUpdateSubscription = this.settingsForm.get("minSalary")?.valueChanges.subscribe(() => this.updateSliderValues());
+  }
+
+  onSalarySliderHigherValueChange(newHigherValue: number): void {
+    this.maxSalaryUpdateSubscription?.unsubscribe();
+    this.settingsForm.get("maxSalary")?.patchValue(newHigherValue);
+    this.maxSalaryUpdateSubscription = this.settingsForm.get("maxSalary")?.valueChanges.subscribe(() => this.updateSliderValues());
+  }
+
+  hasCompanyWorkExperienceFilter(): boolean {
+    return this.settingsForm.get('companyWorkExperience')?.value !== CompanyWorkExperience.DOES_NOT_MATTER;
+  }
+
+  clearCompanyWorkExperience(): void {
+    this.settingsForm.get("companyWorkExperience")?.patchValue(CompanyWorkExperience.DOES_NOT_MATTER);
+  }
+
+  hasTotalWorkExperienceFilter(): boolean {
+    return this.settingsForm.get('totalWorkExperience')?.value !== CompanyWorkExperience.DOES_NOT_MATTER;
+  }
+
+  clearTotalWorkExperience(): void {
+    this.settingsForm.get("totalWorkExperience")?.patchValue(CompanyWorkExperience.DOES_NOT_MATTER);
+  }
+
+  hasEmployeeStatusFilter(): boolean {
+    return this.settingsForm.get('status')?.value !== EmployeeStatus.DOES_NOT_MATTER;
+  }
+
+  clearEmployeeStatusFilter(): void {
+    this.settingsForm.get("status")?.patchValue(EmployeeStatus.DOES_NOT_MATTER);
+  }
+
+  selectGender(genderEvent: any): void {
+    const genderName: string = genderEvent.target.value;
+    const genderNameUpperCase = genderName.toUpperCase();
+    if (genderNameUpperCase !== "MALE" && genderNameUpperCase !== "FEMALE") {
+      return;
+    }
+    
+    const gender = Gender[genderNameUpperCase];
+    // @ts-ignore
+    const isChecked = this.gendersFormGroup.get(gender)?.value;
+    // @ts-ignore
+    this.gendersFormGroup.get(gender)?.patchValue(!isChecked);
+    if (this.selectedGenders.includes(gender)) {
+      this.selectedGenders = this.selectedGenders.filter(n => n !== gender);
+    } else {
+      this.selectedGenders.push(gender);
+    }
+    this.hasGendersFilter = !!this.selectedGenders.length;
+  }
+
+  clearGenders(): void {
+    this.selectedGenders = [];
+    this.hasGendersFilter = false;
+    this.clearGendersFilter.next();
+    this._genders.forEach((gender: Gender) => {
+      // @ts-ignore
+      const isChecked = this.gendersFormGroup.controls[gender]?.value;
+      if (!isChecked) {
+        // @ts-ignore
+        this.gendersFormGroup.controls[gender]?.patchValue(true);
       }
     });
   }

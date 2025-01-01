@@ -31,6 +31,7 @@ import { FooterComponent } from '../footer/footer.component';
 import { SELECTED_UNITS } from '../../tokens/selected-units.token';
 import { SelectedUnit } from '../../model/selected-unit.model';
 import { InfoComponent } from '../info/info.component';
+import { Gender } from '../../model/gender.enum';
 
 @Component({
   selector: 'app-organizational-tree',
@@ -68,6 +69,7 @@ export class OrganizationalTreeComponent implements OnInit {
   groups?: OrganizationalUnit[];
   jobTitles?: string[];
   jobTypes?: string[];
+  genders: Gender[] = [Gender.MALE, Gender.FEMALE];
 
   private width = 1200;
   private height = 1200;

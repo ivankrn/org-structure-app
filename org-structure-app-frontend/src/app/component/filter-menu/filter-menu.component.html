@@ -4,92 +4,290 @@
         <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
     </summary>
     <form [formGroup]="settingsForm">
-        <div id="locations" formArrayName="locations" class="section">
-            <div class="title-container">
-                <div class="title">Локации</div>
-                @if (hasLocationsFilter) {
-                    <div class="clear" (click)="clearLocations()">Сбросить</div>
-                }
+        <details open id="atribute-filters">
+            <summary class="summary">
+                <span class="summary-text">По атрибутам</span>
+                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+            <div>
+                <div id="employee-salary">
+                    <div class="title-container">
+                        <div class="title">Зарплата, рублей</div>
+                        @if (hasSalaryFilter()) {
+                            <div class="clear" (click)="clearSalary()">Сбросить</div>
+                        }
+                    </div>
+                    <ul class="salary-input-container">
+                        <li class="salary-input">
+                            <div class="search-container">
+                                <input type="number" id="min-salary" name="min-salary" formControlName="minSalary">
+                            </div>
+                        </li>
+                        <li style="align-content: center;">
+                            <hr style="width: 16px;"/>
+                        </li>
+                        <li class="salary-input">
+                            <div class="search-container">
+                                <input type="number" id="max-salary" name="max-salary" formControlName="maxSalary">
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="slider">
+                        <ngx-slider [options]="salarySliderOptions()" formControlName="salary"
+                                    (valueChange)="onSalarySliderLowerValueChange($event)"
+                                    (highValueChange)="onSalarySliderHigherValueChange($event)"
+                        />
+                    </div>
+                </div>
+                <ng-container *ngTemplateOutlet="companyWorkExperience" />
+                <ng-container *ngTemplateOutlet="totalWorkExperience" />
+                <ng-container *ngTemplateOutlet="employeeStatus" />
+                <div id="employee-gender">
+                    <div class="title-container">
+                        <div class="title">Пол</div>
+                        @if (hasGendersFilter) {
+                            <div class="clear" (click)="clearGenders()">Сбросить</div>
+                        }
+                    </div>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="male" name="male" value="male" class="checkbox" formControlName="genders"
+                                [checked]="gendersFormGroup.value['MALE']" (change)="selectGender($event)">
+                            <label for="male">Мужской</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="female" name="female" value="female" class="checkbox" formControlName="genders"
+                                [checked]="gendersFormGroup.value['FEMALE']" (change)="selectGender($event)">
+                            <label for="female">Женский</label>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <name-search-bar [names]="_locationNames"
-                             [clearSubject]="clearLocationsFilter"
-                             (nameSelectedEvent)="selectLocationName($event)"
-            />
-        </div>
-        <div id="divisions" class="section">
-            <div class="title-container">
-                <div class="title">Подразделения</div>
-                @if (hasDivisionsFilter) {
-                    <div class="clear" (click)="clearDivisions()">Сбросить</div>
-                }
+        </details>
+        <details open id="job-position-filters">
+            <summary class="summary">
+                <span class="summary-text">По позициям</span>
+                <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
+            </summary>
+            <div>
+                <div id="locations" formArrayName="locations" class="section">
+                    <div class="title-container">
+                        <div class="title">Локации</div>
+                        @if (hasLocationsFilter) {
+                            <div class="clear" (click)="clearLocations()">Сбросить</div>
+                        }
+                    </div>
+                    <name-search-bar [names]="_locationNames"
+                                     [clearSubject]="clearLocationsFilter"
+                                     (nameSelectedEvent)="selectLocationName($event)"
+                    />
+                </div>
+                <div id="divisions" class="section">
+                    <div class="title-container">
+                        <div class="title">Подразделения</div>
+                        @if (hasDivisionsFilter) {
+                            <div class="clear" (click)="clearDivisions()">Сбросить</div>
+                        }
+                    </div>
+                    <unit-search-bar [units]="_divisions"
+                                     [clearSubject]="clearDivisionsFilter"
+                                     (unitSelectedEvent)="selectDivision($event)"
+                    />
+                </div>
+                <div id="departments" class="section">
+                    <div class="title-container">
+                        <div class="title">Отделы</div>
+                        @if (hasDepartmentsFilter) {
+                            <div class="clear" (click)="clearDepartments()">Сбросить</div>
+                        }
+                    </div>
+                    <unit-search-bar [units]="_departments"
+                                     [clearSubject]="clearDepartmentsFilter"
+                                     (unitSelectedEvent)="selectDepartment($event)"
+                    />
+                </div>
+                <div id="groups" class="section">
+                    <div class="title-container">
+                        <div class="title">Группы</div>
+                        @if (hasGroupsFilter) {
+                            <div class="clear" (click)="clearGroups()">Сбросить</div>
+                        }
+                    </div>
+                    <unit-search-bar [units]="_groups"
+                                     [clearSubject]="clearGroupsFilter"
+                                     (unitSelectedEvent)="selectGroup($event)"
+                    />
+                </div>
+                <div id="job-titles" class="section">
+                    <div class="title-container">
+                        <div class="title">Должности</div>
+                        @if (hasJobTitlesFilter) {
+                            <div class="clear" (click)="clearJobTitles()">Сбросить</div>
+                        }
+                    </div>
+                    <name-search-bar [names]="_jobTitles"
+                                     [clearSubject]="clearJobTitlesFilter"
+                                     (nameSelectedEvent)="selectJobTitle($event)"
+                    />
+                </div>
+                <div id="job-types" class="section">
+                    <div class="title-container">
+                        <div class="title">Типы работы</div>
+                        @if (hasJobTypesFilter) {
+                            <div class="clear" (click)="clearJobTypes()">Сбросить</div>
+                        }
+                    </div>
+                    <name-search-bar [names]="_jobTypes"
+                                     [clearSubject]="clearJobTypesFilter"
+                                     (nameSelectedEvent)="selectJobType($event)"
+                    />
+                </div>
+                <div id="employee-type">
+                    <div class="title">Тип места</div>
+                    <ul>
+                        <li>
+                            <input type="checkbox" id="vacancy" name="vacancy"
+                                   value="vacancy" class="checkbox" formControlName="displayVacancies">
+                            <label for="vacancy">Вакантные места</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="not-vacancy" name="not-vacancy"
+                                   value="not-vacancy" formControlName="displayNotVacancies">
+                            <label for="not-vacancy">Занятые места</label>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <unit-search-bar [units]="_divisions"
-                             [clearSubject]="clearDivisionsFilter"
-                             (unitSelectedEvent)="selectDivision($event)"
-            />
-        </div>
-        <div id="departments" class="section">
-            <div class="title-container">
-                <div class="title">Отделы</div>
-                @if (hasDepartmentsFilter) {
-                    <div class="clear" (click)="clearDepartments()">Сбросить</div>
-                }
-            </div>
-            <unit-search-bar [units]="_departments"
-                             [clearSubject]="clearDepartmentsFilter"
-                             (unitSelectedEvent)="selectDepartment($event)"
-            />
-        </div>
-        <div id="groups" class="section">
-            <div class="title-container">
-                <div class="title">Группы</div>
-                @if (hasGroupsFilter) {
-                    <div class="clear" (click)="clearGroups()">Сбросить</div>
-                }
-            </div>
-            <unit-search-bar [units]="_groups"
-                             [clearSubject]="clearGroupsFilter"
-                             (unitSelectedEvent)="selectGroup($event)"
-            />
-        </div>
-        <div id="job-titles" class="section">
-            <div class="title-container">
-                <div class="title">Должности</div>
-                @if (hasJobTitlesFilter) {
-                    <div class="clear" (click)="clearJobTitles()">Сбросить</div>
-                }
-            </div>
-            <name-search-bar [names]="_jobTitles"
-                             [clearSubject]="clearJobTitlesFilter"
-                             (nameSelectedEvent)="selectJobTitle($event)"
-            />
-        </div>
-        <div id="job-types" class="section">
-            <div class="title-container">
-                <div class="title">Типы работы</div>
-                @if (hasJobTypesFilter) {
-                    <div class="clear" (click)="clearJobTypes()">Сбросить</div>
-                }
-            </div>
-            <name-search-bar [names]="_jobTypes"
-                             [clearSubject]="clearJobTypesFilter"
-                             (nameSelectedEvent)="selectJobType($event)"
-            />
-        </div>
-        <div id="employee-type">
-            <div class="title">Тип места</div>
-            <ul>
-                <li>
-                    <input type="checkbox" id="vacancy" name="vacancy" value="vacancy" class="checkbox"
-                        formControlName="displayVacancies">
-                    <label for="vacancy">Вакантные места</label>
-                </li>
-                <li>
-                    <input type="checkbox" id="not-vacancy" name="not-vacancy" value="not-vacancy"
-                        formControlName="displayNotVacancies">
-                    <label for="not-vacancy">Занятые места</label>
-                </li>
-            </ul>
-        </div>
+        </details>
+
     </form>
 </details>
+
+<ng-template #companyWorkExperience>
+    <div id="employee-company-work-experience">
+        <div class="title-container">
+            <div class="title">Стаж работы в компании</div>
+            @if (hasCompanyWorkExperienceFilter()) {
+                <div class="clear" (click)="clearCompanyWorkExperience()">Сбросить</div>
+            }
+        </div>
+        <ul>
+            <li>
+                <input type="radio" id="employee-company-work-experience-does-not-matter" value="DOES_NOT_MATTER"
+                       [checked]="settingsForm.get('companyWorkExperience')?.value === 'DOES_NOT_MATTER'"
+                       formControlName="companyWorkExperience">
+                <label for="employee-company-work-experience-does-not-matter">Не имеет значения</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-company-work-experience-less-than-one-year" value="LESS_THAN_ONE_YEAR"
+                       [checked]="settingsForm.get('companyWorkExperience')?.value === 'LESS_THAN_ONE_YEAR'"
+                       formControlName="companyWorkExperience">
+                <label for="employee-company-work-experience-less-than-one-year">Менее 1 года</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-company-work-experience-from-one-to-three-years" value="FROM_ONE_TO_THREE_YEARS"
+                       [checked]="settingsForm.get('companyWorkExperience')?.value === 'FROM_ONE_TO_THREE_YEARS'"
+                       formControlName="companyWorkExperience">
+                <label for="employee-company-work-experience-from-one-to-three-years">От 1 года до 3 лет</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-company-work-experience-from-three-to-six-years" value="FROM_THREE_TO_SIX_YEARS"
+                       [checked]="settingsForm.get('companyWorkExperience')?.value === 'FROM_THREE_TO_SIX_YEARS'"
+                       formControlName="companyWorkExperience">
+                <label for="employee-company-work-experience-from-three-to-six-years">От 3 до 6 лет</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-company-work-experience-more-than-six-years" value="MORE_THAN_SIX_YEARS"
+                       [checked]="settingsForm.get('companyWorkExperience')?.value === 'MORE_THAN_SIX_YEARS'"
+                       formControlName="companyWorkExperience">
+                <label for="employee-company-work-experience-more-than-six-years">Более 6 лет</label>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+
+<ng-template #totalWorkExperience>
+    <div id="employee-total-work-experience">
+        <div class="title-container">
+            <div class="title">Общий стаж работы</div>
+            @if (hasTotalWorkExperienceFilter()) {
+                <div class="clear" (click)="clearTotalWorkExperience()">Сбросить</div>
+            }
+        </div>
+        <ul>
+            <li>
+                <input type="radio" id="employee-total-work-experience-does-not-matter" value="DOES_NOT_MATTER"
+                       [checked]="settingsForm.get('totalWorkExperience')?.value === 'DOES_NOT_MATTER'"
+                       formControlName="totalWorkExperience">
+                <label for="employee-total-work-experience-does-not-matter">Не имеет значения</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-total-work-experience-less-than-one-year" value="LESS_THAN_ONE_YEAR"
+                       [checked]="settingsForm.get('totalWorkExperience')?.value === 'LESS_THAN_ONE_YEAR'"
+                       formControlName="totalWorkExperience">
+                <label for="employee-total-work-experience-less-than-one-year">Менее 1 года</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-total-work-experience-from-one-to-three-years" value="FROM_ONE_TO_THREE_YEARS"
+                       [checked]="settingsForm.get('totalWorkExperience')?.value === 'FROM_ONE_TO_THREE_YEARS'"
+                       formControlName="totalWorkExperience">
+                <label for="employee-total-work-experience-from-one-to-three-years">От 1 года до 3 лет</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-total-work-experience-from-three-to-six-years" value="FROM_THREE_TO_SIX_YEARS"
+                       [checked]="settingsForm.get('totalWorkExperience')?.value === 'FROM_THREE_TO_SIX_YEARS'"
+                       formControlName="totalWorkExperience">
+                <label for="employee-total-work-experience-from-three-to-six-years">От 3 до 6 лет</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-total-work-experience-more-than-six-years" value="MORE_THAN_SIX_YEARS"
+                       [checked]="settingsForm.get('totalWorkExperience')?.value === 'MORE_THAN_SIX_YEARS'"
+                       formControlName="totalWorkExperience">
+                <label for="employee-total-work-experience-more-than-six-years">Более 6 лет</label>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+
+<ng-template #employeeStatus>
+    <div id="employee-status">
+        <div class="title-container">
+            <div class="title">Статус</div>
+            @if (hasEmployeeStatusFilter()) {
+                <div class="clear" (click)="clearEmployeeStatusFilter()">Сбросить</div>
+            }
+        </div>
+        <ul>
+            <li>
+                <input type="radio" id="employee-status-does-not-matter" value="DOES_NOT_MATTER"
+                       [checked]="settingsForm.get('status')?.value === 'DOES_NOT_MATTER'"
+                       formControlName="status">
+                <label for="employee-status-does-not-matter">Не имеет значения</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-status-active" value="ACTIVE"
+                       [checked]="settingsForm.get('status')?.value === 'ACTIVE'"
+                       formControlName="status">
+                <label for="employee-status-active">На работе</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-status-on-sick-leave" value="ON_SICK_LEAVE"
+                       [checked]="settingsForm.get('status')?.value === 'ON_SICK_LEAVE'"
+                       formControlName="status">
+                <label for="employee-status-on-sick-leave">На больничном</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-status-on-vacation" value="ON_VACATION"
+                       [checked]="settingsForm.get('status')?.value === 'ON_VACATION'"
+                       formControlName="status">
+                <label for="employee-status-on-vacation">В отпуске</label>
+            </li>
+            <li>
+                <input type="radio" id="employee-status-on-maternity-leave" value="ON_MATERNITY_LEAVE"
+                       [checked]="settingsForm.get('status')?.value === 'ON_MATERNITY_LEAVE'"
+                       formControlName="status">
+                <label for="employee-status-on-maternity-leave">В декрете</label>
+            </li>
+        </ul>
+    </div>
+</ng-template>

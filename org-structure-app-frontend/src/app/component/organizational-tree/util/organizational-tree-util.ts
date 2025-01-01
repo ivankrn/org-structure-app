@@ -82,6 +82,11 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             type: OrganizationalTreeNodeType.EMPLOYEE,
             jobTitle: employee.jobTitle,
             jobType: employee.jobType,
+            status: employee.status,
+            gender: employee.gender,
+            salary: employee.salary,
+            companyWorkExperienceInYears: calculateDifferenceInYearsBetweenNowAndDate(new Date(employee.employmentDate)),
+            totalWorkExperienceInYears: employee.totalYearsExperience,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
@@ -113,6 +118,11 @@ export function convertProject(project: Project): OrganizationalTreeNode {
             type: OrganizationalTreeNodeType.EMPLOYEE,
             jobTitle: employee.jobTitle,
             jobType: employee.jobType,
+            status: employee.status,
+            gender: employee.gender,
+            salary: employee.salary,
+            companyWorkExperienceInYears: calculateDifferenceInYearsBetweenNowAndDate(new Date(employee.employmentDate)),
+            totalWorkExperienceInYears: employee.totalYearsExperience,
             isVacancy: employee.isVacancy,
             parent: nodeWithoutChildren
         };
@@ -197,6 +207,12 @@ function getUnitNameWithType(unit: OrganizationalUnit): string {
     }
     return `${type} "${unit.name}"`;
 }
+
+function calculateDifferenceInYearsBetweenNowAndDate(date: Date) {
+    var ageDiffInMs = Date.now() - date.getTime();
+    var ageDate = new Date(ageDiffInMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
 
 export function hasChildrenWithId(unit: OrganizationalTreeNode, id: number): boolean {
     if (!unit.children) {

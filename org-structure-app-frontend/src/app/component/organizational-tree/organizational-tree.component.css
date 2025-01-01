@@ -15,7 +15,7 @@
 #filter-menu {
     position: fixed;
     z-index: 100;
-    width: 248px;
+    width: 300px;
     right: calc(50vw - 600px);
 }
 
