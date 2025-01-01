@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { FilterMenuSettings } from './filter-menu-settings.model';
@@ -9,7 +9,7 @@ import { NamesSearchBarComponent } from "../name-search-bar/name-search-bar.comp
 import { Gender } from '../../model/gender.enum';
 import { CompanyWorkExperience } from '../../model/company-work-experience.enum';
 import { EmployeeStatus } from '../../model/employee-status.enum';
-import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
+import { CustomStepDefinition, NgxSliderModule, Options } from '@angular-slider/ngx-slider';
 
 @Component({
   selector: 'filter-menu',
@@ -22,6 +22,7 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
 
   readonly DEFAULT_MIN_SALARY = 0;
   readonly DEFAULT_MAX_SALARY = 500000;
+  readonly DEFAULT_STEP_SALARY = 500;
 
   _locationNames!: string[];
   @Input()
@@ -113,12 +114,11 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
     status: EmployeeStatus.DOES_NOT_MATTER,
     genders: this.formBuilder.group({})
   });
-  salarySliderOptions: Options = {
+  salarySliderOptions: WritableSignal<Options> = signal({
     floor: this.DEFAULT_MIN_SALARY,
     ceil: this.DEFAULT_MAX_SALARY,
-    step: 500,
     pushRange: true
-  };
+  });
 
   @Output()
   newSettingsEvent = new EventEmitter<FilterMenuSettings>();
@@ -130,6 +130,13 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    const stepsArray: CustomStepDefinition[] = [];
+    for (let breakPoint = this.DEFAULT_MIN_SALARY; breakPoint <= this.DEFAULT_MAX_SALARY; breakPoint += this.DEFAULT_STEP_SALARY) {
+      stepsArray.push({ value: breakPoint });
+    }
+    const options: Options = this.salarySliderOptions();
+    options.stepsArray = stepsArray;
+
     this.settingsUpdateSubscription = this.settingsForm.valueChanges.subscribe(() => this.updateSettings());
     this.minSalaryUpdateSubscription = this.settingsForm.get("minSalary")?.valueChanges.subscribe(() => this.updateSliderValues());
     this.maxSalaryUpdateSubscription = this.settingsForm.get("maxSalary")?.valueChanges.subscribe(() => this.updateSliderValues());

@@ -87,9 +87,11 @@ input[type='checkbox']{
     text-align: center;
     display: inline-block;
     vertical-align: middle;
+
     width: 20px !important;
     height: 20px !important;
-    appearance:none;
+    appearance: none;
+
     border: 1px solid #121212;
     box-shadow: none;
     font-size: 1em;
@@ -104,14 +106,16 @@ input[type='radio']{
     text-align: center;
     display: inline-block;
     vertical-align: middle;
+
     width: 24px !important;
     height: 24px !important;
-    color:white;
-    appearance:none;
-    border: 1.5px solid #14191A1F;
+    color: white;
+    appearance: none;
+
+    border: 1px solid rgba(20, 25, 26, 0.12);
     border-radius: 50%;
     box-shadow: none;
-    font-size: 1em;
+    font-size: 12px;
 }
 
 input[type=number] {
@@ -166,8 +170,8 @@ input[type=number]::placeholder {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
     margin-bottom: 8px;
+
     &:last-child {
         margin-bottom: 0;
     }
