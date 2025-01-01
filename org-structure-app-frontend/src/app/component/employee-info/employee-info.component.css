@@ -60,6 +60,11 @@ details>summary {
     font-weight: 600;
 }
 
+details > div {
+    border-left: 1px solid #C2C2C2;
+    padding-left: 12px;
+}
+
 summary::-webkit-details-marker {
     display: none
 }

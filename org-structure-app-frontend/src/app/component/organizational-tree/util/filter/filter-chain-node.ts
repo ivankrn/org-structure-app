@@ -1,3 +1,5 @@
+import { EmployeeStatus } from "../../../../model/employee-status.enum";
+import { Gender } from "../../../../model/gender.enum";
 import { FilterMenuSettings } from "../../../filter-menu/filter-menu-settings.model";
 import { OrganizationalTreeNodeType } from "../../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../../model/organizational-tree-node.model";
@@ -72,6 +74,33 @@ export class EmployeeFilterChainNode extends FilterChainNode {
                 .map(entry => entry[0]);
             if (selectedJobTypes.length > 0 && !selectedJobTypes.includes(node.jobType!)) {
                 return false;
+            }
+
+            if (node.salary! < filterSettings.minSalary || node.salary! > filterSettings.maxSalary) {
+                return false;
+            }
+
+            if (!node.isVacancy) {
+                if (node.companyWorkExperienceInYears! < filterSettings.minCompanyWorkExperienceInYears()
+                    || node.companyWorkExperienceInYears! > filterSettings.maxCompanyWorkExperienceInYears()) {
+                    return false;
+                }
+    
+                if (node.totalWorkExperienceInYears! < filterSettings.minTotalWorkExperienceInYears()
+                    || node.totalWorkExperienceInYears! > filterSettings.maxTotalWorkExperienceInYears()) {
+                    return false;
+                }
+    
+                if (filterSettings.status !== EmployeeStatus.DOES_NOT_MATTER && node.status !== filterSettings.status) {
+                    return false;
+                }
+    
+                const selectedGenders: Gender[] = Object.entries(filterSettings.genders)
+                    .filter(entry => entry[1])
+                    .map(entry => Gender[entry[0]]);
+                if (!selectedGenders.includes(node.gender!)) {
+                    return false;
+                }
             }
         }
         if (this.nextFilter !== undefined) {
