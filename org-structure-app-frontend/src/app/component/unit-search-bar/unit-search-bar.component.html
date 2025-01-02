@@ -4,7 +4,7 @@
     >
     <img class="arrow" [ngClass]="{'rotate': selectOpened}" (click)="selectOpened = !selectOpened" src="../../../assets/img/select.svg" alt="">
 </div>
-@if (selectOpened) {
+@if (selectOpened && searchedUnits.length > 0) {
     <div class="select" [ngStyle]="{'height': (Math.min(20 * units.length, 160)).toString() + 'px'}">
         @for (unit of searchedUnits; track unit.id) {
             <label class="option" (click)="selectUnit(unit)">
@@ -21,5 +21,10 @@
                 </span>
             </label>
         }
+    </div>
+}
+@if (searchedUnits.length == 0) {
+    <div class="nothing-found-block">
+        <p class="nothing-found-title">Ничего не найдено</p>
     </div>
 }

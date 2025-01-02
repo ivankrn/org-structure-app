@@ -4,7 +4,7 @@
     >
     <img class="arrow" [ngClass]="{'rotate': selectOpened}" (click)="selectOpened = !selectOpened" src="../../../assets/img/select.svg" alt="">
 </div>
-@if (selectOpened) {
+@if (selectOpened && searchedNames.length > 0) {
     <div class="select" [ngStyle]="{'height': (Math.min(20 * names.length, 160)).toString() + 'px'}">
         @for (name of searchedNames; track name) {
             <label class="option" (click)="selectName(name)">
@@ -12,5 +12,10 @@
                 {{name}}
             </label>
         }
+    </div>
+}
+@if (searchedNames.length == 0) {
+    <div class="nothing-found-block">
+        <p class="nothing-found-title">Ничего не найдено</p>
     </div>
 }

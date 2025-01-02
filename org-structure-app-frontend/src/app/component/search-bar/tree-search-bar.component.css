@@ -131,6 +131,23 @@ input[type=search] {
     width: 123px;
 }
 
+.nothing-found-block {
+    display: flex;
+    height: 50px;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 16px 0 rgba(20, 25, 26, 0.08);
+    text-align: center; 
+}
+
+.nothing-found-title {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #8A8C8C;
+    margin: auto;
+}
+
 @media (min-width: 3024px) {
     .search-bar {
         padding: 32px 48px;
