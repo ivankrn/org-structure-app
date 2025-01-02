@@ -1,13 +1,12 @@
-<div class="search-container" (click)="selectOpened = !selectOpened">
+<div class="search-container">
     <input type="search" placeholder="Выберите"
-           [readOnly]="true"
-           [(ngModel)]="selectedUnitNamesString"
+           [(ngModel)]="selectedUnitNamesString" #searchBarInput (click)="selectOpened = true"
     >
-    <img class="arrow" [ngClass]="{'rotate': selectOpened}" src="../../../assets/img/select.svg" alt="">
+    <img class="arrow" [ngClass]="{'rotate': selectOpened}" (click)="selectOpened = !selectOpened" src="../../../assets/img/select.svg" alt="">
 </div>
 @if (selectOpened) {
     <div class="select" [ngStyle]="{'height': (Math.min(20 * units.length, 160)).toString() + 'px'}">
-        @for (unit of units; track unit.id) {
+        @for (unit of searchedUnits; track unit.id) {
             <label class="option" (click)="selectUnit(unit)">
                 <input type="checkbox" [checked]="selectedUnitsArray.includes(unit)">
                 <span>
