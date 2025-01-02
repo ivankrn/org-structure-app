@@ -39,9 +39,9 @@
                         />
                     </div>
                 </div>
-                <ng-container *ngTemplateOutlet="companyWorkExperience" />
-                <ng-container *ngTemplateOutlet="totalWorkExperience" />
-                <ng-container *ngTemplateOutlet="employeeStatus" />
+                <ng-container *ngTemplateOutlet="companyWorkExperience; context: {form: settingsForm}" />
+                <ng-container *ngTemplateOutlet="totalWorkExperience; context: {form: settingsForm}" />
+                <ng-container *ngTemplateOutlet="employeeStatus; context: {form: settingsForm}" />
                 <div id="employee-gender">
                     <div class="title-container">
                         <div class="title">Пол</div>
@@ -163,8 +163,8 @@
     </form>
 </details>
 
-<ng-template #companyWorkExperience>
-    <div id="employee-company-work-experience">
+<ng-template #companyWorkExperience let-form="form">
+    <div id="employee-company-work-experience" [formGroup]="form">
         <div class="title-container">
             <div class="title">Стаж работы в компании</div>
             @if (hasCompanyWorkExperienceFilter()) {
@@ -206,8 +206,8 @@
     </div>
 </ng-template>
 
-<ng-template #totalWorkExperience>
-    <div id="employee-total-work-experience">
+<ng-template #totalWorkExperience let-form="form">
+    <div id="employee-total-work-experience" [formGroup]="form">
         <div class="title-container">
             <div class="title">Общий стаж работы</div>
             @if (hasTotalWorkExperienceFilter()) {
@@ -249,8 +249,8 @@
     </div>
 </ng-template>
 
-<ng-template #employeeStatus>
-    <div id="employee-status">
+<ng-template #employeeStatus let-form="form">
+    <div id="employee-status" [formGroup]="form">
         <div class="title-container">
             <div class="title">Статус</div>
             @if (hasEmployeeStatusFilter()) {
