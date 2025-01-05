@@ -12,6 +12,7 @@ export interface Employee {
     jobType: string;
     email: string;
     isVacancy: boolean;
+    imageUrl: string;
     status?: EmployeeStatus;
     employmentDate: string;
     organizationalUnit?: OrganizationalUnit;

@@ -30,6 +30,7 @@ public record EmployeeDTO (
         @Schema(description = "Дата трудоустройства")
         ZonedDateTime employmentDate,
         @Schema(description = "Обший стаж работы")
-        Integer totalYearsExperience
-) {
-}
+        Integer totalYearsExperience,
+        @Schema(description = "Ссылка на фото сотрудника")
+        String imageUrl
+) { }
