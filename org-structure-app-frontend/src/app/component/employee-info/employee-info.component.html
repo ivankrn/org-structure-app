@@ -3,8 +3,7 @@
         <div class="title">Профиль</div>
         <div id="employee-profile-details">
             <div class="profile-image">
-                <!-- TODO сделать получение изображения с бэкенда -->
-                <img src="http://45.95.234.130/content/images/profile/default_profile_image.png" alt="Employee image">
+                <img src="http://45.95.234.130{{employee.imageUrl ? employee.imageUrl : '/content/images/profile/default_profile_image.png'}}" alt="Employee image">
             </div>
             <div class="profile-name">
                 <div class="value">{{ employee.fullName }}</div>
