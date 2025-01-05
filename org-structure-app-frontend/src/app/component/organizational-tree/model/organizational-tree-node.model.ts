@@ -17,7 +17,9 @@ export interface OrganizationalTreeNode {
     companyWorkExperienceInYears?: number;
     totalWorkExperienceInYears?: number;
     isVacancy?: boolean;
+    imageUrl?: string;
     parent?: OrganizationalTreeNode;
     hierarchy?: OrganizationalTreeNodeHierarchy;
     children?: OrganizationalTreeNode[];
+    head?: OrganizationalTreeNode;
 }
