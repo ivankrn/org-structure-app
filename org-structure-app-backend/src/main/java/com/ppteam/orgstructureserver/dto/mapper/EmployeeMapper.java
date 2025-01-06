@@ -1,8 +1,10 @@
 package com.ppteam.orgstructureserver.dto.mapper;
 
 import com.ppteam.orgstructureserver.database.model.Employee;
+import com.ppteam.orgstructureserver.database.repository.EmployeeRepository;
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
 import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
+import com.ppteam.orgstructureserver.dto.SalaryStatisticsDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -20,4 +22,6 @@ public interface EmployeeMapper {
     @Mapping(source = "employee.parent", target = "organizationalUnit")
     @Mapping(source = "employee.parent.location.name", target = "organizationalUnit.location")
     EmployeeFullDTO convertToFullDTO(Employee employee);
+
+    SalaryStatisticsDTO convertToDTO(EmployeeRepository.SalaryStatistics salaryStatistics);
 }

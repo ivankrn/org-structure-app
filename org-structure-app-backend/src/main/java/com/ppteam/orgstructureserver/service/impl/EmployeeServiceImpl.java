@@ -4,6 +4,7 @@ import com.ppteam.orgstructureserver.controller.error.NotFoundException;
 import com.ppteam.orgstructureserver.database.repository.EmployeeRepository;
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
 import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
+import com.ppteam.orgstructureserver.dto.SalaryStatisticsDTO;
 import com.ppteam.orgstructureserver.dto.mapper.EmployeeMapper;
 import com.ppteam.orgstructureserver.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDTO> findByFullNameContainingIgnoreCase(String name) {
         return employeeRepository.findByFullNameContainingIgnoreCase(name).stream()
                 .map(mapper::convertToDTO).toList();
+    }
+
+    @Override
+    public SalaryStatisticsDTO getSalaryStatistics() {
+        return mapper.convertToDTO(employeeRepository.getSalaryStatistics());
     }
 
 }
