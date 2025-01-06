@@ -2,6 +2,7 @@ package com.ppteam.orgstructureserver.controller;
 
 import com.ppteam.orgstructureserver.dto.EmployeeDTO;
 import com.ppteam.orgstructureserver.dto.EmployeeFullDTO;
+import com.ppteam.orgstructureserver.dto.SalaryStatisticsDTO;
 import com.ppteam.orgstructureserver.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,6 +51,17 @@ public class EmployeeController {
     public List<EmployeeDTO> findEmployeesWithFullNameContaining(@Parameter(description = "Имя для поиска")
                                                                  @RequestParam String name) {
         return employeeService.findByFullNameContainingIgnoreCase(name);
+    }
+
+    @Operation(summary = "Получить статистику по зарплатам среди сотрудников")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Статистика по зарплатам",
+            content = {@Content(mediaType = "application/json",
+                schema = @Schema(implementation = SalaryStatisticsDTO.class))}),
+    })
+    @GetMapping("/statistics/salary")
+    public SalaryStatisticsDTO getSalaryStatistics() {
+        return employeeService.getSalaryStatistics();
     }
 
 }
