@@ -16,6 +16,8 @@ public record OrganizationalUnitWithLocationsDTO(
         String location,
         @Schema(description = "Глава")
         EmployeeDTO head,
+        @Schema(description = "Заместитель")
+        EmployeeDTO deputy,
         @Schema(description = "Локации организационной единицы")
         List<LocationWithOrganizationalUnitsDTO> locations) {
 }

@@ -13,5 +13,7 @@ public record OrganizationalUnitDTO(
         @Schema(description = "Локация")
         String location,
         @Schema(description = "Глава")
-        EmployeeDTO head) {
-}
+        EmployeeDTO head,
+        @Schema(description = "Заместитель")
+        EmployeeDTO deputy
+) { }

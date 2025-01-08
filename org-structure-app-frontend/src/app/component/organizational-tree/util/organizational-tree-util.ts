@@ -3,6 +3,7 @@ import { OrganizationalUnit } from "../../../model/organizational-unit.model";
 import { OrganizationalTreeNodeType } from "../model/organizational-tree-node-type.enum";
 import { OrganizationalTreeNode } from "../model/organizational-tree-node.model";
 import { Project } from '../../../model/project.model';
+import { Employee } from "../../../model/employee.model";
 
 export function convertUnitGroupedByLocations(organizationalUnit: OrganizationalUnit): OrganizationalTreeNode {
     const node: OrganizationalTreeNode = {
@@ -27,8 +28,10 @@ export function convertUnitGroupedByLocations(organizationalUnit: Organizational
                 name: getUnitNameWithType(subsidiary),
                 nameWithoutType: subsidiary.name,
                 type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
-                location: subsidiary.location
+                location: subsidiary.location,
+                head: convertEmployeeToNode(subsidiary.head!)
             };
+            newSubsidiary.head!.parent = newSubsidiary;
             updateNodeHierarchy(locationChild, newSubsidiary);
             locationChild.children?.push(newSubsidiary);
         });
@@ -42,7 +45,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         id: organizationalUnit.id, 
         name: getUnitNameWithType(organizationalUnit),
         nameWithoutType: organizationalUnit.name,
-        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]]
+        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
+        head: organizationalUnit.head ? convertEmployeeToNode(organizationalUnit.head) : undefined,
     };
     node.children = [];
     let parent = getUnitParentInTree(treeData!, node);
@@ -52,7 +56,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: parent.name,
             nameWithoutType: parent.nameWithoutType,
             type: parent.type,
-            parent: parent.parent
+            parent: parent.parent,
+            head: parent.head,
         };
     }
     node.parent = parent;
@@ -61,7 +66,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         id: organizationalUnit.id,
         name: getUnitNameWithType(organizationalUnit),
         nameWithoutType: organizationalUnit.name,
-        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]]
+        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
+        head: organizationalUnit.head ? convertEmployeeToNode(organizationalUnit.head) : undefined,
     };
     organizationalUnit.subsidiaries?.forEach(subsidiary => {
         const newSubsidiary: OrganizationalTreeNode = {
@@ -69,30 +75,21 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: getUnitNameWithType(subsidiary),
             nameWithoutType: subsidiary.name,
             type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
-            parent: nodeWithoutChildren
+            parent: nodeWithoutChildren,
+            head: subsidiary.head ? convertEmployeeToNode(subsidiary.head) : undefined,
         };
         updateNodeHierarchy(node, newSubsidiary);
         node.children?.push(newSubsidiary);
     });
     organizationalUnit.employees?.forEach(employee => {
-        const newEmployee: OrganizationalTreeNode = {
-            id: employee.id,
-            name: employee.fullName,
-            nameWithoutType: employee.fullName,
-            type: OrganizationalTreeNodeType.EMPLOYEE,
-            jobTitle: employee.jobTitle,
-            jobType: employee.jobType,
-            status: employee.status,
-            gender: employee.gender,
-            salary: employee.salary,
-            companyWorkExperienceInYears: calculateDifferenceInYearsBetweenNowAndDate(new Date(employee.employmentDate)),
-            totalWorkExperienceInYears: employee.totalYearsExperience,
-            isVacancy: employee.isVacancy,
-            parent: nodeWithoutChildren
-        };
+        const newEmployee = convertEmployeeToNode(employee);
+        newEmployee.parent = nodeWithoutChildren;
         updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);
     });
+    const headEmployee = convertEmployeeToNode(organizationalUnit.head!);
+    headEmployee.parent = nodeWithoutChildren;
+    node.head = headEmployee;
     return node;
 }
 
@@ -111,21 +108,8 @@ export function convertProject(project: Project): OrganizationalTreeNode {
         type: OrganizationalTreeNodeType.PROJECT
     }
     project.employees?.forEach(employee => {
-        const newEmployee: OrganizationalTreeNode = {
-            id: employee.id,
-            name: employee.fullName,
-            nameWithoutType: employee.fullName,
-            type: OrganizationalTreeNodeType.EMPLOYEE,
-            jobTitle: employee.jobTitle,
-            jobType: employee.jobType,
-            status: employee.status,
-            gender: employee.gender,
-            salary: employee.salary,
-            companyWorkExperienceInYears: calculateDifferenceInYearsBetweenNowAndDate(new Date(employee.employmentDate)),
-            totalWorkExperienceInYears: employee.totalYearsExperience,
-            isVacancy: employee.isVacancy,
-            parent: nodeWithoutChildren
-        };
+        const newEmployee = convertEmployeeToNode(employee);
+        newEmployee.parent = nodeWithoutChildren;
         updateNodeHierarchy(node, newEmployee);
         node.children?.push(newEmployee);
     });
@@ -213,6 +197,24 @@ function calculateDifferenceInYearsBetweenNowAndDate(date: Date) {
     var ageDate = new Date(ageDiffInMs); // miliseconds from epoch
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   }
+
+function convertEmployeeToNode(employee: Employee): OrganizationalTreeNode {
+    return {
+        id: employee.id,
+        name: employee.fullName,
+        nameWithoutType: employee.fullName,
+        type: OrganizationalTreeNodeType.EMPLOYEE,
+        jobTitle: employee.jobTitle,
+        jobType: employee.jobType,
+        status: employee.status,
+        gender: employee.gender,
+        salary: employee.salary,
+        companyWorkExperienceInYears: calculateDifferenceInYearsBetweenNowAndDate(new Date(employee.employmentDate)),
+        totalWorkExperienceInYears: employee.totalYearsExperience,
+        isVacancy: employee.isVacancy,
+        imageUrl: employee.imageUrl
+    };
+}
 
 export function hasChildrenWithId(unit: OrganizationalTreeNode, id: number): boolean {
     if (!unit.children) {
