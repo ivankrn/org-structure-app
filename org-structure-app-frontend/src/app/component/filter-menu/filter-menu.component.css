@@ -66,6 +66,7 @@ ul {
     padding: 0;
     list-style-type: none;
     margin-block-start: 0;
+    margin-block-end: 12px;
 }
 
 input[type="checkbox"] + label {
@@ -88,17 +89,18 @@ input[type='checkbox']{
     display: inline-block;
     vertical-align: middle;
 
-    width: 20px !important;
-    height: 20px !important;
+    width: 16px !important;
+    height: 16px !important;
     appearance: none;
+    margin: 0 8px 0 0;
 
     border: 1px solid #121212;
     box-shadow: none;
-    font-size: 1em;
+    font-size: 12px;
 }
 
 input[type='radio']:checked {
-    border: 6px solid #121212;
+    border: 4px solid #121212;
     border-radius: 50%;
 }
 
@@ -107,14 +109,20 @@ input[type='radio']{
     display: inline-block;
     vertical-align: middle;
 
-    width: 24px !important;
-    height: 24px !important;
+    width: 16px !important;
+    height: 16px !important;
     color: white;
     appearance: none;
+    margin: 0 8px 0 0;
 
     border: 1px solid rgba(20, 25, 26, 0.12);
     border-radius: 50%;
     box-shadow: none;
+    font-size: 12px;
+}
+
+input[type='radio'] + label, input[type='checkbox'] + label {
+    font-family: 'Inter', Courier, monospace;
     font-size: 12px;
 }
 
@@ -153,6 +161,7 @@ input[type=number]::placeholder {
 
 .salary-input {
     min-width: 0;
+    margin-bottom: 0;
 }
 
 .selected-units {
@@ -231,6 +240,10 @@ details > div {
     margin-top: 24px;
 }
 
+li:not(:last-child) {
+    margin-bottom: 10px;
+}
+
 @media (min-width: 3024px) {
     #filter-menu {
         padding: 48px;
@@ -257,17 +270,29 @@ details > div {
         font-size: 20px;
     }
 
-    input[type='checkbox'] {
+    input[type='checkbox'], input[type='radio'] {
         width: 24px !important;
         height: 24px !important;
-        margin-right: 4px;
+        margin-right: 12px;
     }
 
-    input[type='checkbox'] label{
+    input[type='checkbox'] {
+        font-size: 18px;
+    }
+
+    input[type='checkbox'] + label, input[type='radio'] + label {
         font-size: 22px;
+    }
+
+    input[type='radio']:checked {
+        border-width: 6px;
     }
 
     .summary-arrow {
         width: 32px;
+    }
+
+    ul {
+        margin-block-end: 16px;
     }
 }

@@ -304,11 +304,11 @@ export class OrganizationalTreeComponent implements OnInit {
             this.onEmployeeSelect(id);
           } else {
             const currentDate: Date = new Date();
-            if (currentDate.getTime() - this.lastClickedDate.getTime() < 500) {
+            if (currentDate.getTime() - this.lastClickedDate.getTime() < 200) {
               this.notExpand$.next();
             } else {
               this.lastClickedDate = currentDate;
-              timer(500)
+              timer(200)
                 .pipe(
                   takeUntil(this.notExpand$)
                 )
