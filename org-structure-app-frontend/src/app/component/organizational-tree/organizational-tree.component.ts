@@ -145,7 +145,6 @@ export class OrganizationalTreeComponent implements OnInit {
       .attr("width", this.width)
       .attr("height", this.height)
       .attr("viewBox", [-this.cx - delta / 2, -this.cy + delta / 2, this.width + delta, this.height + delta])
-      .attr("style", "width: 100%; height: auto; font: 10px inter;")
       .call(this.zoom);
     this.graph = this.svg.append("g");
   }
@@ -359,32 +358,34 @@ export class OrganizationalTreeComponent implements OnInit {
       ?.join("text")
       .merge(u)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
-      .attr("dy", "0.31em")
+      .attr("dy", "-0.3em")
       .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("paint-order", "stroke")
       .attr("class", "label")
       .attr("stroke", "white")
       .attr("stroke-width", 3)
+      .attr("style", "width: 100%; height: auto; font: 12px inter;")
       .text(d => d.data.name);
 
-    const headImages = this.graph?.selectAll(".node")
-      .filter((d: any) => d.data.head)
-      .data(root.descendants());
-    console.log(headImages);
-
-    headImages
-      ?.join("image")
-      .merge(headImages)
-      .attr("xlink:href", d => {
-        return d.data.head ? 
-          `http://45.95.234.130${d.data.head.imageUrl}` : "http://45.95.234.130/content/images/profile/default_profile_image.png";
-      })
-      .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
-      .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
-      .attr("clip-path", "inset(0% round 15px)")
-      .attr("width", "10px")
-      .attr("height", "10px");
+    // const headImages = this.graph?.selectAll(".node")
+    //   .filter((d: any) => d.data.head)
+    //   .data(root.descendants());
+    // console.log(headImages);
+    //
+    // headImages
+    //   ?.join("image")
+    //   .merge(headImages)
+    //   .attr("xlink:href", d => {
+    //     return d.data.head ?
+    //       `http://45.95.234.130${d.data.head.imageUrl}` : "http://45.95.234.130/content/images/profile/default_profile_image.png";
+    //   })
+    //   .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
+    //   .attr("dy", "1em")
+    //   .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+    //   .attr("clip-path", "inset(0% round 15px)")
+    //   .attr("width", "10px")
+    //   .attr("height", "10px");
 
     const headLabels = this.graph?.selectAll(".node-head-label")
       .filter((d: any) => d.data.head)
@@ -395,14 +396,14 @@ export class OrganizationalTreeComponent implements OnInit {
       .merge(headLabels)
       .attr("class", "node-head-label")
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
-      .attr("dy", "2em")
-      .attr("dx", "1em")
+      .attr("dy", "1em")
       .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("paint-order", "stroke")
       .attr("class", "label")
       .attr("stroke", "white")
       .attr("stroke-width", 3)
+      .attr("style", "width: 100%; height: auto; font: 10px inter; fill: #999999;")
       .text(d => d.data.head?.name);
   }
 
