@@ -1,21 +1,22 @@
 <div class="search-container">
-    <input type="search" placeholder="Выберите"
-           [(ngModel)]="selectedNamesString" #searchBarInput (click)="selectOpened = true"
-    >
-    <img class="arrow" [ngClass]="{'rotate': selectOpened}" (click)="selectOpened = !selectOpened" src="../../../assets/img/select.svg" alt="">
+    <input type="search" placeholder="Выберите" #searchBarInput
+           [(ngModel)]="selectedNamesString" (click)="selectOpened = true">
+    <img class="arrow" [ngClass]="{ 'rotate': selectOpened }"
+         src="../../../assets/img/select.svg" alt="" (click)="selectOpened = !selectOpened">
 </div>
-@if (selectOpened && searchedNames.length > 0) {
-    <div class="select" [ngStyle]="{'height': (Math.min(20 * names.length, 160)).toString() + 'px'}">
-        @for (name of searchedNames; track name) {
-            <label class="option" (click)="selectName(name)">
-                <input type="checkbox" [checked]="selectedNamesArray.includes(name)">
-                {{name}}
-            </label>
-        }
-    </div>
-}
-@if (searchedNames.length == 0) {
-    <div class="nothing-found-block">
-        <p class="nothing-found-title">Ничего не найдено</p>
-    </div>
+@if (selectOpened) {
+    @if (searchedNames.length > 0) {
+        <div class="select" [ngStyle]="{ 'height': (Math.min(20 * names.length, 160)).toString() + 'px' }">
+            @for (name of searchedNames; track name) {
+                <label class="option" (click)="selectName(name)">
+                    <input type="checkbox" [checked]="selectedNamesArray.includes(name)">
+                    {{ name }}
+                </label>
+            }
+        </div>
+    } @else {
+        <div class="nothing-found-block">
+            <p class="nothing-found-title">Ничего не найдено</p>
+        </div>
+    }
 }

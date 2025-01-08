@@ -1,30 +1,26 @@
 <div class="search-container">
-    <input type="search" placeholder="Выберите"
-           [(ngModel)]="selectedUnitNamesString" #searchBarInput (click)="selectOpened = true"
-    >
-    <img class="arrow" [ngClass]="{'rotate': selectOpened}" (click)="selectOpened = !selectOpened" src="../../../assets/img/select.svg" alt="">
+    <input type="search" placeholder="Выберите" #searchBarInput
+           [(ngModel)]="selectedUnitNamesString" (click)="selectOpened = true">
+    <img class="arrow" [ngClass]="{ 'rotate': selectOpened }"
+         src="../../../assets/img/select.svg" alt="" (click)="selectOpened = !selectOpened">
 </div>
-@if (selectOpened && searchedUnits.length > 0) {
-    <div class="select" [ngStyle]="{'height': (Math.min(20 * units.length, 160)).toString() + 'px'}">
-        @for (unit of searchedUnits; track unit.id) {
-            <label class="option" (click)="selectUnit(unit)">
-                <input type="checkbox" [checked]="selectedUnitsArray.includes(unit)">
-                <span>
-
-                    <span class="unit-name">
-                        {{unit.name}}
+@if (selectOpened) {
+    @if (searchedUnits.length > 0) {
+        <div class="select" [ngStyle]="{ 'height': (Math.min(20 * units.length, 160)).toString() + 'px' }">
+            @for (unit of searchedUnits; track unit.id) {
+                <label class="option" (click)="selectUnit(unit)">
+                    <input type="checkbox" [checked]="selectedUnitsArray.includes(unit)">
+                    <span>
+                        <span class="unit-name">{{ unit.name }}</span>
+                        <br>
+                        <span class="unit-location">{{ unit.location }}</span>
                     </span>
-                    <br>
-                    <span class="unit-location">
-                        {{unit.location}}
-                    </span>
-                </span>
-            </label>
-        }
-    </div>
-}
-@if (searchedUnits.length == 0) {
-    <div class="nothing-found-block">
-        <p class="nothing-found-title">Ничего не найдено</p>
-    </div>
+                </label>
+            }
+        </div>
+    } @else {
+        <div class="nothing-found-block">
+            <p class="nothing-found-title">Ничего не найдено</p>
+        </div>
+    }
 }
