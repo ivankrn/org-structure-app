@@ -1,7 +1,24 @@
+#header {
+    position: fixed;
+    z-index: 100;
+    width: 100vw;
+    height: 48px;
+    top: 0;
+    background: white;
+
+    display: flex;
+    align-items: center;
+}
+
+#logo {
+    margin-left: calc(50vw - 600px);
+}
+
 #employee-info {
     position: fixed;
     z-index: 100;
     width: 300px;
+    top: 62px;
     left: calc(50vw - 600px);
 }
 
@@ -9,6 +26,7 @@
     position: fixed;
     z-index: 100;
     width: 486px;
+    top: 62px;
     left: calc(50vw - 600px + 248px + 109px);
 }
 
@@ -16,6 +34,7 @@
     position: fixed;
     z-index: 100;
     width: 300px;
+    top: 62px;
     right: calc(50vw - 600px);
 }
 
@@ -42,37 +61,50 @@ svg {
 }
 
 @media (min-width: 3024px) {
+    #header {
+        height: 96px;
+    }
+
+    #logo {
+        margin-left: 48px;
+        width: 300px;
+    }
+
     #employee-info {
         width: 604px;
-        top: 48px;
+        top: 108px;
         left: 48px;
     }
 
     #tree-search-bar {
         width: 926px;
-        top: 48px;
+        top: 108px;
         left: calc(50vw - 463px);
     }
 
     #filter-menu {
         width: 604px;
-        top: 48px;
+        top: 108px;
         right: 48px;
     }
 }
 
 @media (min-width: 3840px) {
+    #logo {
+        margin-left: 64px;
+    }
+
     #employee-info {
-        top: 64px;
-        left: 616px;
+        top: 140px;
+        left: 64px;
     }
 
     #tree-search-bar {
-        top: 64px;
+        top: 140px;
     }
 
     #filter-menu {
-        top: 64px;
-        right: 616px;
+        top: 140px;
+        right: 64px;
     }
 }

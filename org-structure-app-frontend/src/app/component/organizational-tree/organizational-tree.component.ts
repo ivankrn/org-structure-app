@@ -142,8 +142,6 @@ export class OrganizationalTreeComponent implements OnInit {
     const delta = 300;
     this.svg = d3.select("figure#tree")
       .append("svg")
-      .attr("width", this.width)
-      .attr("height", this.height)
       .attr("viewBox", [-this.cx - delta / 2, -this.cy + delta / 2, this.width + delta, this.height + delta])
       .call(this.zoom);
     this.graph = this.svg.append("g");
