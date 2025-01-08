@@ -45,7 +45,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         id: organizationalUnit.id, 
         name: getUnitNameWithType(organizationalUnit),
         nameWithoutType: organizationalUnit.name,
-        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]]
+        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
+        head: organizationalUnit.head ? convertEmployeeToNode(organizationalUnit.head) : undefined,
     };
     node.children = [];
     let parent = getUnitParentInTree(treeData!, node);
@@ -55,7 +56,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: parent.name,
             nameWithoutType: parent.nameWithoutType,
             type: parent.type,
-            parent: parent.parent
+            parent: parent.parent,
+            head: parent.head,
         };
     }
     node.parent = parent;
@@ -64,7 +66,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         id: organizationalUnit.id,
         name: getUnitNameWithType(organizationalUnit),
         nameWithoutType: organizationalUnit.name,
-        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]]
+        type: OrganizationalTreeNodeType[OrganizationalUnitType[organizationalUnit.type]],
+        head: organizationalUnit.head ? convertEmployeeToNode(organizationalUnit.head) : undefined,
     };
     organizationalUnit.subsidiaries?.forEach(subsidiary => {
         const newSubsidiary: OrganizationalTreeNode = {
@@ -72,7 +75,8 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
             name: getUnitNameWithType(subsidiary),
             nameWithoutType: subsidiary.name,
             type: OrganizationalTreeNodeType[OrganizationalUnitType[subsidiary.type]],
-            parent: nodeWithoutChildren
+            parent: nodeWithoutChildren,
+            head: subsidiary.head ? convertEmployeeToNode(subsidiary.head) : undefined,
         };
         updateNodeHierarchy(node, newSubsidiary);
         node.children?.push(newSubsidiary);

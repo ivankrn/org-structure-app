@@ -358,8 +358,14 @@ export class OrganizationalTreeComponent implements OnInit {
       ?.join("text")
       .merge(u)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
-      .attr("dy", "-0.3em")
-      .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+      .attr("dy", d => {
+        if (d.data.type === OrganizationalTreeNodeType.EMPLOYEE || d.data.type === OrganizationalTreeNodeType.LEGAL_ENTITY) {
+          return "0.3em";
+        } else {
+          return "-0.3em";
+        }
+      })
+      .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("paint-order", "stroke")
       .attr("class", "label")
@@ -374,6 +380,12 @@ export class OrganizationalTreeComponent implements OnInit {
     // console.log(headImages);
     //
     // headImages
+    //   ?.exit()
+    //   .transition()
+    //   .duration(this.redrawAnimationDurationInMs)
+    //   .style("opacity", 0)
+    //   .remove();
+    // headImages
     //   ?.join("image")
     //   .merge(headImages)
     //   .attr("xlink:href", d => {
@@ -382,7 +394,7 @@ export class OrganizationalTreeComponent implements OnInit {
     //   })
     //   .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
     //   .attr("dy", "1em")
-    //   .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+    //   .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8)
     //   .attr("clip-path", "inset(0% round 15px)")
     //   .attr("width", "10px")
     //   .attr("height", "10px");
@@ -397,7 +409,7 @@ export class OrganizationalTreeComponent implements OnInit {
       .attr("class", "node-head-label")
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0) rotate(${d.x >= Math.PI ? 180 : 0})`)
       .attr("dy", "1em")
-      .attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+      .attr("x", d => d.x < Math.PI === !d.children ? 8 : -8)
       .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
       .attr("paint-order", "stroke")
       .attr("class", "label")
