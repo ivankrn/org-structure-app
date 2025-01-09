@@ -31,7 +31,6 @@ export function convertUnitGroupedByLocations(organizationalUnit: Organizational
                 location: subsidiary.location,
                 head: convertEmployeeToNode(subsidiary.head!)
             };
-            newSubsidiary.head!.parent = newSubsidiary;
             updateNodeHierarchy(locationChild, newSubsidiary);
             locationChild.children?.push(newSubsidiary);
         });
@@ -88,7 +87,6 @@ export function convertUnit(treeData: OrganizationalTreeNode, organizationalUnit
         node.children?.push(newEmployee);
     });
     const headEmployee = convertEmployeeToNode(organizationalUnit.head!);
-    headEmployee.parent = nodeWithoutChildren;
     node.head = headEmployee;
     return node;
 }
