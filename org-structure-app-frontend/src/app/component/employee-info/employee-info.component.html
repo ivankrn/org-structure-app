@@ -1,14 +1,17 @@
-<div *ngIf="employee">
+<div *ngIf="employee() as employee">
     <div id="employee-profile">
         <div class="title">Профиль</div>
         <div id="employee-profile-details">
             <div class="profile-image">
-                <img src="http://45.95.234.130{{employee.imageUrl ? employee.imageUrl : '/content/images/profile/default_profile_image.png'}}" alt="Employee image">
+                <img [src]="imageUrl()" alt="Employee image">
             </div>
             <div class="profile-name">
                 <div class="value">{{ employee.fullName }}</div>
-                <!-- TODO спросить, одинаковые ли цвета у статусов -->
-                <div *ngIf="employee.status" class="employee-status">{{ '• ' + (employee.status | asRussianText) }}</div>
+                @if (employee.status) {
+                    <div class="employee-status" [ngStyle]="{ 'color': statusColor() }">
+                        {{ '• ' + (employee.status | asRussianText) }}
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -20,18 +23,20 @@
                     <div class="value">{{ employee.salary }}</div>
                 </div>
             </div>
-            <div *ngIf="!employee.isVacancy" class="info">
-                <div class="title">Стаж работы в компании, лет</div>
-                <div class="field">
-                    <div class="value">{{ getExperience(employee.employmentDate) }}</div>
+            @if (!employee.isVacancy) {
+                <div class="info">
+                    <div class="title">Стаж работы в компании, лет</div>
+                    <div class="field">
+                        <div class="value">{{ experience() }}</div>
+                    </div>
                 </div>
-            </div>
-            <div *ngIf="!employee.isVacancy" class="info">
-                <div class="title">Общий стаж работы, лет</div>
-                <div class="field">
-                    <div class="value">{{ employee.totalYearsExperience }}</div>
+                <div class="info">
+                    <div class="title">Общий стаж работы, лет</div>
+                    <div class="field">
+                        <div class="value">{{ employee.totalYearsExperience }}</div>
+                    </div>
                 </div>
-            </div>
+            }
             <div class="info">
                 <div class="title">Должность</div>
                 <div class="field">
@@ -44,24 +49,26 @@
                     <div class="value">{{ employee.jobType }}</div>
                 </div>
             </div>
-            <div *ngIf="!employee.isVacancy" class="info">
-                <div class="title">Электронная почта</div>
-                <div class="field">
-                    <div class="value">{{ employee.email }}</div>
-                </div>
-            </div>
-            <div *ngIf="!employee.isVacancy" class="info">
-                <div class="title">Проекты</div>
-                @for (projectName of employee.projects; track projectName.id) {
-                    <div class="field field_projects">
-                        <div class="value">{{ projectName.name }}</div>
-                    </div>
-                } @empty {
+            @if (!employee.isVacancy) {
+                <div class="info">
+                    <div class="title">Электронная почта</div>
                     <div class="field">
-                        <div class="value"></div>
+                        <div class="value">{{ employee.email }}</div>
                     </div>
-                }
-            </div>
+                </div>
+                <div class="info">
+                    <div class="title">Проекты</div>
+                    @for (projectName of employee.projects; track projectName.id) {
+                        <div class="field field_projects">
+                            <div class="value">{{ projectName.name }}</div>
+                        </div>
+                    } @empty {
+                        <div class="field">
+                            <div class="value"></div>
+                        </div>
+                    }
+                </div>
+            }
         </div>
         <summary class="summary">
             <span class="summary-text">О сотруднике</span>

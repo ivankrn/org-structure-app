@@ -3,9 +3,9 @@
         <span class="summary-text" id="total-summary">Сведения</span>
         <img class="summary-arrow" src="../../../assets/img/arrow.svg" alt="">
     </summary>
-    @if ((type | async) === 'employee') {
-        <employee-info [employee]="employee" />
-    } @else if ((type | async) === 'unit') {
-        <unit-info (enterToEmployee)="enterToEmployee.emit($event)" [unit]="unit" />
+    @if (type() === 'employee') {
+        <employee-info [employee]="employee()" />
+    } @else if (type() === 'unit') {
+        <unit-info (enterToEmployee)="enterToEmployee.emit($event)" [unit]="unit()" />
     }
 </details>

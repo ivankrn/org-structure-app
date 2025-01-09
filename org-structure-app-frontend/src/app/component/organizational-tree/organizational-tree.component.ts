@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import * as d3 from 'd3';
-import { BehaviorSubject, concatMap, forkJoin, map, Subject, takeUntil, tap, timer } from 'rxjs';
+import { concatMap, forkJoin, map, Subject, takeUntil, tap, timer } from 'rxjs';
 import { Employee } from '../../model/employee.model';
 import { OrganizationalUnitHierarchy } from '../../model/organizational-unit-hierarchy.model';
 import { OrganizationalUnitType } from '../../model/organizational-unit-type.enum';
@@ -50,8 +50,6 @@ import { Gender } from '../../model/gender.enum';
 })
 export class OrganizationalTreeComponent implements OnInit {
 
-  protected isShowFooter: WritableSignal<boolean> = signal(false);
-
   private mainTree?: OrganizationalTreeNode;
   private treeData?: OrganizationalTreeNode;
   private svg?: d3.Selection<any, any, any, any>;
@@ -60,9 +58,9 @@ export class OrganizationalTreeComponent implements OnInit {
   private selectedUnitsIds: Set<number> = new Set();
   private filterSettings?: FilterMenuSettings;
   private filterChain?: FilterChainNode;
-  selectedEmployee?: Employee;
-  selectedUnit?: SelectedUnit;
-  selectedType$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  selectedEmployee: WritableSignal<Employee | undefined> = signal(undefined);
+  selectedUnit: WritableSignal<SelectedUnit | undefined> = signal(undefined);
+  selectedType: WritableSignal<string | undefined> = signal(undefined);
   locationNames?: string[];
   divisions?: OrganizationalUnit[];
   departments?: OrganizationalUnit[];
@@ -79,7 +77,7 @@ export class OrganizationalTreeComponent implements OnInit {
   private redrawAnimationDurationInMs = 250;
   private currentCenterType: OrganizationalTreeNodeType = OrganizationalTreeNodeType.LEGAL_ENTITY;
   private lastClickedDate: Date = new Date();
-  private notExpand$: Subject<void> = new Subject<void>();
+  private expand$: Subject<void> = new Subject<void>();
 
   private organizationalUnitService: OrganizationalUnitService = inject(OrganizationalUnitService);
   private projectService: ProjectService = inject(ProjectService);
@@ -279,7 +277,7 @@ export class OrganizationalTreeComponent implements OnInit {
           if (d.data.isVacancy) {
             classList.push("vacancy-node")
           }
-          if (d.data.id == this.selectedEmployee?.id) {
+          if (d.data.id == this.selectedEmployee()?.id) {
             classList.push("selected-employee-node");
           }
         }
@@ -302,15 +300,15 @@ export class OrganizationalTreeComponent implements OnInit {
           } else {
             const currentDate: Date = new Date();
             if (currentDate.getTime() - this.lastClickedDate.getTime() < 200) {
-              this.notExpand$.next();
+              this.expand$.next();
             } else {
               this.lastClickedDate = currentDate;
               timer(200)
                 .pipe(
-                  takeUntil(this.notExpand$)
+                  takeUntil(this.expand$)
                 )
                 .subscribe(() => {
-                  this.updateTreeFromUnitId(id);
+                  this.onUnitSelect(id);
                 });
             }
           }
@@ -324,23 +322,19 @@ export class OrganizationalTreeComponent implements OnInit {
 
         if (type === 'UNIT') {
           const id: number = Number.parseInt(split[1]);
-          this.onUnitSelect(id);
+          this.updateTreeFromUnitId(id);
         }
       })
       .transition()
       .duration(this.redrawAnimationDurationInMs)
       .attr("transform", d => `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y},0)`)
       .attr("fill", d => {
-        if (d.children) {
+        if (d.data.id === this.selectedEmployee()?.id || d.data.id === this.selectedUnit()?.id) {
           return "#555";
         }
         return d.data.isVacancy ? "#88ff50" : "#999";
       })
-      .attr("r", nodeRadius)
-      .attr("stroke", d => {
-        return d.data.type === OrganizationalTreeNodeType.EMPLOYEE && d.data.id == this.selectedEmployee?.id ? "#353535" : null;
-      })
-      .attr("stroke-width", 2);
+      .attr("r", nodeRadius);
   }
 
   private redrawTreeLabels(root: d3.HierarchyPointNode<any>): void {
@@ -436,14 +430,15 @@ export class OrganizationalTreeComponent implements OnInit {
     this.employeeService.findById(employeeId)
       .pipe(
         tap(employee => {
-          this.selectedEmployee = employee;
-          this.selectedType$.next('employee');
+          this.selectedEmployee.set(employee);
+          this.selectedUnit.set(undefined);
+          this.selectedType.set('employee');
         }),
         map(employee => employee.organizationalUnit?.id),
         concatMap(unitId => this.organizationalUnitService.findUnitHierarchy(unitId!))
       )
       .subscribe(hierarchy => {
-        this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
+        this.selectedEmployee()!.organizationalUnitHierarchy = hierarchy;
         const idsToExpand: number[] = this.findNotExpandedHierarchyUnitIds(hierarchy);
         const zoomToEmployee = () => this.zoomToNodeWithId(`EMPLOYEE-` + employeeId);
         if (idsToExpand.length !== 0) {
@@ -548,30 +543,31 @@ export class OrganizationalTreeComponent implements OnInit {
     this.employeeService.findById(id)
       .pipe(
         tap(employee => {
-          this.selectedEmployee = employee;
-          this.selectedType$.next('employee');
+          this.selectedEmployee.set(employee);
+          this.selectedUnit.set(undefined);
+          this.selectedType.set('employee');
         }),
         map(employee => employee.organizationalUnit?.id),
         concatMap(id => this.organizationalUnitService.findUnitHierarchy(id!))
       )
       .subscribe(hierarchy => {
-        this.selectedEmployee!.organizationalUnitHierarchy = hierarchy;
+        this.selectedEmployee()!.organizationalUnitHierarchy = hierarchy;
         this.redrawTree();
       });
   }
 
   private onUnitSelect(id: number): void {
-
     this.organizationalUnitService.findById(id)
       .pipe(
         tap(unit => {
-          this.selectedUnit = unit;
-          this.selectedType$.next('unit');
+          this.selectedUnit.set(unit);
+          this.selectedEmployee.set(undefined);
+          this.selectedType.set('unit');
         }),
         concatMap(() => this.organizationalUnitService.findUnitHierarchy(id))
       )
       .subscribe(hierarchy => {
-        this.selectedUnit!.hierarchy = hierarchy;
+        this.selectedUnit()!.hierarchy = hierarchy;
         this.redrawTree();
       })
   }

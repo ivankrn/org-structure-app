@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, InputSignal, Output, Signal } from '@angular/core';
 import { SelectedUnit } from '../../model/selected-unit.model';
 import { EmployeeStatusPipe } from '../../pipe/employee-status.pipe';
 import { NgClass, NgIf } from '@angular/common';
@@ -17,16 +17,15 @@ import { Employee } from '../../model/employee.model';
   styleUrl: './unit-info.component.css'
 })
 export class UnitInfoComponent {
-  @Input({ required: true })
-  unit?: SelectedUnit;
+  unit: InputSignal<SelectedUnit | undefined> = input.required();
 
   @Output()
   public enterToEmployee: EventEmitter<number> = new EventEmitter<number>();
 
   protected readonly organizationalUnitType = OrganizationalUnitType;
 
-  protected russianType(unitType: OrganizationalUnitType): string {
-    switch (unitType) {
+  protected russianType: Signal<string> = computed(() => {
+    switch (this.unit()?.type) {
       case OrganizationalUnitType.LEGAL_ENTITY:
         return 'Юридическое лицо';
       case OrganizationalUnitType.DIVISION:
@@ -35,8 +34,22 @@ export class UnitInfoComponent {
         return 'Отдел';
       case OrganizationalUnitType.GROUP:
         return 'Группа';
+      default:
+          return '';
     }
-  }
+  });
+
+  protected headImageUrl: Signal<string> = computed(() => {
+    return `http://45.95.234.130${this.unit()?.head?.imageUrl
+        ? this.unit()?.head?.imageUrl
+        : '/content/images/profile/default_profile_image.png'}`;
+  });
+
+  protected deputyImageUrl: Signal<string> = computed(() => {
+    return `http://45.95.234.130${this.unit()?.deputy?.imageUrl
+        ? this.unit()?.deputy?.imageUrl
+        : '/content/images/profile/default_profile_image.png'}`;
+  });
 
   protected onClickEmployee(employee?: Employee): void {
     if (employee?.id) {

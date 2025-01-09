@@ -3,9 +3,9 @@
         <img id="logo" src="../../../assets/img/logo.svg" alt="">
     </div>
     <div id="employee-info">
-        <info [type]="selectedType$.asObservable()"
-              [employee]="selectedEmployee"
-              [unit]="selectedUnit"
+        <info [type]="selectedType()"
+              [employee]="selectedEmployee()"
+              [unit]="selectedUnit()"
               (enterToEmployee)="findEmployeeOnTreeById($event)"
         />
     </div>
