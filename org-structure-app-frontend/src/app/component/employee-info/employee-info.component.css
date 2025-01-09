@@ -52,10 +52,9 @@
 
 .employee-status {
     font-size: 12px;
-    color: #50de4d;
 }
 
-details>summary {
+details > summary {
     list-style: none;
     font-weight: 600;
 }
