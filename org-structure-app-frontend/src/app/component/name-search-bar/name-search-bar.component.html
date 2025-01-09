@@ -8,10 +8,10 @@
     @if (searchedNames.length > 0) {
         <div class="select" [ngStyle]="{ 'height': (Math.min(20 * names.length, 160)).toString() + 'px' }">
             @for (name of searchedNames; track name) {
-                <label class="option" (click)="selectName(name)">
+                <div class="checkbox-container" (click)="selectName(name)">
                     <input type="checkbox" [checked]="selectedNamesArray.includes(name)">
-                    {{ name }}
-                </label>
+                    <label class="option">{{ name }}</label>
+                </div>
             }
         </div>
     } @else {

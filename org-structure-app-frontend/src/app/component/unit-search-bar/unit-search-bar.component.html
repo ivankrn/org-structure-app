@@ -8,14 +8,16 @@
     @if (searchedUnits.length > 0) {
         <div class="select" [ngStyle]="{ 'height': (Math.min(20 * units.length, 160)).toString() + 'px' }">
             @for (unit of searchedUnits; track unit.id) {
-                <label class="option" (click)="selectUnit(unit)">
+                <div class="checkbox-container" (click)="selectUnit(unit)">
                     <input type="checkbox" [checked]="selectedUnitsArray.includes(unit)">
-                    <span>
-                        <span class="unit-name">{{ unit.name }}</span>
-                        <br>
-                        <span class="unit-location">{{ unit.location }}</span>
-                    </span>
-                </label>
+                    <label class="option">
+                        <span>
+                            <span class="unit-name">{{ unit.name }}</span>
+                            <br>
+                            <span class="unit-location">{{ unit.location }}</span>
+                        </span>
+                    </label>
+                </div>
             }
         </div>
     } @else {
